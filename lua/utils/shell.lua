@@ -13,7 +13,7 @@ function M.set_shell()
 	--[[ Right now, if I use powershell instead of cmd it breaks things.
 		The startup is a lot slower, and it breaks git integration with NvimTree ]]
 	local powershell_options = {
-		shell = vim.fn.executable "pwsh" == 1 and "pwsh" or "powershell",
+		shell = "powershell",
 		shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;",
 		shellredir = "-RedirectStandardOutput %s -NoNewWindow -Wait",
 		shellpipe = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode",

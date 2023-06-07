@@ -6,8 +6,7 @@ function M.Java_Workspaces()
 end
 
 function M.Views()
-	local fold_tmp_dir = dir.Data_Dir.."view/"
-	vim.cmd("silent! !rm -r " .. fold_tmp_dir)
+	vim.cmd("silent! !rm -r " .. dir.Data_Dir.."view/")
 end
 
 function M.LSP_Log()
