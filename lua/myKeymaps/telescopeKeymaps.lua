@@ -5,9 +5,9 @@ My_Telescope_Keymaps = {
 	i = {
         ["<C-c>"] = actions.close,
 
-        ["<C-v>"] = StopInsert(Custom_Actions.multi_selection_open_vertical),
-        ["<C-x>"] = StopInsert(Custom_Actions.multi_selection_open_horizontal),
-        ["<CR>"]  = StopInsert(Custom_Actions.multi_selection_open),
+        ["<C-v>"] = Stop_Insert(Custom_Actions.multi_selection_open_vertical),
+        ["<C-x>"] = Stop_Insert(Custom_Actions.multi_selection_open_horizontal),
+        ["<CR>"]  = Stop_Insert(Custom_Actions.multi_selection_open),
 
         ["<Tab>"] = actions.toggle_selection + actions.move_selection_worse,
         ["<S-Tab>"] = actions.toggle_selection + actions.move_selection_better,

@@ -41,7 +41,7 @@ cmp.setup {
 			luasnip.lsp_expand(args.body)
 		end,
 	},
-	mapping = CompletionMappings,
+	mapping = Completion_Mappings,
 	formatting = {
 		fields = { "kind", "abbr", "menu" },
 		format = function(entry, vim_item)

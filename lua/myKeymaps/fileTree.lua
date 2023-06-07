@@ -1,6 +1,6 @@
 -- In myPlugin.lua, this function gets used, and attached the NvimTree
 -- Source: github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach - Scroll to Bottom
-function TreeOnAttach(bufnr)
+function Tree_On_Attach(bufnr)
 	-- All helper functions that github said to use
 	local api = require('nvim-tree.api')
 

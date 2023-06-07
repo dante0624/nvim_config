@@ -2,7 +2,7 @@
 local cmp = require('cmp')
 local luasnip = require('luasnip')
 
-CompletionMappings = {
+Completion_Mappings = {
 	["<C-k>"] = cmp.mapping.select_prev_item(),
 	["<C-j>"] = cmp.mapping.select_next_item(),
 	["<C-b>"] = cmp.mapping(cmp.mapping.scroll_docs(-1), { "i", "c" }),

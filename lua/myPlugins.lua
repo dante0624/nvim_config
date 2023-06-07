@@ -37,7 +37,7 @@ return packer.startup(function(use)
 			require('myKeymaps.fileTree') -- Gives me the TreeOnAttach function
 
 			require("nvim-tree").setup({
-				on_attach = TreeOnAttach,
+				on_attach = Tree_On_Attach,
 				view = {
 					number = true,
 					relativenumber = true,

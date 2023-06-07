@@ -1,7 +1,7 @@
 -- Use other lua files that I created
 require("myKeymaps.vanillaNvim")
 require("myFolding")
-require("misc_options")
+require("miscOptions")
 
 -- Specifies my modificiations to a downloaded color scheme
 require("myColors.nvimDarkTheme")
@@ -11,9 +11,11 @@ require("myColors.nvimDarkTheme")
 require("myPlugins")
 
 -- Give me the ability to quickly delete tmp folders and files
-Flush = require("utils.flush_tmp")
+Flush = require("utils.flushTmp")
 
 -- TODO:
+-- Find a way to quicky view all TODOs within a project
+
 -- Trouble.nvim
 	-- And other things by Folke
 -- Get undotree

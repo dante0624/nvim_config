@@ -47,7 +47,7 @@ local action_state = require "telescope.actions.state"
 
 -- Helper functions from github issues page
 -- This was heavily modified by me to make grep work with multi_selection
-local function multiopen(prompt_bufnr, method)
+local function multi_open(prompt_bufnr, method)
     local cmd_map = {
         vertical = "vsplit",
         horizontal = "split",
@@ -76,7 +76,6 @@ local function multiopen(prompt_bufnr, method)
 					print("Failed to move to cursor:", err_msg, row, col)
 				end
 			end
-
         end
     else
         actions["select_" .. method](prompt_bufnr)
@@ -85,17 +84,17 @@ end
 
 Custom_Actions = transform_mod({
     multi_selection_open_vertical = function(prompt_bufnr)
-        multiopen(prompt_bufnr, "vertical")
+        multi_open(prompt_bufnr, "vertical")
     end,
     multi_selection_open_horizontal = function(prompt_bufnr)
-        multiopen(prompt_bufnr, "horizontal")
+        multi_open(prompt_bufnr, "horizontal")
     end,
     multi_selection_open = function(prompt_bufnr)
-        multiopen(prompt_bufnr, "default")
+        multi_open(prompt_bufnr, "default")
     end,
 })
 
-function StopInsert(callback)
+function Stop_Insert(callback)
     return function(prompt_bufnr)
         vim.cmd.stopinsert()
         vim.schedule(function()
