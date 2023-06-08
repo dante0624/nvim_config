@@ -1,6 +1,7 @@
 # nvim_config
 Just my nvim configuration. I want it to work on any operating system so I can have one IDE for life
 
+
 # Installation
 Use git clone to install, but it must be installed in the correct place depending on OS.
 Generally you can figure this out by going into Neovim's command mode and typing: `lua print(vim.fn.stdpath("config"))`
@@ -13,6 +14,7 @@ Generally these paths look like:
 ## WSL, MacOS, and Linux
 `~\.config\nvim`
 
+
 # Dependencies
 These need to be installed manually, and be available as shell commands. So they need to also be on the path.
 
@@ -22,6 +24,11 @@ I suggest using zig for everything because it is cross platform and works everyw
 `choco install zig`
 ### WSL, MacOS, and Linux
 `sudo snap install zig`
+
+## Node, NVM, and NPM
+Nvim and all its plugins love to autoinstall things using these javascript tools.
+Even if you have no desire to write javascript code, these 3 are still needed to make nvim work.
+Make sure they are installed, and on the path.
 
 ## A special font used in terminal
 Need to download a special font from https://www.nerdfonts.com/
@@ -37,7 +44,16 @@ Needed for telescope's live grep feature. Check if installed by typing `rg` in t
 Available at https://github.com/sharkdp/fd
 Needed for speed up telescope. Check if installed by typing `fd` in terminal.
 
+## Language Versions
+In order to get the LSPs to work, make sure that each language is up to the neccessary version and on the path.
+### Python
+python3 is needed, ensure that `python` has an alias which links it to python3.
+### Java
+java 17 is needed, ensure that `java` returns a version >= 17.
+
+
 # Cold start for Plugins
+
 When nvim is opened for the first time with this config, it will start by downloading Packer, the plugin manager.
 Once this is done, the user needs to exit and reopen nvim.
 At this point packer itself will be installed, but it will not yet have installed all needed plugins.
