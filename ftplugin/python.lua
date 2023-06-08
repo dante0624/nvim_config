@@ -1,4 +1,4 @@
-local Map = require("utils.map").Map
+local Local_Map = require("utils.map").Local_Map
 
 -- Python only tab options
 vim.g.pyindent_open_paren = 'shiftwidth()'
@@ -9,8 +9,8 @@ vim.g.pyindent_continue = 'shiftwidth() * 2'
 local full_fname = vim.fn.expand('%:p')
 
 local command = 'python "'..full_fname..'"'-- Wrap out file name in double quotes
-Map(
-	{ 'n', 'v', 's', 'i' },
+Local_Map(
+	{ 'n', 'v' },
 	'<C-e>',
 	'<Cmd>ToggleTerm<CR>'..command..'<CR>'
 )
