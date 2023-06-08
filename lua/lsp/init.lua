@@ -1,7 +1,7 @@
 local servers = {
 	"lua_ls", -- Lua
 	"pyright", -- Python
-	-- "jdtls", -- Java has its own way of doing things
+	"jdtls", -- Java
 }
 
 local installer_settings = {
@@ -44,7 +44,11 @@ for _, server in pairs(servers) do
 		opts = vim.tbl_deep_extend("force", conf_opts, opts)
 	end
 
-	lspconfig[server].setup(opts)
+	-- Java has its own way of being setup under ftplugin/java.lua
+	if server ~= "jdtls" then
+		lspconfig[server].setup(opts)
+	end
+
 end
 
 require("lsp.handlers").setup()

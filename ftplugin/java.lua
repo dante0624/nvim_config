@@ -17,14 +17,14 @@ end
 local root_dir_ending = vim.fn.fnamemodify(root_dir, ':t')
 
 local inferred_workspace = dir.Java_Workspaces .. root_dir_ending
-local jdtls_dir = dir.Data_Dir .. "lsp_servers/jdtls/"
+local jdtls_dir = dir.Data_Dir .. "mason/packages/jdtls/"
 local os_config
-if os.is_windows or os.is_wsl then
-	os_config = "config_win"
+if os.is_unix or os.is_wsl then
+	os_config = "config_linux"
 elseif os.is_macos then
 	os_config = "config_mac"
-elseif os.is_unix then
-	os_config = "config_linux"
+elseif os.is_windows then
+	os_config = "config_win"
 end
 
 
