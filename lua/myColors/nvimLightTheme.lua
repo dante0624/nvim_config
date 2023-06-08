@@ -1,4 +1,8 @@
-vim.cmd.colorscheme("tokyonight-day")
+-- Protected call is needed when packer is used for the first time
+local status_ok, _ = pcall(vim.cmd.colorscheme, "tokyonight-day")
+if not status_ok then
+  return false
+end
 
 -- Making the comments and the line numbers pop a little more
 vim.cmd.highlight("CursorLine", "guibg=none")

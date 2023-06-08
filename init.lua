@@ -1,9 +1,9 @@
 --[[ Super important file
 Installs all the plugins, and requires them, and sets them up
 Should be first for bootstrapping, because other files depend on plugins ]]
-local plugins_ready = require("myPlugins")
-if not plugins_ready then
-	print("First use of packer, need to exit and re-enter for plugins")
+local packer_ready = require("myPlugins")
+if not packer_ready then
+	print("First use of packer, need to exit and re-enter. Then run :PackerSync to get plugins")
 end
 
 -- Use other lua files that I created
@@ -12,8 +12,9 @@ require("myFolding")
 require("miscOptions")
 
 -- Specifies my modificiations to a downloaded color scheme
-if plugins_ready then
-	require("myColors.nvimDarkTheme")
+local plugins_ready = require("myColors.nvimDarkTheme")
+if packer_ready and not plugins_ready then
+	print("Colorscheme, and likely other plugins missing. Run :PackerSync")
 end
 
 -- Give me the ability to quickly delete tmp folders and files

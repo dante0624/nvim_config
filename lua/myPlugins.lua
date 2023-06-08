@@ -69,10 +69,16 @@ return packer.startup(function(use)
             ts_update()
         end,
 		config = function()
-			require('nvim-treesitter.install').compilers = { "zig", "clang" }
+			require('nvim-treesitter.install').compilers = { "zig" }
 			require('nvim-treesitter.configs').setup({
 				highlight = { enable = true },
-				ensure_installed = { "lua", "python", "java", "kotlin", },
+				ensure_installed = {
+					"comment", -- If I don't have this, WSL bugs out on every comment
+					"lua",
+					"python",
+					"java",
+					"kotlin",
+				},
 			})
 		end,
     }
