@@ -60,6 +60,9 @@ Map('', '<leader>w', '<Cmd>w<CR>')
 Map('', '<leader>W', '<Cmd>wa<CR>')
 Map('', '<leader>Q', '<Cmd>q<CR>')
 
+-- Open and close the quickfix list easily
+Map('', '<leader>ro', '<Cmd>copen<CR>')
+Map('', '<leader>rq', '<Cmd>cclose<CR>')
 
 -- Switch between windows quickly
 Map({ 'n', 'v', 's', 'i', 't' }, '<C-h>', '<C-w>h')
