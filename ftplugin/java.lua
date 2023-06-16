@@ -118,5 +118,16 @@ if single_file then
 		'<C-e>',
 		'<Cmd>ToggleTerm<CR>'..run_command..'<CR>'
 	)
+else
+	Local_Map(
+		{ 'n', 'v' },
+		'<C-b>',
+		'<Cmd>ToggleTerm<CR>gradle build<CR>'
+	)
+	Local_Map(
+		{ 'n', 'v' },
+		'<C-e>',
+		'<Cmd>ToggleTerm<CR>gradle test<CR>'
+	)
 end
 
