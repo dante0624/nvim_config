@@ -1,3 +1,5 @@
+local buffers = require("utils.buffers")
+
 -- In myPlugin.lua, this function gets used, and attached the NvimTree
 -- Source: github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach - Scroll to Bottom
 function Tree_On_Attach(bufnr)
@@ -35,14 +37,26 @@ function Tree_On_Attach(bufnr)
 	vim.keymap.del('n', 'g?', { buffer = bufnr })
 
 	-- Helper Functions for my custom keybinds
+
 	local function open_silent(_)
+		api.tree.close() -- Close the tree so we are focused on the current buffer, not the tree
+		local go_back  = not buffers.Is_Empty() -- true iff the current buffer isn't [No Name]
+		api.tree.open() -- Go back to the tree
+
 		local node = api.tree.get_node_under_cursor()
 
 		api.node.open.edit()
-		if node.type == "file" then
-			vim.cmd([[exe "norm \<c-o>"]]) -- Normal command to go to the previous buffer
-			api.tree.focus() -- Refocus on the tree where we previously were
+
+		if node.type == "directory" then
+			return
 		end
+
+		if go_back then
+			vim.cmd([[exe "norm \<c-o>"]]) -- Normal command to go to the previous buffer
+		end
+
+		buffers.Clean_Empty()
+		api.tree.focus()
 	end
 
 	local function open_and_go(_)
@@ -50,7 +64,8 @@ function Tree_On_Attach(bufnr)
 
 		api.node.open.edit()
 		if node.type == "file" then
-			api.tree.close() -- Close the tree after going to the file
+			api.tree.close()
+			buffers.Clean_Empty()
 		end
 	end
 

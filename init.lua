@@ -19,6 +19,7 @@ end
 
 -- Give me the ability to quickly delete tmp folders and files
 Flush = require("utils.flushTmp")
+Clean_Buffers = require("utils.buffers").Clean_Empty
 
 -- TODO:
 -- Find a way to quicky view all TODOs within a project
