@@ -36,6 +36,8 @@ Map('i', '<C-v>', '<Esc>"+pa')
 -- Intuitive tabbing for me
 Map('v', '<TAB>', '>gv')
 Map('v', '<S-TAB>', '<gv')
+Map('n', '<TAB>', '>>')
+Map('n', '<S-TAB>', '<<')
 
 -- Lets me use cs (clear search) to stop highlighting search results
 Map('n', 'cs', '<Cmd>noh<CR>')
@@ -46,18 +48,16 @@ Map('n', 'zz', 'za')
 -- Toggle my tree (tt) plugin
 Map('', 'tt', '<Cmd>NvimTreeToggle<CR>')
 
--- Switch between buffers quickly
-Map('', '<leader><TAB>', '<Cmd>BufferLineCycleNext<CR>')
-Map('', '<leader><S-TAB>', '<Cmd>BufferLineCyclePrev<CR>')
-Map('', '<leader>q', '<Cmd>bd<CR>') -- bd is for buffer delete
-
--- Reorder my buffer tabs
-Map('', '<leader>bl', '<Cmd>BufferLineMoveNext<CR>') -- Buffer Right (l)
-Map('', '<leader>bh', '<Cmd>BufferLineMovePrev<CR>') -- Buffer Left (h)
+-- Manipulate Buffer Tabs
+Map('', 'm', '<Cmd>BufferLineCycleNext<CR>')
+Map('', 'M', '<Cmd>BufferLineCyclePrev<CR>')
+Map('', '<leader><TAB>', '<Cmd>BufferLineMoveNext<CR>')
+Map('', '<leader><S-TAB>', '<Cmd>BufferLineMovePrev<CR>')
 
 -- Write and quit buffers quickly
 Map('', '<leader>w', '<Cmd>w<CR>')
 Map('', '<leader>W', '<Cmd>wa<CR>')
+Map('', '<leader>q', '<Cmd>bd<CR>')
 Map('', '<leader>Q', '<Cmd>q<CR>')
 
 -- Open and close the quickfix list easily
@@ -75,6 +75,9 @@ Map({ 'n', 'v', 's', 'i', 't' }, '<C-Up>', '<Cmd>resize -2<CR>')
 Map({ 'n', 'v', 's', 'i', 't' }, '<C-Down>', '<Cmd>resize +2<CR>')
 Map({ 'n', 'v', 's', 'i', 't' }, '<C-Left>', '<Cmd>vertical resize -2<CR>')
 Map({ 'n', 'v', 's', 'i', 't' }, '<C-Right>', '<Cmd>vertical resize +2<CR>')
+
+-- Easier redo command
+Map('', 'R', '<C-r>')
 
 -- Telescope Opening
 Map('', '<leader>f', '<Cmd>Telescope find_files<CR>')
