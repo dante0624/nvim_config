@@ -36,8 +36,8 @@ Map('i', '<C-v>', '<Esc>"+pa')
 -- Intuitive tabbing for me
 Map('v', '<TAB>', '>gv')
 Map('v', '<S-TAB>', '<gv')
-Map('n', '<TAB>', '>>')
-Map('n', '<S-TAB>', '<<')
+-- Map('n', '<TAB>', '>>')
+-- Map('n', '<S-TAB>', '<<')
 
 -- Lets me use cs (clear search) to stop highlighting search results
 Map('n', 'cs', '<Cmd>noh<CR>')
@@ -49,8 +49,8 @@ Map('n', 'zz', 'za')
 Map('', 'tt', '<Cmd>NvimTreeToggle<CR>')
 
 -- Manipulate Buffer Tabs
-Map('', 'm', '<Cmd>BufferLineCycleNext<CR>')
-Map('', 'M', '<Cmd>BufferLineCyclePrev<CR>')
+Map('n', '<TAB>', '<Cmd>BufferLineCycleNext<CR>')
+Map('n', '<S-TAB>', '<Cmd>BufferLineCyclePrev<CR>')
 Map('', '<leader><TAB>', '<Cmd>BufferLineMoveNext<CR>')
 Map('', '<leader><S-TAB>', '<Cmd>BufferLineMovePrev<CR>')
 
