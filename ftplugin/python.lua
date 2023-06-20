@@ -11,7 +11,7 @@ local full_fname = vim.fn.expand('%:p')
 local command = 'python "'..full_fname..'"'-- Wrap out file name in double quotes
 Local_Map(
 	{ 'n', 'v' },
-	'<C-e>',
+	'<C-r>',
 	'<Cmd>ToggleTerm<CR>'..command..'<CR>'
 )
 

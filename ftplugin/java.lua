@@ -115,7 +115,7 @@ if single_file then
 	local run_command = build_cmd..separator..'java -cp "'..root_dir..'" '..class_name
 	Local_Map(
 		{ 'n', 'v' },
-		'<C-e>',
+		'<C-r>',
 		'<Cmd>ToggleTerm<CR>'..run_command..'<CR>'
 	)
 else
@@ -126,7 +126,7 @@ else
 	)
 	Local_Map(
 		{ 'n', 'v' },
-		'<C-e>',
+		'<C-r>',
 		'<Cmd>ToggleTerm<CR>gradle test<CR>'
 	)
 end
