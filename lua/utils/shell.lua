@@ -10,8 +10,6 @@ local function set_flags()
 end
 
 function M.set_shell()
-	--[[ Right now, if I use powershell instead of cmd it breaks things.
-		The startup is a lot slower, and it breaks git integration with NvimTree ]]
 	local powershell_options = {
 		shell = "powershell",
 		shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;",
