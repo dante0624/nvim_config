@@ -78,6 +78,9 @@ return packer.startup(function(use)
 					"python",
 					"java",
 					"kotlin",
+					"html",
+					"css",
+					"javascript",
 				},
 			})
 		end,
@@ -107,6 +110,7 @@ return packer.startup(function(use)
 			require('lsp') -- My folder, handles all setting up of all LSP stuff
 		end,
 	}
+	use 'jose-elias-alvarez/null-ls.nvim' -- Formatters and Linters
 	use 'mfussenegger/nvim-jdtls' -- Configure Java Lsp differently because it wants to be hard
 	-- Actual configuration is found under ftplugin/java.lua
 
@@ -153,6 +157,13 @@ return packer.startup(function(use)
 	use {'windwp/nvim-autopairs',
 		config = function()
 			require("nvim-autopairs").setup({})
+		end,
+	}
+	use {'windwp/nvim-ts-autotag',
+		config = function()
+			require('nvim-ts-autotag').setup({
+				filetypes = { "html" , "xml" },
+			})
 		end,
 	}
 	use {'numToStr/Comment.nvim',

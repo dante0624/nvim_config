@@ -2,6 +2,9 @@ local servers = {
 	"lua_ls", -- Lua
 	"pyright", -- Python
 	"jdtls", -- Java
+	"tsserver", -- Typescript and Javascript
+	"html", -- HTML
+	"cssls", -- CSS
 }
 
 local installer_settings = {
