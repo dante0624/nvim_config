@@ -39,11 +39,14 @@ function Tree_On_Attach(bufnr)
 	-- Helper Functions for my custom keybinds
 
 	local function open_silent(_)
-		api.tree.close() -- Close the tree so we are focused on the current buffer, not the tree
-		local go_back  = not buffers.Is_Empty() -- true iff the current buffer isn't [No Name]
-		api.tree.open() -- Go back to the tree
-
 		local node = api.tree.get_node_under_cursor()
+
+		-- Later on, we will open a new file and then go back in the jumplist with <C-o>
+		-- But we only do this if our current file isn't null
+		-- Also we only jump back if we aren't trying to open the file we are already on
+		api.tree.close() -- Close the tree so we are focused on the current buffer, not the tree
+		local go_back  = not buffers.Is_Empty() and node.absolute_path ~= vim.fn.expand('%:p')
+		api.tree.open() -- Go back to the tree
 
 		api.node.open.edit()
 
