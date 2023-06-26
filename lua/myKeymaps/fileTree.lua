@@ -1,4 +1,11 @@
 local buffers = require("utils.buffers")
+local Map = require("utils.map").Map
+
+-- Keybinds that work in a regular vim buffer
+Map('', 'tt', '<Cmd>NvimTreeToggle<CR>')
+Map('', 'tq', '<Cmd>NvimTreeClose<CR>')
+Map('', 'to', '<Cmd>NvimTreeOpen<CR>')
+Map('', 'tf', '<Cmd>NvimTreeFindFile<CR>')
 
 -- In myPlugin.lua, this function gets used, and attached the NvimTree
 -- Source: github.com/nvim-tree/nvim-tree.lua/wiki/Migrating-To-on_attach - Scroll to Bottom
@@ -37,7 +44,6 @@ function Tree_On_Attach(bufnr)
 	vim.keymap.del('n', 'g?', { buffer = bufnr })
 
 	-- Helper Functions for my custom keybinds
-
 	local function open_silent(_)
 		local node = api.tree.get_node_under_cursor()
 

@@ -1,6 +1,12 @@
 require('myKeymaps.telescopeHelpers')
 local actions = require "telescope.actions"
+local Map = require("utils.map").Map
 
+-- Keybinds for a regular buffer
+Map('', '<leader>f', '<Cmd>Telescope find_files<CR>')
+Map('', '<leader>g', '<Cmd>Telescope live_grep<CR>')
+
+-- Keybinds for within Telescope
 My_Telescope_Keymaps = {
 	i = {
         ["<C-c>"] = actions.close,

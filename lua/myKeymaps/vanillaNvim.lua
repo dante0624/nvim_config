@@ -36,14 +36,9 @@ Map('i', '<C-v>', '<Esc>"+pa')
 -- Intuitive tabbing for me
 Map('v', '<TAB>', '>gv')
 Map('v', '<S-TAB>', '<gv')
--- Map('n', '<TAB>', '>>')
--- Map('n', '<S-TAB>', '<<')
 
 -- Lets me use cs (clear search) to stop highlighting search results
 Map('n', 'cs', '<Cmd>noh<CR>')
-
--- Toggle my tree (tt) plugin
-Map('', 'tt', '<Cmd>NvimTreeToggle<CR>')
 
 -- Manipulate Buffer Tabs
 Map('n', '<TAB>', '<Cmd>BufferLineCycleNext<CR>')
@@ -75,8 +70,4 @@ Map({ 'n', 'v', 's', 'i', 't' }, '<C-Right>', '<Cmd>vertical resize +2<CR>')
 
 -- Easier redo command
 Map('', 'R', '<C-r>')
-
--- Telescope Opening
-Map('', '<leader>f', '<Cmd>Telescope find_files<CR>')
-Map('', '<leader>g', '<Cmd>Telescope live_grep<CR>')
 
