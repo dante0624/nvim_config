@@ -42,9 +42,6 @@ Map('v', '<S-TAB>', '<gv')
 -- Lets me use cs (clear search) to stop highlighting search results
 Map('n', 'cs', '<Cmd>noh<CR>')
 
--- Slighly faster way of closing or reopening folds
-Map('n', 'zz', 'za')
-
 -- Toggle my tree (tt) plugin
 Map('', 'tt', '<Cmd>NvimTreeToggle<CR>')
 

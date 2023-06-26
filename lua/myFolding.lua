@@ -1,21 +1,26 @@
+require("myKeymaps.folding")
+
+-- These options come from Treesitter's README on how to set up folding
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldenable = false
 
 function _G.MyFoldText()
 	local first_line = vim.fn.getline(vim.v.foldstart)
 	local last_line = vim.fn.getline(vim.v.foldend):gsub("^%s*", "") -- Removes leading whitespaces
-	local line_count = vim.v.foldend - vim.v.foldstart - 1
-
-	-- Normally include the last line in the preview
-	-- Unless it is long, then we do not
-	if string.len(last_line) > 10 then
-		line_count = line_count + 1
-		last_line = ""
-	end
+	local line_count = vim.v.foldend - vim.v.foldstart
 
 	local fold_message = ' +--- ' .. line_count .. ' lines ---+ '
 	if line_count == 1 then
-		fold_message = ' +--- ' .. line_count .. ' line ---+ ' -- Fix plural / singular
+		fold_message = fold_message:gsub("lines", "line")
+	end
+
+	--[[ If line_count is zero (something went wrong) then first_line==last_line so only display once
+	Some buffers can manually set fold_text_bottom to false to hide the last line
+		Most buffers don't set it at all, so it will be nil. Then nil==false returns false
+		Languages like python should set this in their ftplugin/python.lua file ]]
+	if line_count == 0 or vim.b.fold_text_bottom == false then
+		last_line = ""
 	end
 
     local fold_text =  first_line .. fold_message .. last_line
@@ -25,12 +30,13 @@ function _G.MyFoldText()
 	local tab_spaces = string.rep(" ", vim.o.ts)
 	return fold_text:gsub("\t",tab_spaces)
 end
+
 vim.opt.foldtext = 'v:lua.MyFoldText()'
 vim.opt.fillchars:append({fold = " "}) -- Gets rid of trailing dots that vim automatically adds in
 
+
 -- We want to only remember folds on these file types
-	-- Each call to 'mkview' creates a tmp file
--- Also having folds at all looks kinda bad on things that aren't source files
+-- Each call to 'mkview' creates a tmp file, so minimize that
 local folding_file_types = {
 	'*.lua',
 	'*.python',
@@ -43,17 +49,13 @@ local folding_file_types = {
 
 -- Automatically remembers folds after closing and reopening
 local remember_folds = vim.api.nvim_create_augroup('remember_folds', {clear = true})
-vim.api.nvim_create_autocmd({'BufWinLeave'}, {
+vim.api.nvim_create_autocmd({'BufWinLeave', 'BufWritePost',}, {
 	pattern = folding_file_types,
 	group = remember_folds,
 	command = "mkview",
 })
 
-vim.api.nvim_create_autocmd({'BufWinEnter'}, {
-	-- First open all the folds that exist (zR)
-	-- Next, try to load any folds that exist, and do it silently so if they don't exist then nothing happens
-	-- This applies to any file at all
-	-- So we have the behavior where we remember folds if possible, but if not possible then they are all open
+vim.api.nvim_create_autocmd({'BufWinEnter',}, {
 	pattern = "*",
 	group = remember_folds,
 	callback = function()

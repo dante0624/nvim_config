@@ -1,5 +1,8 @@
 local Local_Map = require("utils.map").Local_Map
 
+-- Buffer scoped variable that I made up for folding
+vim.b.fold_text_bottom = false
+
 -- Python only tab options
 vim.g.pyindent_open_paren = 'shiftwidth()'
 vim.g.pyindent_nested_paren = 'shiftwidth()'
