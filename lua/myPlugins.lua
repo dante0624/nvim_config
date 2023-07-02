@@ -82,6 +82,7 @@ return packer.startup(function(use)
 					"html",
 					"css",
 					"javascript",
+					-- "json", -- Treesitter for json sucks, and the default syntax works perfectly
 				},
 			})
 		end,
