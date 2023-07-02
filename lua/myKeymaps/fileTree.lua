@@ -51,7 +51,7 @@ function Tree_On_Attach(bufnr)
 
 		api.node.open.edit()
 
-		if node.type == "directory" then
+		if node.type ~= "file" then
 			return
 		end
 
