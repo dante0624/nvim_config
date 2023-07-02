@@ -51,6 +51,7 @@ return packer.startup(function(use)
 				sync_root_with_cwd = true,
 				git = {
 					ignore = false, -- Starts off by not ignoring gitignored files
+					timeout = 1000, -- Increase from 400ms (default) to 1s
 				},
 			})
 		end,
