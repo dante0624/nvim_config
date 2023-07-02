@@ -13,9 +13,5 @@ function M.Clean_Empty()
 	end
 end
 
-function M.Is_Empty()
-	return vim.fn.empty(vim.fn.bufname('%')) == 1 -- Has no name
-end
-
 return M
 
