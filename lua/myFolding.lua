@@ -35,16 +35,17 @@ vim.opt.foldtext = 'v:lua.MyFoldText()'
 vim.opt.fillchars:append({fold = " "}) -- Gets rid of trailing dots that vim automatically adds in
 
 
--- We want to only remember folds on these file types
--- Each call to 'mkview' creates a tmp file, so minimize that
+-- Manually ensure that this matches Treesitter's 'ensure_installed'
+-- Found under the the plugin configuration
 local folding_file_types = {
 	'*.lua',
 	'*.python',
 	'*.java',
-	'*.json',
+	'*.kt',
 	'*.html',
 	'*.css',
 	'*.js',
+	'*.json'
 }
 
 -- Automatically remembers folds after closing and reopening
