@@ -47,7 +47,7 @@ local config = {
 		'--add-opens', 'java.base/java.lang=ALL-UNNAMED',
 
 		-- This line was modified by me, it is a file that the user needs to find manually and source
-		'-jar', jdtls_dir .. 'plugins/org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar',
+		'-jar', jdtls_dir .. 'plugins/org.eclipse.equinox.launcher_1.6.500.v20230622-2056.jar',
 
 		-- Same with this line, the ending is dependent on operating system
 		'-configuration', jdtls_dir .. os_config,
