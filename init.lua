@@ -22,12 +22,35 @@ Flush = require("utils.flushTmp")
 Clean_Buffers = require("utils.buffers").Clean_Empty
 
 -- TODO:
+-- September 1st, 2023
+
+-- Don't like how deleted text gets used for the next paste
+	-- Probably fix by having paste (maybe copy and cut too) use different register
+
+-- Look into root directory problem.
+	-- Sometimes, nvimTree, telescope, and toggle term all get the root directory wrong
+	-- They will pick some random subfolder (like a random test resource folder) and always make it that
+	-- Persists between sessions
+	-- May be fixed by simply cleaning out some cache file, tmp file
+	-- Definitely fixed by uninstalling neovim, the editor and my config, then reinstalling
+
 -- Find a way to quicky view all TODOs within a project
+	-- Possibly all diagnostics, might be part of Trouble.nvim
 
 -- Trouble.nvim
-	-- And other things by Folke
+	-- Look into other things by Folke
 -- Get undotree
 
--- Learn more about using GIT in file explorer.
-	-- Learn and remap some keybinds
+-- Some type of session manager so I can restore files quickly after running $ nvim with no arguments
+	-- https://github.com/rmagatti/auto-session
+	-- Looks like a very appealing solution
+
+-- Try out harpoon
+	-- Alternative solution to a session manager
+	-- Also try out the general workflow and see how it feels (not using nvim tree or buffer line)
+
+-- Linters for style, formatting, and grammar checking
+
+-- Set new git icons for the file explorer
+	-- Don't like the ones for new file and modified, I find them misleading
 
