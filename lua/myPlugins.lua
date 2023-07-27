@@ -84,6 +84,14 @@ return packer.startup(function(use)
 					"javascript",
 					-- "json", -- Treesitter for json sucks, and the default syntax works perfectly
 				},
+				-- Configure and setup autotag plugin
+				autotag = {
+					enable = true,
+					enable_rename = true,
+					enable_close = true,
+					enable_close_on_slash = true,
+					filetypes = { "html" , "xml" },
+				},
 			})
 		end,
     }
@@ -162,11 +170,9 @@ return packer.startup(function(use)
 		end,
 	}
 	use {'windwp/nvim-ts-autotag',
-		config = function()
-			require('nvim-ts-autotag').setup({
-				filetypes = { "html" , "xml" },
-			})
-		end,
+		-- Treesitter is also responsible for config / setup of this plugin
+		requires = 'nvim-treesitter/nvim-treesitter',
+		after = 'nvim-treesitter',
 	}
 	use {'numToStr/Comment.nvim',
 		config = function()
