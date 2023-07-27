@@ -3,7 +3,9 @@ Just my nvim configuration. I want it to work on any operating system so I can h
 
 
 # Installation
-Use git clone to install, but it must be installed in the correct place depending on OS.
+To install neovim itself, a simple option for Windows, MacOS, and Linus is to install the latest release from neovim's github at https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-download. Do not use chocolatey to install neovim as I have had some problems with file permissions after doing that.
+
+Use git clone to install my configuration, but it must be installed in the correct place depending on OS.
 Generally you can figure this out by going into Neovim's command mode and typing: `lua print(vim.fn.stdpath("config"))`
 You may need to manually create this directory path if it does not exist yet.
 Then clone the repo into this now empty directory with `git clone <URL> <Dir>`
@@ -25,9 +27,9 @@ I suggest using zig for everything because it is cross platform and works everyw
 ### WSL, MacOS, and Linux
 `sudo snap install zig`
 
-## Node, NVM, and NPM
+## Node and NPM
 Nvim and all its plugins love to autoinstall things using these javascript tools.
-Even if you have no desire to write javascript code, these 3 are still needed to make nvim work.
+Even if you have no desire to write javascript code, these 2 are still needed to make nvim work.
 Make sure they are installed, and on the path.
 
 ## A special font used in terminal
@@ -57,5 +59,5 @@ java 17 is needed, ensure that `java` returns a version >= 17.
 When nvim is opened for the first time with this config, it will start by downloading Packer, the plugin manager.
 Once this is done, the user needs to exit and reopen nvim.
 At this point packer itself will be installed, but it will not yet have installed all needed plugins.
-So the user needs to run :PackerSync from the command line. This will begin installing all plugins.
+So the user needs to run :PackerSync from neovim's command line. This will begin installing all plugins.
 Once done, it is time to exit and quit one more time, and now nvim should work!
