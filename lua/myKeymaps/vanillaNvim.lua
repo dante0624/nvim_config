@@ -21,8 +21,9 @@ Map('', 'L', '$')
 Map('', 'K', '<C-u>zz')
 Map('', 'J', '<C-d>zz')
 
--- Simply moves the cursor after pasting with shift
-Map('', 'P', 'gP')
+-- Paste from register 0 instead of the unnamed register, such that we only paste what we yank
+Map('', 'p', '"0p')
+Map('', 'P', '"0gP') -- Moves the cursor after pasting with shift
 
 -- Use control to copy, cut, and paste from clipboard
 Map('', '<C-p>', '"+p')
@@ -30,7 +31,7 @@ Map('', '<C-y>', '"+y')
 Map('', '<C-x>', '"+x')
 
 -- Use Control to paste while in insertion mode. p for default, v for clipboard
-Map('i', '<C-p>', '<Esc>pa')
+Map('i', '<C-p>', '<Esc>"0pa')
 Map('i', '<C-v>', '<Esc>"+pa')
 
 -- Intuitive tabbing for me

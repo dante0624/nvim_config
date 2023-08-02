@@ -24,8 +24,9 @@ Clean_Buffers = require("utils.buffers").Clean_Empty
 -- TODO:
 -- September 1st, 2023
 
--- Don't like how deleted text gets used for the next paste
-	-- Probably fix by having paste (maybe copy and cut too) use different register
+-- Some type of session manager so I can restore files quickly after running $ nvim with no arguments
+	-- https://github.com/rmagatti/auto-session
+	-- Looks like a very appealing solution
 
 -- Look into root directory problem.
 	-- Sometimes, nvimTree, telescope, and toggle term all get the root directory wrong
@@ -39,17 +40,16 @@ Clean_Buffers = require("utils.buffers").Clean_Empty
 
 -- Trouble.nvim
 	-- Look into other things by Folke
--- Get undotree
 
 -- Some type of session manager so I can restore files quickly after running $ nvim with no arguments
 	-- https://github.com/rmagatti/auto-session
 	-- Looks like a very appealing solution
 
+-- Get undotree
+
 -- Try out harpoon
 	-- Alternative solution to a session manager
 	-- Also try out the general workflow and see how it feels (not using nvim tree or buffer line)
-
--- Linters for style, formatting, and grammar checking
 
 -- Set new git icons for the file explorer
 	-- Don't like the ones for new file and modified, I find them misleading
