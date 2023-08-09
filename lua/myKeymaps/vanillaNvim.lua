@@ -25,6 +25,9 @@ Map('', 'J', '<C-d>zz')
 Map('', 'p', '"0p')
 Map('', 'P', '"0gP') -- Moves the cursor after pasting with shift
 
+-- Make x, only while in visual mode, cut text into register 0
+Map('v', 'x', '"0x')
+
 -- Use control to copy, cut, and paste from clipboard
 Map('', '<C-p>', '"+p')
 Map('', '<C-y>', '"+y')
