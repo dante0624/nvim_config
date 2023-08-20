@@ -60,7 +60,12 @@ return packer.startup(function(use)
 		tag = "*",
 		requires = 'nvim-tree/nvim-web-devicons',
 		config = function()
-			require("bufferline").setup({})
+			require("bufferline").setup({
+				options = {
+					move_wraps_at_ends = true,
+				},
+			})
+			require("myKeymaps.tabline")
 		end,
 	}
 

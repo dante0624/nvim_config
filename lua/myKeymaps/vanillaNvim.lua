@@ -37,18 +37,12 @@ Map('', '<C-x>', '"+x')
 Map('i', '<C-p>', '<Esc>"0pa')
 Map('i', '<C-v>', '<Esc>"+pa')
 
--- Intuitive tabbing for me
+-- Intuitive tab indentation, only in visual mode
 Map('v', '<TAB>', '>gv')
 Map('v', '<S-TAB>', '<gv')
 
 -- Lets me use cs (clear search) to stop highlighting search results
 Map('n', 'cs', '<Cmd>noh<CR>')
-
--- Manipulate Buffer Tabs
-Map('n', '<TAB>', '<Cmd>BufferLineCycleNext<CR>')
-Map('n', '<S-TAB>', '<Cmd>BufferLineCyclePrev<CR>')
-Map('', '<leader><TAB>', '<Cmd>BufferLineMoveNext<CR>')
-Map('', '<leader><S-TAB>', '<Cmd>BufferLineMovePrev<CR>')
 
 -- Write and quit buffers quickly
 Map('', '<leader>w', '<Cmd>w<CR>')
