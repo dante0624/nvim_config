@@ -24,9 +24,32 @@ Clean_Buffers = require("utils.buffers").Clean_Empty
 -- TODO:
 -- September 1st, 2023
 
--- Some type of session manager so I can restore files quickly after running $ nvim with no arguments
+-- Configure status line at the top
+	-- Make a quick remap to toggle the tab line
+		-- Use :set showtabline=0 and :set showtabline=2 to toggle the tabline
+
+-- Better status Line at the bottom
+	-- https://github.com/nvim-lualine/lualine.nvim
+
+-- Quicker navigation around files
+	-- https://github.com/phaazon/hop.nvim
+	-- Remap f to HopWord (demote old f to F, old F to <Alt-f>). Use leader key for other remaps
+		-- Probably <Leader-j> f or HopLine, and <Leader-h-something> for others
+	-- Maybe even go back to normal number line numberings after this
+
+-- Implement Flush.All() function
+
+-- Some type of session manager so I can restore files quickly after running $nvim with no arguments
 	-- https://github.com/rmagatti/auto-session
 	-- Looks like a very appealing solution
+
+-- Find a way to quicky view all TODOs within a project
+	-- Possibly all diagnostics, might be part of Trouble.nvim
+
+-- Get undotree
+
+-- Set new git icons for the file explorer
+	-- Don't like the ones for new file and modified, I find them misleading
 
 -- Look into root directory problem.
 	-- Sometimes, nvimTree, telescope, and toggle term all get the root directory wrong
@@ -34,23 +57,4 @@ Clean_Buffers = require("utils.buffers").Clean_Empty
 	-- Persists between sessions
 	-- May be fixed by simply cleaning out some cache file, tmp file
 	-- Definitely fixed by uninstalling neovim, the editor and my config, then reinstalling
-
--- Find a way to quicky view all TODOs within a project
-	-- Possibly all diagnostics, might be part of Trouble.nvim
-
--- Trouble.nvim
-	-- Look into other things by Folke
-
--- Some type of session manager so I can restore files quickly after running $ nvim with no arguments
-	-- https://github.com/rmagatti/auto-session
-	-- Looks like a very appealing solution
-
--- Get undotree
-
--- Try out harpoon
-	-- Alternative solution to a session manager
-	-- Also try out the general workflow and see how it feels (not using nvim tree or buffer line)
-
--- Set new git icons for the file explorer
-	-- Don't like the ones for new file and modified, I find them misleading
 
