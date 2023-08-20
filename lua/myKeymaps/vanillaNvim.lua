@@ -69,3 +69,17 @@ Map({ 'n', 'v', 's', 'i', 't' }, '<C-Right>', '<Cmd>vertical resize +2<CR>')
 -- Easier redo command
 Map('', 'R', '<C-r>')
 
+-- Toggle the tabline, at the top, on or off
+local function tabline_alternate()
+	local current_tabline = vim.o.showtabline
+	local next_tabline
+	if current_tabline == 0 then
+		next_tabline = 2
+	else
+		next_tabline = 0
+	end
+
+	vim.opt.showtabline = next_tabline
+end
+Map('', 'ta', tabline_alternate)
+

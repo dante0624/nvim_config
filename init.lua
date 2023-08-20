@@ -24,10 +24,6 @@ Clean_Buffers = require("utils.buffers").Clean_Empty
 -- TODO:
 -- September 1st, 2023
 
--- Configure status line at the top
-	-- Make a quick remap to toggle the tab line
-		-- Use :set showtabline=0 and :set showtabline=2 to toggle the tabline
-
 -- Better status Line at the bottom
 	-- https://github.com/nvim-lualine/lualine.nvim
 
@@ -42,6 +38,7 @@ Clean_Buffers = require("utils.buffers").Clean_Empty
 -- Some type of session manager so I can restore files quickly after running $nvim with no arguments
 	-- https://github.com/rmagatti/auto-session
 	-- Looks like a very appealing solution
+		-- Should remember everything about the status of my tabline at the top
 
 -- Find a way to quicky view all TODOs within a project
 	-- Possibly all diagnostics, might be part of Trouble.nvim
