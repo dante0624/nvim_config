@@ -44,10 +44,11 @@ Map('v', '<S-TAB>', '<gv')
 -- Lets me use cs (clear search) to stop highlighting search results
 Map('n', 'cs', '<Cmd>noh<CR>')
 
--- Write and quit buffers quickly
+-- Write buffers quickly
 Map('', '<leader>w', '<Cmd>w<CR>')
 Map('', '<leader>W', '<Cmd>wa<CR>')
-Map('', '<leader>q', '<Cmd>bd<CR>')
+
+-- Close a window quickly
 Map('', '<leader>Q', '<Cmd>q<CR>')
 
 -- Open and close the quickfix list easily
