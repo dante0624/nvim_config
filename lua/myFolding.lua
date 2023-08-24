@@ -39,7 +39,7 @@ vim.opt.fillchars:append({fold = " "}) -- Gets rid of trailing dots that vim aut
 -- Found under the the plugin configuration
 local folding_file_types = {
 	'*.lua',
-	'*.python',
+	'*.py',
 	'*.java',
 	'*.kt',
 	'*.html',
