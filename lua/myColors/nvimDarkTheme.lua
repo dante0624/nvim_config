@@ -14,3 +14,8 @@ vim.cmd.highlight("CursorLineNR", "guifg=#73a0a2")
 -- Remove background highlighting on folds
 vim.cmd.highlight("Folded", "guibg=none")
 
+-- Make DocStrings have the same hue as normal strings, just less bright and italicized
+vim.cmd.highlight("@string.documentation", "guifg=#a6c478")
+vim.cmd.highlight("@string.documentation", "cterm=italic")
+vim.cmd.highlight("@string.documentation", "gui=italic")
+
