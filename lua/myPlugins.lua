@@ -29,18 +29,18 @@ packer.init({
 
 -- Install your plugins here
 return packer.startup(function(use)
-	-- My plugins here. Just requires a URL after github.com/
-	use 'wbthomason/packer.nvim' -- Have packer manage itself
+	use 'wbthomason/packer.nvim'
 
-	use {'nvim-tree/nvim-tree.lua', -- File Exploration Tree
+	use {'nvim-tree/nvim-tree.lua',
+		tag = 'f5804ce', -- Windows bug was fixed at this commit, then broken later
 		requires = {
-			'nvim-tree/nvim-web-devicons', -- Gives the tree nice icons
+			'nvim-tree/nvim-web-devicons',
 		},
 		config = function()
 			-- NvimTree: disable netrw at the very start of your init.lua (strongly advised)
 			vim.g.loaded_netrw = 1
 			vim.g.loaded_netrwPlugin = 1
-			require('myKeymaps.fileTree') -- Gives me the TreeOnAttach function
+			require('myKeymaps.fileTree')
 
 			require("nvim-tree").setup({
 				on_attach = Tree_On_Attach,
@@ -56,7 +56,7 @@ return packer.startup(function(use)
 			})
 		end,
 	}
-	use {'akinsho/bufferline.nvim', -- Gives buffers very nice tabs
+	use {'akinsho/bufferline.nvim',
 		tag = "*",
 		requires = 'nvim-tree/nvim-web-devicons',
 		config = function()
@@ -68,8 +68,36 @@ return packer.startup(function(use)
 			require("myKeymaps.tabline")
 		end,
 	}
-
-    use {'nvim-treesitter/nvim-treesitter', -- Better coloring based on languages
+	use {
+		'nvim-lualine/lualine.nvim',
+		requires = { 'nvim-tree/nvim-web-devicons', opt = true },
+		config = function()
+			require('lualine').setup({
+				sections = {
+					lualine_a = {'mode'},
+					lualine_b = {
+						{'branch', color='ColorColumn', },
+						{'diff', color='ColorColumn'},
+					},
+					lualine_c = {
+						{'filename', color='Normal'}
+					},
+					lualine_x = {
+						{'fileformat', color='Normal'},
+						{'filetype', color='Normal'}
+					},
+					lualine_y = {
+						{'progress', color='ColorColumn'},
+						{'location', color='ColorColumn'}
+					},
+					lualine_z = {
+						{'datetime', style="%H:%M", color='Cursor'}
+					},
+				},
+			})
+		end,
+	}
+    use {'nvim-treesitter/nvim-treesitter',
         run = function()
             local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
             ts_update()
@@ -78,6 +106,8 @@ return packer.startup(function(use)
 			require('nvim-treesitter.install').compilers = { "zig" }
 			require('nvim-treesitter.configs').setup({
 				highlight = { enable = true },
+
+				-- Note that treesitter for json sucks, and the default syntax works perfectly
 				ensure_installed = {
 					"comment", -- If I don't have this, WSL bugs out on every comment
 					"lua",
@@ -87,9 +117,9 @@ return packer.startup(function(use)
 					"html",
 					"css",
 					"javascript",
-					-- "json", -- Treesitter for json sucks, and the default syntax works perfectly
 				},
-				-- Configure and setup autotag plugin
+
+				-- Configure and setup autotag plugin because it works better on bootstrapping
 				autotag = {
 					enable = true,
 					enable_rename = true,
@@ -100,34 +130,37 @@ return packer.startup(function(use)
 			})
 		end,
     }
-	use 'folke/tokyonight.nvim' -- Give me a nice color scheme
+	use 'folke/tokyonight.nvim'
 
-	use {'hrsh7th/nvim-cmp', -- The Code Completion Engine
-		requires = { 'L3MON4D3/LuaSnip' }, -- The Snippet Engine
+	use {'hrsh7th/nvim-cmp',
+		requires = { 'L3MON4D3/LuaSnip' },
 		config = function()
-			require('myCompletion') -- Runs all the needed config stuff
+			require('myCompletion')
 		end,
 	}
-	use 'hrsh7th/cmp-buffer' -- Buffer completions
-	use 'hrsh7th/cmp-path' -- Path completions
-	-- use 'hrsh7th/cmp-cmdline' -- Cmdline completions
-	use 'hrsh7th/cmp-nvim-lua' -- Gives completion on nvim things like vim.fn.*
-	use 'saadparwaiz1/cmp_luasnip' -- Snippet completions
-	use 'rafamadriz/friendly-snippets' -- Collection of snippets to use
+	use 'hrsh7th/cmp-buffer'
+	use 'hrsh7th/cmp-path'
+	use 'hrsh7th/cmp-nvim-lua'
+	use 'saadparwaiz1/cmp_luasnip'
+	use 'rafamadriz/friendly-snippets'
 
-	use {'williamboman/mason-lspconfig.nvim', -- Installs and manages LSPs
+	use {'williamboman/mason-lspconfig.nvim',
 		requires = {
-			'neovim/nvim-lspconfig', -- NVim's own LSP client
-			'williamboman/mason.nvim', -- Just an LSP installer
-			'hrsh7th/cmp-nvim-lsp', -- Gives lsp code completion
+			'neovim/nvim-lspconfig',
+			'williamboman/mason.nvim',
+			'hrsh7th/cmp-nvim-lsp',
 		},
 		config = function()
 			require('lsp') -- My folder, handles all setting up of all LSP stuff
 		end,
 	}
-	use 'jose-elias-alvarez/null-ls.nvim' -- Formatters and Linters
-	use 'mfussenegger/nvim-jdtls' -- Configure Java Lsp differently because it wants to be hard
+ 	-- TODO: Remove this plugin because it is getting archived
+	-- Currently is responsible for just the html lsp I believe
+	use 'jose-elias-alvarez/null-ls.nvim'
+
+ 	-- Configure Java Lsp differently because it wants to be hard
 	-- Actual configuration is found under ftplugin/java.lua
+	use 'mfussenegger/nvim-jdtls'
 
 	use {'nvim-telescope/telescope.nvim',
 		tag = '0.1.1',
@@ -149,7 +182,7 @@ return packer.startup(function(use)
 						theme = "dropdown",
 					},
 					live_grep = {
-						preview = "true", -- The preview is more useful for grep
+						preview = "true", -- The preview is useful for grep
 					},
 				},
 				defaults = {
@@ -187,7 +220,7 @@ return packer.startup(function(use)
 	}
 	use {'lewis6991/gitsigns.nvim',
 		config = function()
-			require('myKeymaps.gitSigns') -- Gives me the GitOnAttach 
+			require('myKeymaps.gitSigns')
 			require('gitsigns').setup({
 				on_attach = GitOnAttach,
 				current_line_blame_opts = {
@@ -207,8 +240,8 @@ return packer.startup(function(use)
 				size = 20, -- Only relevant if I switch back to horizontal
 				shade_terminals = false,
 				open_mapping = Terminal_Open_Mapping,
-				insert_mappings = true, -- whether or not the open mapping applies in insert mode
-				terminal_mappings = true, -- whether or not the open mapping applies in terminal mode
+				insert_mappings = true,
+				terminal_mappings = true,
 				persist_mode = false,
 				float_opts = {
 					width = function() return math.floor(vim.o.columns * 0.9) end,
