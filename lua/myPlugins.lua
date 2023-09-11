@@ -250,5 +250,12 @@ return packer.startup(function(use)
 			})
 		end,
 	}
+
+	use {'phaazon/hop.nvim',
+		config = function()
+			require('hop').setup()
+			require('myKeymaps.hopping')
+		end,
+	}
 end)
 
