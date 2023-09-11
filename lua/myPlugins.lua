@@ -27,6 +27,7 @@ packer.init({
 	}
 })
 
+
 -- Install your plugins here
 return packer.startup(function(use)
 	use 'wbthomason/packer.nvim'
@@ -103,7 +104,17 @@ return packer.startup(function(use)
             ts_update()
         end,
 		config = function()
-			require('nvim-treesitter.install').compilers = { "zig" }
+			-- Zig is the easiest compiler to get on Windows and WSL, but not on for MacOS or Linux
+			local os = require("utils.os")
+
+			local treesitter_compilers
+			if os.is_windows or os.is_wsl then
+				treesitter_compilers = { "zig" }
+			else
+				treesitter_compilers = { "cc" }
+			end
+
+			require('nvim-treesitter.install').compilers = treesitter_compilers
 			require('nvim-treesitter.configs').setup({
 				highlight = { enable = true },
 
@@ -237,11 +248,11 @@ return packer.startup(function(use)
 			require('myKeymaps.terminal')
 			require("toggleterm").setup({
 				direction = 'float',
-				size = 20, -- Only relevant if I switch back to horizontal
+				size = 20, -- Only relevant if I switch to horizontal
 				shade_terminals = false,
 				open_mapping = Terminal_Open_Mapping,
-				insert_mappings = true,
-				terminal_mappings = true,
+				insert_mappings = false, -- whether or not the open mapping applies in insert mode
+				terminal_mappings = false, -- whether or not the open mapping applies in terminal mode
 				persist_mode = false,
 				float_opts = {
 					width = function() return math.floor(vim.o.columns * 0.9) end,

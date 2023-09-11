@@ -20,12 +20,13 @@ Generally these paths look like:
 # Dependencies
 These need to be installed manually, and be available as shell commands. So they need to also be on the path.
 
-## Some Compiler for Treesitter
-I suggest using zig for everything because it is cross platform and works everywhere. It can be installed with
-### Windows
+## Compiler for Treesitter Parsers
+### Windows and WSL
+I personally have had difficulty getting c compilers to work on Windows. The simplest way I found to make this work is by using zig on windows.
+This can be installed with:
 `choco install zig`
-### WSL, MacOS, and Linux
-`sudo snap install zig`
+### MacOS and Linux
+Need to have c compiler `cc` be installed and on the path. This should come by default.
 
 ## Node and NPM
 Nvim and all its plugins love to autoinstall things using these javascript tools.

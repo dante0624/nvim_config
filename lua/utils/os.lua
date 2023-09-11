@@ -13,5 +13,12 @@ if M.is_wsl then
 	M.is_windows = false
 end
 
+-- MacOS likes to also set the is_unix flag to true, so manually disable it
+if M.is_macos then
+	M.is_unix = false
+	M.is_windows = false
+	M.is_wsl = false
+end
+
 return M
 
