@@ -19,12 +19,19 @@ local root_dir_ending = vim.fn.fnamemodify(root_dir, ':t')
 local inferred_workspace = dir.Java_Workspaces .. root_dir_ending
 local jdtls_dir = dir.Data_Dir .. "mason/packages/jdtls/"
 local os_config
+local launcher_file_name
 if os.is_unix or os.is_wsl then
 	os_config = "config_linux"
+	launcher_file_name = "org.eclipse.equinox.launcher_1.6.500.v20230622-2056.jar"
+	print("Unix if statement taken")
 elseif os.is_macos then
 	os_config = "config_mac"
+	launcher_file_name = "org.eclipse.equinox.launcher_1.6.500.v20230717-2134.jar"
+	print("Mac if statement taken")
 elseif os.is_windows then
 	os_config = "config_win"
+	launcher_file_name = "org.eclipse.equinox.launcher_1.6.500.v20230622-2056.jar"
+	print("Windows if statement taken")
 end
 
 
@@ -47,7 +54,7 @@ local config = {
 		'--add-opens', 'java.base/java.lang=ALL-UNNAMED',
 
 		-- This line was modified by me, it is a file that the user needs to find manually and source
-		'-jar', jdtls_dir .. 'plugins/org.eclipse.equinox.launcher_1.6.500.v20230622-2056.jar',
+		'-jar', jdtls_dir .. 'plugins/' .. launcher_file_name,
 
 		-- Same with this line, the ending is dependent on operating system
 		'-configuration', jdtls_dir .. os_config,
