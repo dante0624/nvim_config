@@ -27,6 +27,7 @@ packer.init({
 	}
 })
 
+
 -- Install your plugins here
 return packer.startup(function(use)
 	-- My plugins here. Just requires a URL after github.com/
@@ -75,7 +76,17 @@ return packer.startup(function(use)
             ts_update()
         end,
 		config = function()
-			require('nvim-treesitter.install').compilers = { "zig" }
+			-- Zig is the easiest compiler to get on Windows and WSL, but not on for MacOS or Linux
+			local os = require("utils.os")
+
+			local treesitter_compilers
+			if os.is_windows or os.is_wsl then
+				treesitter_compilers = { "zig" }
+			else
+				treesitter_compilers = { "cc" }
+			end
+
+			require('nvim-treesitter.install').compilers = treesitter_compilers
 			require('nvim-treesitter.configs').setup({
 				highlight = { enable = true },
 				ensure_installed = {
