@@ -215,11 +215,11 @@ return packer.startup(function(use)
 			require('myKeymaps.terminal')
 			require("toggleterm").setup({
 				direction = 'float',
-				size = 20, -- Only relevant if I switch back to horizontal
+				size = 20, -- Only relevant if I switch to horizontal
 				shade_terminals = false,
 				open_mapping = Terminal_Open_Mapping,
-				insert_mappings = true, -- whether or not the open mapping applies in insert mode
-				terminal_mappings = true, -- whether or not the open mapping applies in terminal mode
+				insert_mappings = false, -- whether or not the open mapping applies in insert mode
+				terminal_mappings = false, -- whether or not the open mapping applies in terminal mode
 				persist_mode = false,
 				float_opts = {
 					width = function() return math.floor(vim.o.columns * 0.9) end,
