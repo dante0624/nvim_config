@@ -40,3 +40,6 @@ function GitOnAttach(bufnr)
     -- map({'o', 'x'}, 'ih', '<Cmd><C-U>Gitsigns select_hunk<CR>')
   end
 
+local Map = require("utils.map").Map
+Map('', 'th', '<CMD>Gitsigns toggle_signs<CR>')
+

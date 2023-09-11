@@ -70,8 +70,8 @@ Map({ 'n', 'v', 's', 'i', 't' }, '<C-Right>', '<Cmd>vertical resize +2<CR>')
 -- Easier redo command
 Map('', 'R', '<C-r>')
 
--- Toggle the tabline, at the top, on or off
-local function tabline_alternate()
+-- Toggle the header line
+local function toggle_header()
 	local current_tabline = vim.o.showtabline
 	local next_tabline
 	if current_tabline == 0 then
@@ -82,5 +82,24 @@ local function tabline_alternate()
 
 	vim.opt.showtabline = next_tabline
 end
-Map('', 'ta', tabline_alternate)
+Map('', 'tk', toggle_header)
+
+local function toggle_footer()
+	local current_statusline = vim.o.laststatus
+	local next_statusline
+	if current_statusline == 0 then
+		next_statusline = 2
+	else
+		next_statusline = 0
+	end
+
+	vim.opt.laststatus = next_statusline
+end
+Map('', 'tj', toggle_footer)
+
+local function toggle_line_numbers()
+	local current_line_numbers = vim.o.number
+	vim.opt.number = not current_line_numbers
+end
+Map('', 'tl', toggle_line_numbers)
 

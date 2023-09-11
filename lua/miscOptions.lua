@@ -1,6 +1,5 @@
 -- Turn on hybrid line numbers
 vim.opt.number = true
-vim.opt.relativenumber = true
 
 -- Don't automatically make the next line a comment if the current line is
 vim.api.nvim_create_autocmd({"BufEnter"}, {

@@ -45,8 +45,10 @@ Clean_Buffers = require("utils.buffers").Clean_Empty
 
 -- Get undotree
 
--- Set new git icons for the file explorer
-	-- Don't like the ones for new file and modified, I find them misleading
+-- Update Package Manager
+	-- Get Lazy.nvim (see if this is needed for faster startup times on new laptop)
+	-- Set commit hashes for each plugin, this way things don't randomly break without me knowing
+	-- Also set commit hash for versions of language servers (especially java) and treesitter parsers
 
 -- Look into root directory problem.
 	-- Sometimes, nvimTree, telescope, and toggle term all get the root directory wrong
