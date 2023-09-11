@@ -19,21 +19,16 @@ local root_dir_ending = vim.fn.fnamemodify(root_dir, ':t')
 local inferred_workspace = dir.Java_Workspaces .. root_dir_ending
 local jdtls_dir = dir.Data_Dir .. "mason/packages/jdtls/"
 local os_config
-local launcher_file_name
 if os.is_unix or os.is_wsl then
 	os_config = "config_linux"
-	launcher_file_name = "org.eclipse.equinox.launcher_1.6.500.v20230622-2056.jar"
-	print("Unix if statement taken")
 elseif os.is_macos then
 	os_config = "config_mac"
-	launcher_file_name = "org.eclipse.equinox.launcher_1.6.500.v20230717-2134.jar"
-	print("Mac if statement taken")
 elseif os.is_windows then
 	os_config = "config_win"
-	launcher_file_name = "org.eclipse.equinox.launcher_1.6.500.v20230622-2056.jar"
-	print("Windows if statement taken")
 end
 
+-- Essentially do a regex search on a directory to find this jar file
+local launcher_file_path = vim.fn.globpath(jdtls_dir .. 'plugins', '*launcher_*')
 
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.local config = {
 -- The command that starts the language server
@@ -53,8 +48,8 @@ local config = {
 		'--add-opens', 'java.base/java.util=ALL-UNNAMED',
 		'--add-opens', 'java.base/java.lang=ALL-UNNAMED',
 
-		-- This line was modified by me, it is a file that the user needs to find manually and source
-		'-jar', jdtls_dir .. 'plugins/' .. launcher_file_name,
+		-- This line was modified by me, it is a jar file that can vary based on version or os
+		'-jar', launcher_file_path,
 
 		-- Same with this line, the ending is dependent on operating system
 		'-configuration', jdtls_dir .. os_config,
@@ -112,12 +107,6 @@ end
 if single_file then
 	local full_fname = vim.fn.expand('%:p')
 	local build_cmd = 'javac "'..full_fname..'"'
-	Local_Map(
-		{ 'n', 'v' },
-		'<C-b>',
-		'<Cmd>ToggleTerm<CR>'..build_cmd..'<CR>'
-	)
-
 	local class_name = vim.fn.expand('%:p:t:r')
 	local run_command = build_cmd..separator..'java -cp "'..root_dir..'" '..class_name
 	Local_Map(
