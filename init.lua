@@ -24,36 +24,31 @@ Clean_Buffers = require("utils.buffers").Clean_Empty
 -- TODO:
 -- September 1st, 2023
 
--- Better status Line at the bottom
-	-- https://github.com/nvim-lualine/lualine.nvim
-
--- Quicker navigation around files
-	-- https://github.com/phaazon/hop.nvim
-	-- Remap f to HopWord (demote old f to F, old F to <Alt-f>). Use leader key for other remaps
-		-- Probably <Leader-j> f or HopLine, and <Leader-h-something> for others
-	-- Maybe even go back to normal number line numberings after this
-
--- Implement Flush.All() function
+-- Add ability to immediately jump to open buffer
+	-- To make this work, we need a guarantee that new buffers will be added all the way to the right always
+		-- This doesn't happen if a buffer was previously in the middle, then we drop it and re-add it.
+		-- In this case it will go to where it used to be
+	-- Also look into issue related to the buffer line being toggled off
+		-- Issue happens if we start with one file, turn off buffer line, and telescope to a new file. Then bufffer cycling does not work.
+		-- It begins to work if we quickly toggle the buffer line on and off again. No idea why.
+	-- Vim shortcuts should be Control a-g
 
 -- Some type of session manager so I can restore files quickly after running $nvim with no arguments
 	-- https://github.com/rmagatti/auto-session
-	-- Looks like a very appealing solution
-		-- Should remember everything about the status of my tabline at the top
+		-- Looks like a very appealing solution
+	-- Should remember everything that was toggled, and restore views (the folds)
+	-- Need to restore the bufferline at the top exactly as it was (same order)
+
+-- Update Flush module
+	-- Add ability to flush prior sessions
+	-- Implement Flush.All() function
+
+-- Update Package Manager
+	-- Set commit hashes for each plugin, this way things don't randomly break without me knowing
+	-- Maybe one day go to lazy.nvim but probably not soon
 
 -- Find a way to quicky view all TODOs within a project
 	-- Possibly all diagnostics, might be part of Trouble.nvim
 
 -- Get undotree
-
--- Update Package Manager
-	-- Get Lazy.nvim (see if this is needed for faster startup times on new laptop)
-	-- Set commit hashes for each plugin, this way things don't randomly break without me knowing
-	-- Also set commit hash for versions of language servers (especially java) and treesitter parsers
-
--- Look into root directory problem.
-	-- Sometimes, nvimTree, telescope, and toggle term all get the root directory wrong
-	-- They will pick some random subfolder (like a random test resource folder) and always make it that
-	-- Persists between sessions
-	-- May be fixed by simply cleaning out some cache file, tmp file
-	-- Definitely fixed by uninstalling neovim, the editor and my config, then reinstalling
 
