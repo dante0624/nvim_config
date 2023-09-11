@@ -18,12 +18,12 @@ function Lsp_Keymaps(bufnr)
 	lsp_map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>")
 	lsp_map("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>")
 	lsp_map("n", "<leader>ho", "<cmd>lua vim.lsp.buf.hover()<CR>") -- ho for hover
-	lsp_map("n", "<leader>l", "<cmd>lua vim.diagnostic.open_float()<CR>")  -- l for line help
 	lsp_map("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
 	lsp_map("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>")
 
 	-- Go up or down (k and j) the list of diagnostics
 	lsp_map("n", "<leader>dk", '<cmd>lua vim.diagnostic.goto_prev({ border = "rounded" })<CR>')
 	lsp_map("n", "<leader>dj", '<cmd>lua vim.diagnostic.goto_next({ border = "rounded" })<CR>')
+	lsp_map("n", "<leader>di", "<cmd>lua vim.diagnostic.open_float()<CR>")  -- di for diagnostic inspect
 end
 
