@@ -53,17 +53,32 @@ return packer.startup(function(use)
 			})
 		end,
 	}
-	use {'akinsho/bufferline.nvim',
-		tag = "*",
-		requires = 'nvim-tree/nvim-web-devicons',
+	-- use {'akinsho/bufferline.nvim',
+	-- 	tag = "*",
+	-- 	requires = 'nvim-tree/nvim-web-devicons',
+	-- 	config = function()
+	-- 		require("bufferline").setup({
+	-- 			options = {
+	-- 				move_wraps_at_ends = true,
+	-- 			},
+	-- 		})
+	-- 		require("myKeymaps.tabline")
+	-- 	end,
+	-- }
+	use {'romgrk/barbar.nvim',
+		requires = {
+			'nvim-tree/nvim-web-devicons',
+			'lewis6991/gitsigns.nvim',
+		},
 		config = function()
-			require("bufferline").setup({
-				options = {
-					move_wraps_at_ends = true,
-				},
+			require('barbar').setup({
+				insert_at_end = true,
+  				focus_on_close = 'left',
+				no_name_title = '[No Name]',
 			})
 			require("myKeymaps.tabline")
 		end,
+
 	}
 	use {
 		'nvim-lualine/lualine.nvim',

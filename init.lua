@@ -24,15 +24,6 @@ Clean_Buffers = require("utils.buffers").Clean_Empty
 -- TODO:
 -- September 1st, 2023
 
--- Add ability to immediately jump to open buffer
-	-- To make this work, we need a guarantee that new buffers will be added all the way to the right always
-		-- This doesn't happen if a buffer was previously in the middle, then we drop it and re-add it.
-		-- In this case it will go to where it used to be
-	-- Also look into issue related to the buffer line being toggled off
-		-- Issue happens if we start with one file, turn off buffer line, and telescope to a new file. Then bufffer cycling does not work.
-		-- It begins to work if we quickly toggle the buffer line on and off again. No idea why.
-	-- Vim shortcuts should be Control a-g
-
 -- Some type of session manager so I can restore files quickly after running $nvim with no arguments
 	-- https://github.com/rmagatti/auto-session
 		-- Looks like a very appealing solution

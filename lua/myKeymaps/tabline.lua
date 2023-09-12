@@ -1,19 +1,17 @@
 local Map = require("utils.map").Map
 
-local left_tab = '<Cmd>BufferLineCyclePrev<CR>'
-local right_tab = '<Cmd>BufferLineCycleNext<CR>'
-
 -- Manipulate Buffer Tabs
-Map('n', '<TAB>', right_tab)
-Map('n', '<S-TAB>', left_tab)
-Map('', '<leader><TAB>', '<Cmd>BufferLineMoveNext<CR>')
-Map('', '<leader><S-TAB>', '<Cmd>BufferLineMovePrev<CR>')
+Map('n', '<S-TAB>', '<Cmd>BufferPrev<CR>')
+Map('n', '<TAB>', '<Cmd>BufferNext<CR>')
+Map('', '<leader><S-TAB>', '<Cmd>BufferMovePrev<CR>')
+Map('', '<leader><TAB>', '<Cmd>BufferMoveNext<CR>')
 
--- Drop current buffer, and move left after doing so
--- Default behavior is to go to the last visited buffer, so this is a hack which uses that fact
-Map('', '<leader>q', left_tab .. right_tab .. '<Cmd>bd<CR>')
+Map('', '<leader>q', '<Cmd>BufferClose<CR>')
 
--- Pick buffer to immediately jump to or drop
-Map('', 'tp', '<Cmd>BufferLinePick<CR>')
-Map('', 'td', '<Cmd>BufferLinePickClose<CR>')
+-- Pick buffer to immediately jump to a buffer
+Map('', '<C-a>', '<Cmd>BufferGoto 1<CR>')
+Map('', '<C-s>', '<Cmd>BufferGoto 2<CR>')
+Map('', '<C-d>', '<Cmd>BufferGoto 3<CR>')
+Map('', '<C-f>', '<Cmd>BufferGoto 4<CR>')
+Map('', '<C-g>', '<Cmd>BufferGoto 5<CR>')
 
