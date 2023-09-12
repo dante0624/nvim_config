@@ -97,9 +97,16 @@ local function toggle_footer()
 end
 Map('', 'tj', toggle_footer)
 
+-- Just changing the vim option wouldn't be enough, it would not modify it in all the open buffers
+-- So we need to change the option, then apply this change to all buffers
 local function toggle_line_numbers()
-	local current_line_numbers = vim.o.number
-	vim.opt.number = not current_line_numbers
+	if vim.o.number then
+		vim.opt.number = false
+		vim.cmd('bufdo set nonumber')
+	else
+		vim.opt.number = true
+		vim.cmd('bufdo set number')
+	end
 end
 Map('', 'tl', toggle_line_numbers)
 
