@@ -45,10 +45,6 @@ return packer.startup(function(use)
 
 			require("nvim-tree").setup({
 				on_attach = Tree_On_Attach,
-				view = {
-					number = true,
-					relativenumber = true,
-				},
 				sync_root_with_cwd = true,
 				git = {
 					ignore = false, -- Starts off by not ignoring gitignored files
