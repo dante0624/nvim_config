@@ -129,7 +129,7 @@ return packer.startup(function(use)
 				-- Configure and setup autotag plugin because it works better on bootstrapping
 				autotag = {
 					enable = true,
-					enable_rename = true,
+					enable_rename = false,
 					enable_close = true,
 					enable_close_on_slash = true,
 					filetypes = { "html" , "xml" },
