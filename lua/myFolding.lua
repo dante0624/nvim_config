@@ -53,7 +53,7 @@ local remember_folds = vim.api.nvim_create_augroup('remember_folds', {clear = tr
 vim.api.nvim_create_autocmd({'BufWinLeave', 'BufWritePost',}, {
 	pattern = folding_file_types,
 	group = remember_folds,
-	command = "mkview",
+	command = "noautocmd silent! mkview",
 })
 
 vim.api.nvim_create_autocmd({'BufWinEnter',}, {
@@ -62,7 +62,7 @@ vim.api.nvim_create_autocmd({'BufWinEnter',}, {
 	callback = function()
 		vim.cmd([[
 			normal zR
-			silent! loadview
+			noautocmd silent! loadview
 		]])
 	end,
 })

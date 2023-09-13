@@ -8,7 +8,8 @@ local ensure_packer = function()
 		vim.cmd [[packadd packer.nvim]]
 		return true
 	end
-		return false
+
+	return false
 end
 
 local packer_bootstrap = ensure_packer()
@@ -279,6 +280,28 @@ return packer.startup(function(use)
 			require('hop').setup()
 			require('myKeymaps.hopping')
 		end,
+	}
+
+	use {'rmagatti/auto-session',
+		-- We require BarBar (top tabline) because we configure this to restore the tab orderings
+		requires = { 'romgrk/barbar.nvim', },
+
+		config = function()
+			vim.opt.sessionoptions:append('globals') -- from barbar's README.md
+
+			require('auto-session').setup({
+				-- Also from barbar's README.md
+				pre_save_cmds = { function() vim.api.nvim_exec_autocmds('User', {pattern = 'SessionSavePre'}) end },
+
+				log_level = "error",
+				auto_session_suppress_dirs = {
+					"/",
+					"~/",
+					"~/Downloads/",
+					"~/Applications/",
+				},
+			})
+		end
 	}
 end)
 
