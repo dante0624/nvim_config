@@ -10,6 +10,7 @@ end
 require("myKeymaps.vanillaNvim")
 require("myFolding")
 require("miscOptions")
+require("myKeymaps.toggleHUD")
 
 -- Specifies my modificiations to a downloaded color scheme
 local plugins_ready = require("myColors.nvimDarkTheme")
@@ -23,12 +24,6 @@ Clean_Buffers = require("utils.buffers").Clean_Empty
 
 -- TODO:
 -- September 1st, 2023
-
--- Some type of session manager so I can restore files quickly after running $nvim with no arguments
-	-- https://github.com/rmagatti/auto-session
-		-- Looks like a very appealing solution
-	-- Should remember everything that was toggled, and restore views (the folds)
-	-- Need to restore the bufferline at the top exactly as it was (same order)
 
 -- Update Flush module
 	-- Add ability to flush prior sessions
