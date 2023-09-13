@@ -72,6 +72,7 @@ return packer.startup(function(use)
 		},
 		config = function()
 			require('barbar').setup({
+				animation = false,
 				insert_at_end = true,
   				focus_on_close = 'left',
 				no_name_title = '[No Name]',
