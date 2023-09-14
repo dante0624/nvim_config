@@ -25,10 +25,6 @@ Clean_Buffers = require("utils.buffers").Clean_Empty
 -- TODO:
 -- September 1st, 2023
 
--- Update Flush module
-	-- Add ability to flush prior sessions
-	-- Implement Flush.All() function
-
 -- Update Package Manager
 	-- Set commit hashes for each plugin, this way things don't randomly break without me knowing
 	-- Maybe one day go to lazy.nvim but probably not soon
