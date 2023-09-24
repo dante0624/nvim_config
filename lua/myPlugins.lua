@@ -295,7 +295,7 @@ return packer.startup(function(use)
 			-- Need to save global options when we make a session, to restore extra information
 			vim.opt.sessionoptions:append('globals')
 
-			local HUD = require("stateOfHUD")
+			local HUD = require("core.myHUD")
 
 			require('auto-session').setup({
 				pre_save_cmds = {

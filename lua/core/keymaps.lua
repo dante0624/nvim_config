@@ -18,8 +18,8 @@ Map({'i', 'c', 't',}, '<A-l>', '<Right>')
 -- My remapings for moving far vertically and horizontally
 Map('', 'H', '^')
 Map('', 'L', '$')
-Map('', 'K', '<C-u>zz')
-Map('', 'J', '<C-d>zz')
+Map('', 'K', '020kzz')
+Map('', 'J', '020jzz')
 
 -- Paste from register 0 instead of the unnamed register, such that we only paste what we yank
 Map('', 'p', '"0p')

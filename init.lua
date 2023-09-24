@@ -6,21 +6,16 @@ if not packer_ready then
 	print("First use of packer, need to exit and re-enter. Then run :PackerSync to get plugins")
 end
 
--- Use other lua files that I created
-require("myKeymaps.vanillaNvim")
-require("myFolding")
-require("miscOptions")
-require("myKeymaps.toggleHUD")
+-- Things which should work with neovim itself, without needing any external plugins
+-- Includes basic keymaps, options, and mini modules which I made myself (filenames begin with "my")
+require("core")
 
 -- Specifies my modificiations to a downloaded color scheme
+-- TODO: Move this to the configuration of the colorscheme plugin itself
 local plugins_ready = require("myColors.nvimDarkTheme")
 if packer_ready and not plugins_ready then
 	print("Colorscheme, and likely other plugins missing. Run :PackerSync")
 end
-
--- Give me the ability to quickly delete tmp folders and files
-Flush = require("utils.flushTmp")
-Clean_Buffers = require("utils.buffers").Clean_Empty
 
 -- TODO:
 -- September 1st, 2023

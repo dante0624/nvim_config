@@ -1,4 +1,4 @@
-require("myKeymaps.folding")
+require("core.myFoldingKeymaps")
 
 -- These options come from Treesitter's README on how to set up folding
 vim.opt.foldmethod = "expr"

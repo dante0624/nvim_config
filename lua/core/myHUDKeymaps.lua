@@ -1,5 +1,5 @@
 local Map = require("utils.map").Map
-local HUD = require("stateOfHUD")
+local HUD = require("core.myHUD")
 
 Map('', 'tk', HUD.toggle_header)
 Map('', 'tj', HUD.toggle_footer)

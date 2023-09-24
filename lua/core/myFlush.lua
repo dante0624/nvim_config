@@ -1,5 +1,5 @@
 local dir = require("utils.directories")
-local M = {}
+Flush = {}
 
 -- Contains the functions which flush out an single, set of tmp files
 -- These set of tmp files together all serve a single purpose
@@ -22,13 +22,11 @@ function single_flush.Sessions()
 	vim.cmd("!rm -r " .. dir.Data_Dir .. "auto_session/")
 end
 
-function M.All()
+function Flush.All()
 	for _, func in pairs(single_flush) do
 		func()
 	end
 end
 
-M = vim.tbl_extend("keep", M, single_flush)
-
-return M
+Flush = vim.tbl_extend("keep", Flush, single_flush)
 
