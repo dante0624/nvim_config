@@ -1,6 +1,6 @@
 local M = {}
 
-require('myKeymaps.lspKeymaps')
+require('lsp.lspKeymaps')
 M.on_attach = function(_, bufnr)
 	Lsp_Keymaps(bufnr)
 end
