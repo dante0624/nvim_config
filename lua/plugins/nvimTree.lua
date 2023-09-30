@@ -78,7 +78,7 @@ end
 
 return {{
 	'nvim-tree/nvim-tree.lua',
-	version = 'f5804ce', -- Windows bug was fixed at this commit, then broken later
+	commit = 'f5804ce94e06966e0fc1aba9c697c178fc7cb210', -- Windows bug was fixed at this commit, then broken later
 	dependencies = {
 		'nvim-tree/nvim-web-devicons',
 	},
