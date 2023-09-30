@@ -9,7 +9,6 @@ return {{
 		-- Actual configuration is found under ftplugin/java.lua
 		'mfussenegger/nvim-jdtls',
 	},
-    event = { "BufReadPre", "BufNewFile" },
 	config = function()
 		require('lsp') -- My folder, handles all setting up of all LSP stuff
 	end,

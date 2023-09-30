@@ -1,11 +1,7 @@
 -- Things which should work with neovim itself, without needing any external plugins
--- Includes basic keymaps, options, and mini modules which I made myself (filenames begin with "my")
+-- Includes basic keymaps, options, and mini modules which I made myself
 require("core")
 require("lazyLauncher")
-
--- Specifies my modificiations to a downloaded color scheme
--- TODO: Move this to the configuration of the colorscheme plugin itself
-local plugins_ready = require("myColors.nvimDarkTheme")
 
 -- TODO:
 -- September 1st, 2023

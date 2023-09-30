@@ -12,7 +12,7 @@ return {{
 		-- Need to save global options when we make a session, to restore extra information
 		vim.opt.sessionoptions:append('globals')
 
-		local HUD = require("core.myHUD")
+		local HUD = require("core.myModules.HUD")
 
 		require('auto-session').setup({
 			pre_save_cmds = {

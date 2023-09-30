@@ -1,3 +1,4 @@
+local Map = require("utils.map").Map
 local buffers = require("utils.buffers")
 
 -- Describes the keybinds that work within the tree itself
@@ -81,11 +82,6 @@ return {{
 	dependencies = {
 		'nvim-tree/nvim-web-devicons',
 	},
-	keys = {
-		{'tq', '<Cmd>NvimTreeClose<CR>', mode = {"n", "v"}},
-		{'to', '<Cmd>NvimTreeOpen<CR>', mode = {"n", "v"}},
-		{'tf', '<Cmd>NvimTreeFindFile<CR>', mode = {"n", "v"}},
-	},
 	config = function()
 		-- NvimTree: disable netrw at the very start of your init.lua (strongly advised)
 		vim.g.loaded_netrw = 1
@@ -99,6 +95,22 @@ return {{
 				timeout = 1000, -- Increase from 400ms (default) to 1s
 			},
 		})
+
+
+		-- For some reason, lazy loading this plugin with keys = seems to bug out. May be related to session manager
+		-- So we just do it the old way with no lazy loading
+		Map('', 'tq', '<Cmd>NvimTreeClose<CR>')
+		Map('', 't<CR>', '<Cmd>NvimTreeOpen<CR>')
+		Map('', 'to', function()
+			vim.cmd("NvimTreeOpen")
+			local current_buff = vim.fn.expand('#:p') -- Need alternative because the current buffer is the tree
+			local go_back  = current_buff ~= ""
+
+			if go_back then
+				vim.cmd("b#")
+			end
+		end)
+		Map('', 'tf', '<Cmd>NvimTreeFindFile<CR>')
 	end,
 }}
 

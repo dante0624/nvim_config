@@ -2,11 +2,8 @@ local os = require("utils.os")
 
 return {{
 	'nvim-treesitter/nvim-treesitter',
-	build = function()
-		local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
-		ts_update()
-	end,
-    event = { "BufReadPost", "BufNewFile" },
+	build = ":TSUpdate",
+	event = { "BufReadPost", "BufNewFile" },
 	config = function()
 		-- Zig is the easiest compiler to get on Windows and WSL, but not on for MacOS or Linux
 		local treesitter_compilers

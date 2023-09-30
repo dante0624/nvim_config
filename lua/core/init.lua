@@ -1,6 +1,4 @@
 require("core.keymaps")
-require("core.myFlush")
-require("core.myFolding")
-require("core.myHUDKeymaps")
+require("core.myModules")
 require("core.options")
 

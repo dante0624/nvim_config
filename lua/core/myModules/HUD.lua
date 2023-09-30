@@ -1,3 +1,5 @@
+local Map = require("utils.map").Map
+
 local M = {}
 
 local function toboolean(str)
@@ -70,16 +72,25 @@ local function toggle_git_signs()
 end
 M.toggle_git_signs = toggle_git_signs
 
--- This just is a way to 'get' whether or not the gitsigns are currently displayed
-local config = require('gitsigns.config').config
-
 M.save_git_signs = function()
-	vim.g.Toggling_git_signs = tostring(config.signcolumn)
+	local signs_displayed = require('gitsigns.config').config.signcolumn -- Boolean value
+	vim.g.Toggling_git_signs = tostring(signs_displayed)
 end
 M.restore_git_signs = function()
 	if not toboolean(vim.g.Toggling_git_signs) then
 		toggle_git_signs()
 	end
+end
+
+Map('', '<Leader>tk', M.toggle_header)
+Map('', '<Leader>tj', M.toggle_footer)
+Map('', '<Leader>tl', M.toggle_line_numbers)
+
+-- This is the only keymap which explicitly requires a plugin to exist
+-- So make sure that the plugin is instaled before setting the keymapping
+local git_signs_installed, _ = pcall(require, 'gitsigns')
+if git_signs_installed then
+	Map('', '<Leader>th', M.toggle_git_signs)
 end
 
 return M
