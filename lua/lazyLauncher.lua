@@ -1,13 +1,14 @@
 local dir = require("utils.directories")
 
 local lazypath = dir.Data_Dir .. "/lazy/lazy.nvim"
+
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
     "git",
     "clone",
     "--filter=blob:none",
     "https://github.com/folke/lazy.nvim.git",
-    "--branch=stable",
+    "--branch=v10.4.1",
     lazypath,
   })
 end

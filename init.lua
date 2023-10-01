@@ -4,15 +4,18 @@ require("core")
 require("lazyLauncher")
 
 -- TODO:
--- September 1st, 2023
+-- November 1st, 2023
 
--- Update Package Manager
-	-- Maybe one day go to lazy.nvim but probably not soon
-	-- Remove NullLS and see if we can still have html and css lsps
-	-- Set commit hashes for each plugin, this way things don't randomly break without me knowing
+-- Add keymap to toggleterm which automatically executes the previous command. Likely <Leader>p
+	-- Should be equivalent to opening up toggleterm, hitting up on the arrow key, and then hitting enter
 
--- Find a way to quicky view all TODOs within a project
-	-- Possibly all diagnostics, might be part of Trouble.nvim
+-- Get a basic spellchecker with a dictionary of valid words
+
+-- Look into DAP, Linters, and Formatters
+	-- Especially python ones as they may be useful at work
+
+-- Find a way to quicky view all diagnostics and TODOs within a project
+	-- Possibly Trouble.nvim
 
 -- Get undotree
 

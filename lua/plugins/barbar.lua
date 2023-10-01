@@ -2,6 +2,7 @@ local Map = require("utils.map").Map
 
 return {{
 	'romgrk/barbar.nvim',
+	tag = "v1.7.0",
 	dependencies = {
 		'nvim-tree/nvim-web-devicons',
 		'lewis6991/gitsigns.nvim',

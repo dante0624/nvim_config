@@ -3,6 +3,7 @@ return {{
 	-- We require BarBar (top tabline) and gitsigns because we configure this to save the state of these plugins
 	-- With Barbar, this needs to remember the order of the tabs
 	-- With gitsigns, this needs to remember whether or not they were being displayed
+	tag = "v2.0.1",
 	dependencies = {
 		'romgrk/barbar.nvim',
 		'lewis6991/gitsigns.nvim',

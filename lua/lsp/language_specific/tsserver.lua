@@ -1,11 +1,13 @@
 local utils = require("utils.directories")
 local os = require("utils.os")
 
+-- This is a hack which suprisingly hasn't broken anything yet
+-- For some reason, only windows seems to ask you to specify where npm is installed
 local npmLocation
 if os.is_windows then
 	npmLocation = "/c/Program Files/nodejs/npm"
 else
-	npmLocation = "" -- TODO: Set this when I need to
+	npmLocation = ""
 end
 
 local javascriptServerParams = {

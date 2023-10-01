@@ -1,5 +1,4 @@
 local dir = require("utils.directories")
-local Local_Map = require("utils.map").Local_Map
 local shell = require("utils.shell")
 local os = require("utils.os")
 
@@ -104,21 +103,15 @@ else
 	separator = " && "
 end
 
+local run_command
 if single_file then
 	local full_fname = vim.fn.expand('%:p')
 	local build_cmd = 'javac "'..full_fname..'"'
 	local class_name = vim.fn.expand('%:p:t:r')
-	local run_command = build_cmd..separator..'java -cp "'..root_dir..'" '..class_name
-	Local_Map(
-		{ 'n', 'v' },
-		'<Leader><CR>',
-		'<Cmd>ToggleTerm<CR>'..run_command..'<CR>'
-	)
+	run_command = build_cmd..separator..'java -cp "'..root_dir..'" '..class_name
 else
-	Local_Map(
-		{ 'n', 'v' },
-		'<Leader><CR>',
-		'<Cmd>ToggleTerm<CR>gradle build<CR>'
-	)
+	run_command = 'gradle build'
 end
+
+vim.b.run_command = run_command
 

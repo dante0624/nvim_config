@@ -2,6 +2,7 @@ local os = require("utils.os")
 
 return {{
 	'nvim-treesitter/nvim-treesitter',
+	-- tag = "v0.9.1",
 	build = ":TSUpdate",
 	event = { "BufReadPost", "BufNewFile" },
 	config = function()
@@ -27,15 +28,6 @@ return {{
 				"html",
 				"css",
 				"javascript",
-			},
-
-			-- Configure and setup autotag plugin because it works better on bootstrapping
-			autotag = {
-				enable = true,
-				enable_rename = false,
-				enable_close = true,
-				enable_close_on_slash = true,
-				filetypes = { "html" , "xml" },
 			},
 		})
 	end,

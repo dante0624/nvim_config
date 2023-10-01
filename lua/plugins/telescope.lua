@@ -1,185 +1,195 @@
-return {{
-	'nvim-telescope/telescope.nvim',
-	tag = '0.1.1',
-	dependencies = {
-		'nvim-lua/plenary.nvim',
-		'nvim-telescope/telescope-fzy-native.nvim',
-	},
-	keys = {
-		{'<leader>f', '<Cmd>Telescope find_files<CR>', mode = {"n", "v"},},
-		{'<leader>g', '<Cmd>Telescope live_grep<CR>', mode = {"n", "v"},},
-	},
-	config = function()
-		--[[
-		We have a problem where if we open files through telescope,
-		it doesn't remember the folds. It misses the autocmd.
-		This is known about, as a flaw with telescope itself: 
-			https://github.com/nvim-telescope/telescope.nvim/issues/1277
-		There are 2 fixes:
-			1: When using telescope, exit its insertion mode first (go to normal mode),
-			and then choose the file.
-				For some reason this works
-				The bug does not happen from telescope's normal mode
-			2: Automate solution 1, such that some insertion mode keymappings
-			will first go to normal mode first and then execute.
-				First, make use of :stopinsert
-				Then execute a command that opens the file
-				I found a solution online that does this
-					Scroll down really far to see this answer
-					https://github.com/nvim-telescope/telescope.nvim/issues/1048
-					Also implements multi_open after selecting with TAB ]]
+return {
+	{
+		'nvim-telescope/telescope.nvim',
+		tag = '0.1.1',
+		dependencies = {
+			'nvim-lua/plenary.nvim',
+			'nvim-telescope/telescope-fzy-native.nvim',
+		},
+		keys = {
+			{'<leader>f', '<Cmd>Telescope find_files<CR>', mode = {"n", "v"},},
+			{'<leader>g', '<Cmd>Telescope live_grep<CR>', mode = {"n", "v"},},
+		},
+		config = function()
+			--[[
+			We have a problem where if we open files through telescope,
+			it doesn't remember the folds. It misses the autocmd.
+			This is known about, as a flaw with telescope itself: 
+				https://github.com/nvim-telescope/telescope.nvim/issues/1277
+			There are 2 fixes:
+				1: When using telescope, exit its insertion mode first (go to normal mode),
+				and then choose the file.
+					For some reason this works
+					The bug does not happen from telescope's normal mode
+				2: Automate solution 1, such that some insertion mode keymappings
+				will first go to normal mode first and then execute.
+					First, make use of :stopinsert
+					Then execute a command that opens the file
+					I found a solution online that does this
+						Scroll down really far to see this answer
+						https://github.com/nvim-telescope/telescope.nvim/issues/1048
+						Also implements multi_open after selecting with TAB ]]
 
-		local actions = require("telescope.actions")
-		local transform_mod = require("telescope.actions.mt").transform_mod
-		local action_state = require("telescope.actions.state")
+			local actions = require("telescope.actions")
+			local transform_mod = require("telescope.actions.mt").transform_mod
+			local action_state = require("telescope.actions.state")
 
-		-- Helper functions from github issues page
-		-- This was heavily modified by me to make grep work with multi_selection
-		local function multi_open(prompt_bufnr, method)
-			local cmd_map = {
-				vertical = "vsplit",
-				horizontal = "split",
-				default = "edit"
-			}
-			local picker = action_state.get_current_picker(prompt_bufnr)
-			local multi_selection = picker:get_multi_selection()
+			-- Helper functions from github issues page
+			-- This was heavily modified by me to make grep work with multi_selection
+			local function multi_open(prompt_bufnr, method)
+				local cmd_map = {
+					vertical = "vsplit",
+					horizontal = "split",
+					default = "edit"
+				}
+				local picker = action_state.get_current_picker(prompt_bufnr)
+				local multi_selection = picker:get_multi_selection()
 
-			if #multi_selection >= 1 then
-				require("telescope.pickers").on_close_prompt(prompt_bufnr)
-				pcall(vim.api.nvim_set_current_win, picker.original_win_id)
+				if #multi_selection >= 1 then
+					require("telescope.pickers").on_close_prompt(prompt_bufnr)
+					pcall(vim.api.nvim_set_current_win, picker.original_win_id)
 
-				local cmd = cmd_map[method]
-				for _, entry in ipairs(multi_selection) do
-					local section = vim.fn.split(entry.value, ":")
+					local cmd = cmd_map[method]
+					for _, entry in ipairs(multi_selection) do
+						local section = vim.fn.split(entry.value, ":")
 
-					local filename = section[1]
-					local row = tonumber(section[2]) -- Will be nil if doesn't exist
-					local col = tonumber(section[3]) -- Will be nil if doesn't exist
+						local filename = section[1]
+						local row = tonumber(section[2]) -- Will be nil if doesn't exist
+						local col = tonumber(section[3]) -- Will be nil if doesn't exist
 
-					vim.cmd(string.format("%s %s", cmd, filename))
+						vim.cmd(string.format("%s %s", cmd, filename))
 
-					if row and col then
-						local ok, err_msg = pcall(vim.api.nvim_win_set_cursor, 0, { row, col })
-						if not ok then
-							print("Failed to move to cursor:", err_msg, row, col)
+						if row and col then
+							local ok, err_msg = pcall(vim.api.nvim_win_set_cursor, 0, { row, col })
+							if not ok then
+								print("Failed to move to cursor:", err_msg, row, col)
+							end
 						end
 					end
+				else
+					actions["select_" .. method](prompt_bufnr)
 				end
-			else
-				actions["select_" .. method](prompt_bufnr)
 			end
-		end
 
-		local custom_actions = transform_mod({
-			multi_selection_open_vertical = function(prompt_bufnr)
-				multi_open(prompt_bufnr, "vertical")
-			end,
-			multi_selection_open_horizontal = function(prompt_bufnr)
-				multi_open(prompt_bufnr, "horizontal")
-			end,
-			multi_selection_open = function(prompt_bufnr)
-				multi_open(prompt_bufnr, "default")
-			end,
-		})
+			local custom_actions = transform_mod({
+				multi_selection_open_vertical = function(prompt_bufnr)
+					multi_open(prompt_bufnr, "vertical")
+				end,
+				multi_selection_open_horizontal = function(prompt_bufnr)
+					multi_open(prompt_bufnr, "horizontal")
+				end,
+				multi_selection_open = function(prompt_bufnr)
+					multi_open(prompt_bufnr, "default")
+				end,
+			})
 
-		local function stop_insert(callback)
-			return function(prompt_bufnr)
-				vim.cmd.stopinsert()
-				vim.schedule(function()
-					callback(prompt_bufnr)
-				end)
+			local function stop_insert(callback)
+				return function(prompt_bufnr)
+					vim.cmd.stopinsert()
+					vim.schedule(function()
+						callback(prompt_bufnr)
+					end)
+				end
 			end
-		end
-		local my_telescope_keymaps = {
-			i = {
-				["<C-c>"] = actions.close,
+			local my_telescope_keymaps = {
+				i = {
+					["<C-c>"] = actions.close,
 
-				["<C-v>"] = stop_insert(custom_actions.multi_selection_open_vertical),
-				["<C-x>"] = stop_insert(custom_actions.multi_selection_open_horizontal),
-				["<CR>"]  = stop_insert(custom_actions.multi_selection_open),
+					["<C-v>"] = stop_insert(custom_actions.multi_selection_open_vertical),
+					["<C-x>"] = stop_insert(custom_actions.multi_selection_open_horizontal),
+					["<CR>"]  = stop_insert(custom_actions.multi_selection_open),
 
-				["<Tab>"] = actions.toggle_selection + actions.move_selection_worse,
-				["<S-Tab>"] = actions.toggle_selection + actions.move_selection_better,
+					["<Tab>"] = actions.toggle_selection + actions.move_selection_worse,
+					["<S-Tab>"] = actions.toggle_selection + actions.move_selection_better,
 
-				["<C-j>"] = actions.move_selection_next,
-				["<C-k>"] = actions.move_selection_previous,
+					["<C-j>"] = actions.move_selection_next,
+					["<C-k>"] = actions.move_selection_previous,
 
-				["<C-n>"] = actions.cycle_history_next,
-				["<C-p>"] = actions.cycle_history_prev,
+					["<C-n>"] = actions.cycle_history_next,
+					["<C-p>"] = actions.cycle_history_prev,
 
-				["<C-u>"] = actions.preview_scrolling_up,
-				["<C-d>"] = actions.preview_scrolling_down,
+					["<C-u>"] = actions.preview_scrolling_up,
+					["<C-d>"] = actions.preview_scrolling_down,
 
-				["<C-l>"] = actions.open_qflist,
-				["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
-				-- ["<M-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+					["<C-l>"] = actions.open_qflist,
+					["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
+					-- ["<M-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
 
-				-- ["<C-l>"] = actions.complete_tag,
+					-- ["<C-l>"] = actions.complete_tag,
 
-				["<C-/>"] = actions.which_key,
-			  },
+					["<C-/>"] = actions.which_key,
+				  },
 
-			  n = {
-				["q"] = actions.close,
+				  n = {
+					["q"] = actions.close,
 
-				["v"] = custom_actions.multi_selection_open_vertical,
-				["x"] = custom_actions.multi_selection_open_horizontal,
-				["<CR>"] = custom_actions.multi_selection_open,
+					["v"] = custom_actions.multi_selection_open_vertical,
+					["x"] = custom_actions.multi_selection_open_horizontal,
+					["<CR>"] = custom_actions.multi_selection_open,
 
-				["<Tab>"] = actions.toggle_selection + actions.move_selection_worse,
-				["<S-Tab>"] = actions.toggle_selection + actions.move_selection_better,
+					["<Tab>"] = actions.toggle_selection + actions.move_selection_worse,
+					["<S-Tab>"] = actions.toggle_selection + actions.move_selection_better,
 
-				["j"] = actions.move_selection_next,
-				["k"] = actions.move_selection_previous,
-				["J"] = actions.results_scrolling_up,
-				["K"] = actions.results_scrolling_down,
-				["M"] = actions.move_to_middle,
-				["gg"] = actions.move_to_top,
-				["G"] = actions.move_to_bottom,
+					["j"] = actions.move_selection_next,
+					["k"] = actions.move_selection_previous,
+					["J"] = actions.results_scrolling_up,
+					["K"] = actions.results_scrolling_down,
+					["M"] = actions.move_to_middle,
+					["gg"] = actions.move_to_top,
+					["G"] = actions.move_to_bottom,
 
-				["n"] = actions.cycle_history_next,
-				["p"] = actions.cycle_history_prev,
+					["n"] = actions.cycle_history_next,
+					["p"] = actions.cycle_history_prev,
 
-				["u"] = actions.preview_scrolling_up,
-				["d"] = actions.preview_scrolling_down,
+					["u"] = actions.preview_scrolling_up,
+					["d"] = actions.preview_scrolling_down,
 
-				["l"] = actions.open_qflist,
-				["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
-				-- ["<M-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+					["l"] = actions.open_qflist,
+					["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
+					-- ["<M-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
 
-				["?"] = actions.which_key,
-			}
-		}
-
-		require('telescope').setup({
-			extensions = {
-				fzy_native = {
-					override_generic_sorter = false,
-					override_file_sorter = true,
+					["?"] = actions.which_key,
 				}
-			},
-			pickers = {
-				find_files = {
-					theme = "dropdown",
-				},
-				live_grep = {
-					preview = "true", -- The preview is useful for grep
-				},
-			},
-			defaults = {
-				preview = false, -- The preview is not really useful otherwise imo
-				sorting_strategy = "ascending",
-				layout_config = {
-					prompt_position = 'top',
-				},
-				prompt_prefix = " ",
-				selection_caret = " ",
-				path_display = { "smart" },
+			}
 
-				mappings = my_telescope_keymaps,
-			},
-		})
-		require('telescope').load_extension('fzy_native')
-	end,
-}}
+			require('telescope').setup({
+				extensions = {
+					fzy_native = {
+						override_generic_sorter = false,
+						override_file_sorter = true,
+					}
+				},
+				pickers = {
+					find_files = {
+						theme = "dropdown",
+					},
+					live_grep = {
+						preview = "true", -- The preview is useful for grep
+					},
+				},
+				defaults = {
+					preview = false, -- The preview is not really useful otherwise imo
+					sorting_strategy = "ascending",
+					layout_config = {
+						prompt_position = 'top',
+					},
+					prompt_prefix = " ",
+					selection_caret = " ",
+					path_display = { "smart" },
+
+					mappings = my_telescope_keymaps,
+				},
+			})
+			require('telescope').load_extension('fzy_native')
+		end,
+	},
+	{
+			'nvim-lua/plenary.nvim',
+			tag = 'v0.1.2',
+	},
+	{
+			'nvim-telescope/telescope-fzy-native.nvim',
+			commit = "282f069504515eec762ab6d6c89903377252bf5b",
+	},
+}
 

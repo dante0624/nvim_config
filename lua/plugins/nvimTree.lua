@@ -76,41 +76,47 @@ local function tree_on_attach(bufnr)
 	vim.keymap.set('n', 'y', api.fs.copy.node, opts('Copy'))
 end
 
-return {{
-	'nvim-tree/nvim-tree.lua',
-	commit = 'f5804ce94e06966e0fc1aba9c697c178fc7cb210', -- Windows bug was fixed at this commit, then broken later
-	dependencies = {
-		'nvim-tree/nvim-web-devicons',
+return {
+	{
+		'nvim-tree/nvim-tree.lua',
+		commit = 'f5804ce94e06966e0fc1aba9c697c178fc7cb210', -- Windows bug was fixed at this commit, then broken later
+		dependencies = {
+			'nvim-tree/nvim-web-devicons',
+		},
+		config = function()
+			-- NvimTree: disable netrw at the very start of your init.lua (strongly advised)
+			vim.g.loaded_netrw = 1
+			vim.g.loaded_netrwPlugin = 1
+
+			require("nvim-tree").setup({
+				on_attach = tree_on_attach,
+				sync_root_with_cwd = true,
+				git = {
+					ignore = false, -- Starts off by not ignoring gitignored files
+					timeout = 1000, -- Increase from 400ms (default) to 1s
+				},
+			})
+
+
+			-- For some reason, lazy loading with keys causes a bug.
+			-- So we don't lazy load, and we define the keymaps here
+			Map('', 'tq', '<Cmd>NvimTreeClose<CR>')
+			Map('', 't<CR>', '<Cmd>NvimTreeOpen<CR>')
+			Map('', 'to', function()
+				vim.cmd("NvimTreeOpen")
+				local current_buff = vim.fn.expand('#:p') -- Need alternative because the current buffer is the tree
+				local go_back  = current_buff ~= ""
+
+				if go_back then
+					vim.cmd("b#")
+				end
+			end)
+			Map('', 'tf', '<Cmd>NvimTreeFindFile<CR>')
+		end,
 	},
-	config = function()
-		-- NvimTree: disable netrw at the very start of your init.lua (strongly advised)
-		vim.g.loaded_netrw = 1
-		vim.g.loaded_netrwPlugin = 1
-
-		require("nvim-tree").setup({
-			on_attach = tree_on_attach,
-			sync_root_with_cwd = true,
-			git = {
-				ignore = false, -- Starts off by not ignoring gitignored files
-				timeout = 1000, -- Increase from 400ms (default) to 1s
-			},
-		})
-
-
-		-- For some reason, lazy loading this plugin with keys = seems to bug out. May be related to session manager
-		-- So we just do it the old way with no lazy loading
-		Map('', 'tq', '<Cmd>NvimTreeClose<CR>')
-		Map('', 't<CR>', '<Cmd>NvimTreeOpen<CR>')
-		Map('', 'to', function()
-			vim.cmd("NvimTreeOpen")
-			local current_buff = vim.fn.expand('#:p') -- Need alternative because the current buffer is the tree
-			local go_back  = current_buff ~= ""
-
-			if go_back then
-				vim.cmd("b#")
-			end
-		end)
-		Map('', 'tf', '<Cmd>NvimTreeFindFile<CR>')
-	end,
-}}
+	{
+		'nvim-tree/nvim-web-devicons',
+		tag = "nerd-v2-compat",
+	},
+}
 

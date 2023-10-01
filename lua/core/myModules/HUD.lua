@@ -82,16 +82,10 @@ M.restore_git_signs = function()
 	end
 end
 
+-- These 3 commands work perfectly well with or without plugins
 Map('', '<Leader>tk', M.toggle_header)
 Map('', '<Leader>tj', M.toggle_footer)
 Map('', '<Leader>tl', M.toggle_line_numbers)
-
--- This is the only keymap which explicitly requires a plugin to exist
--- So make sure that the plugin is instaled before setting the keymapping
-local git_signs_installed, _ = pcall(require, 'gitsigns')
-if git_signs_installed then
-	Map('', '<Leader>th', M.toggle_git_signs)
-end
 
 return M
 

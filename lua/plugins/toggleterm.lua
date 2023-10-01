@@ -18,8 +18,20 @@ end
 
 return {{
 	'akinsho/toggleterm.nvim',
+	tag = "v2.8.0",
 	keys = {
 		{open_mapping, '<CMD>ToggleTerm<CR>', mode={'n', 'v',}},
+		{
+			'<Leader><CR>',
+			function()
+				local toggleterm = require("toggleterm")
+				local run_command = vim.b.run_command
+				if run_command ~= nil then
+					toggleterm.exec(run_command)
+				end
+			end,
+			mode={'n', 'v',}
+		},
 	},
 	config = function()
 		require("utils.shell").set_shell()
