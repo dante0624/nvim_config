@@ -56,9 +56,29 @@ java 17 is needed, ensure that `java` returns a version >= 17.
 
 
 # Cold start for Plugins
+## Lazy and Plugins
+The first time using neovim with this config, users should type `$nvim` with no arguments. It will start by downloading Lazy, the plugin manager.
+A popup window will appear for Lazy, where it will automatically begin installing the plugins.
+This is a visual process where the plugins will move out of a `Working` section and into an `Installed` section.
+Once this is done, press the `q` key to close the popup.
+Note that prior to doing this you may need to press the enter key to dismiss any messages that may appear at the bottom of the screen.
 
-When nvim is opened for the first time with this config, it will start by downloading Packer, the plugin manager.
-Once this is done, the user needs to exit and reopen nvim.
-At this point packer itself will be installed, but it will not yet have installed all needed plugins.
-So the user needs to run :PackerSync from neovim's command line. This will begin installing all plugins.
-Once done, it is time to exit and quit one more time, and now nvim should work!
+## Treesitter Parsers
+Neovim will automatically be downloading and compiling all parsers at this time.
+At this point you should wait for them to be installed correctly. Depending on the device and compiler speeds, this may be very fast or take a couple of minutes.
+Messages will appear at the bottom of the screen for each parser that has been installed.
+If you miss these messages you can execute the command `:messages` to reread them (use `j` and `k` to vertically scroll through all messages).
+There are a total of n parsers to install, so you are looking for a message where parser number [n/n] was installed correctly.
+It is very important not to exit out of neovim until all n parsers have been installed, as exiting early may lead to some parsers never working properly.
+
+## Mason LSPs
+Neovim will also be automatically downloading all LSPs at this time.
+Messages will also appear saying when these are done, however it will not say how many need to be installed in total.
+To check this, execute the command `:Mason` to view a new popup window.
+This is very similar to the popup window for lazy, where each item visually moves from `Installing` or `Queued` sections to the `Installed` section.
+Once the popup window only shows 2 sections (`Installed` and `Available`) then you can be condident that the installation is done.
+Once again, press the `q` key to close the popup.
+
+## Post Installation Completion
+The safest and simplest thing to do now is to exit neovim via the `:q` command.
+Now you are free to use neovim to edit files going forward :)
