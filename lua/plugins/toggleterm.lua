@@ -26,9 +26,13 @@ return {{
 			function()
 				local toggleterm = require("toggleterm")
 				local run_command = vim.b.run_command
-				if run_command ~= nil then
-					toggleterm.exec(run_command)
+				if run_command == nil then return end
+
+				if require("utils.shell").is_powershell then
+					run_command = run_command:gsub(" && ", " ; ")
 				end
+
+				toggleterm.exec(run_command)
 			end,
 			mode={'n', 'v',}
 		},

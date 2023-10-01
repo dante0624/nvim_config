@@ -1,5 +1,4 @@
 local dir = require("utils.directories")
-local shell = require("utils.shell")
 local os = require("utils.os")
 
 -- Gives me the same keymaps as other lsps
@@ -95,20 +94,12 @@ local config = {
 require('jdtls').start_or_attach(config)
 
 
--- Start of the keymappings for quickly building and running
-local separator
-if shell.is_powershell then
-	separator = " ; "
-else
-	separator = " && "
-end
-
 local run_command
 if single_file then
 	local full_fname = vim.fn.expand('%:p')
 	local build_cmd = 'javac "'..full_fname..'"'
 	local class_name = vim.fn.expand('%:p:t:r')
-	run_command = build_cmd..separator..'java -cp "'..root_dir..'" '..class_name
+	run_command = build_cmd..' && java -cp "'..root_dir..'" '..class_name
 else
 	run_command = 'gradle build'
 end
