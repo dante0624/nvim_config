@@ -23,6 +23,20 @@ return {{
 		vim.cmd.highlight("@string.documentation", "guifg=#a6c478")
 		vim.cmd.highlight("@string.documentation", "cterm=italic")
 		vim.cmd.highlight("@string.documentation", "gui=italic")
+
+		-- Make modified buffers have a nice blue color
+		vim.cmd.highlight("BufferCurrentMod", "guifg=#7aa2f7")
+		vim.cmd.highlight("BufferAlternateMod", "guifg=#5f7ab4")
+		vim.cmd.highlight("BufferInactiveMod", "guifg=#5f7ab4")
+		vim.cmd.highlight("BufferVisibleMod", "guifg=#5f7ab4")
+
+
+		-- Make NeoTree have simple colors that make sense to me
+		vim.cmd.highlight("NeoTreeDirectoryName", "guifg=#aab1d3")
+		vim.cmd.highlight("NeoTreeDirectoryIcon", "guifg=#aab1d3")
+		vim.cmd.highlight("NeoTreeDotfile", "guifg=#737aa2", "gui=italic")
+		vim.cmd.highlight("NeoTreeGitUntracked", "guifg=#266d6a")
+		vim.cmd.highlight("NeoTreeGitModified", "guifg=#426ecd")
 	end,
 }}
 

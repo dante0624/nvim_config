@@ -29,6 +29,11 @@ return {{
 				HUD.restore_footer,
 				HUD.restore_line_numbers,
 				HUD.restore_git_signs,
+				function()
+					local bufnr = vim.fn.bufnr("neo-tree filesystem [1]")
+					vim.cmd("silent! bd " .. bufnr)
+				end,
+
 			},
 
 			log_level = "error",
