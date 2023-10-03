@@ -36,6 +36,11 @@ return {{
 			end,
 			mode={'n', 'v',}
 		},
+		{
+			'<Leader>p', --For Previous
+			'<CMD>ToggleTerm<CR><Up><CR>',
+			mode={'n', 'v',}
+		}
 	},
 	config = function()
 		require("utils.shell").set_shell()

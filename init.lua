@@ -6,9 +6,6 @@ require("lazyLauncher")
 -- TODO:
 -- November 1st, 2023
 
--- Add keymap to toggleterm which automatically executes the previous command. Likely <Leader>p
-	-- Should be equivalent to opening up toggleterm, hitting up on the arrow key, and then hitting enter
-
 -- Get a basic spellchecker with a dictionary of valid words
 
 -- Look into DAP, Linters, and Formatters
