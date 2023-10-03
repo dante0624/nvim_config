@@ -2,7 +2,7 @@ local os = require("utils.os")
 
 return {{
 	'nvim-treesitter/nvim-treesitter',
-	-- tag = "v0.9.1",
+	tag = "v0.9.1",
 	build = ":TSUpdate",
 	event = { "BufReadPost", "BufNewFile" },
 	config = function()

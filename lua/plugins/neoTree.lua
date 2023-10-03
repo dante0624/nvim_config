@@ -8,12 +8,6 @@ return {
 			"nvim-lua/plenary.nvim", -- version of this plugin is locked by telescope.lua file
 		},
 		init = function()
-			function DeleteFile()
-				local bufnr = vim.fn.bufnr("neo-tree filesystem [1]")
-				vim.cmd("silent! bd " .. bufnr)
-			end
-
-
 			local cmdline_arg = vim.v.argv[3]
 			if cmdline_arg ~= nil and vim.fn.isdirectory(cmdline_arg) == 1 then
 				vim.cmd("do User started_on_directory")
@@ -32,7 +26,7 @@ return {
 			{'tb', '<Cmd>Neotree buffers<CR>', mode = {"n", "v"}},
 
 			-- Other
-			{'tf', '<Cmd>Neotree reveal<CR>', mode = {"n", "v"}}, -- Reveal focuses on the current file
+			{'tf', '<Cmd>Neotree reveal_force_cwd<CR>', mode = {"n", "v"}}, -- Reveal focuses on the current file
 			{'tq', '<Cmd>Neotree action=close<CR>', mode = {"n", "v"}},
 		},
 		opts = {
