@@ -1,6 +1,8 @@
 -- Things which should work with neovim itself, without needing any external plugins
 -- Includes basic keymaps, options, and mini modules which I made myself
 require("core")
+
+-- Launches lazy.nvim, which then sets up and manages all plugins
 require("lazyLauncher")
 
 -- TODO:

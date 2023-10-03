@@ -1,9 +1,11 @@
 return {{
-	'phaazon/hop.nvim',
-	tag = 'v2.0.3',
+	'smoka7/hop.nvim',
+	tag = 'v2.3.2',
 	keys = {
-		{'<Leader>l', '<CMD>HopLineStart<CR>', mode={'n', 'v'}},
-		{'<Leader>;', '<CMD>HopChar1<CR>', mode={'n', 'v'}},
+		{'<Leader>k', '<CMD>HopLineStartBC<CR>', mode={'n', 'v'}},
+		{'<Leader>j', '<CMD>HopLineStartAC<CR>', mode={'n', 'v'}},
+		{'<Leader>;', '<CMD>HopChar2<CR>', mode={'n', 'v'}},
 	},
 	opts = {},
 }}
+
