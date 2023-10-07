@@ -174,10 +174,12 @@ return {
 	{
 		"nvim-tree/nvim-web-devicons",
 		tag = "nerd-v2-compat",
+		lazy = true,
 	},
 	{
 		"MunifTanjim/nui.nvim",
 		tag = "0.2.0",
+		lazy = true,
 	},
 }
 

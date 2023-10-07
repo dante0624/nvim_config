@@ -1,5 +1,6 @@
 return {{
 	'rmagatti/auto-session',
+	-- enabled = false,
 	-- We require BarBar (top tabline) and gitsigns because we configure this to save the state of these plugins
 	-- With Barbar, this needs to remember the order of the tabs
 	-- With gitsigns, this needs to remember whether or not they were being displayed

@@ -134,28 +134,34 @@ return {
 	{
 		'L3MON4D3/LuaSnip',
 		tag = "v2.0.0",
+		lazy = true,
 	},
 
 	-- These repo authors don't seem to believe in setting tags, so just use commits
 	{
 		'hrsh7th/cmp-buffer',
 		commit = "3022dbc9166796b644a841a02de8dd1cc1d311fa",
+		lazy = true,
 	},
 	{
 		'hrsh7th/cmp-path',
 		commit = "91ff86cd9c29299a64f968ebb45846c485725f23",
+		lazy = true,
 	},
 	{
 		'hrsh7th/cmp-nvim-lua',
 		commit = "f12408bdb54c39c23e67cab726264c10db33ada8",
+		lazy = true,
 	},
 	{
 		'saadparwaiz1/cmp_luasnip',
 		commit = "18095520391186d634a0045dacaa346291096566",
+		lazy = true,
 	},
 	{
 		'rafamadriz/friendly-snippets',
 		commit = "0368bee1cecaf3c58d436524234baad4c0e0b8cb",
+		lazy = true,
 	},
 }
 
