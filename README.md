@@ -25,13 +25,19 @@ These need to be installed manually, and be available as shell commands. So they
 I personally have had difficulty getting c compilers to work on Windows. The simplest way I found to make this work is by using zig on windows.
 This can be installed with:
 `choco install zig`
-### MacOS and Linux
+### MacOS
 Need to have c compiler `cc` be installed and on the path. This should come by default.
+
+### Linux
+Need to have c compiler `cc` be installed and on the path. This can be installed by any linux disto's package manager.
 
 ## Node and NPM
 Nvim and all its plugins love to autoinstall things using these javascript tools.
 Even if you have no desire to write javascript code, these 2 are still needed to make nvim work.
 Make sure they are installed, and on the path.
+
+To use javascript or typescript LSP, ensure that node version is >= 14.17.
+Note that with ubuntu, apt install tends to install an outdated version by default.
 
 ## A special font used in terminal
 Need to download a special font from https://www.nerdfonts.com/

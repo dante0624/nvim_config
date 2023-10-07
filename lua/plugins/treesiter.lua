@@ -15,6 +15,7 @@ return {{
 		end
 
 		require('nvim-treesitter.install').compilers = treesitter_compilers
+		require('nvim-treesitter.install').prefer_git = true
 		require('nvim-treesitter.configs').setup({
 			highlight = { enable = true },
 
