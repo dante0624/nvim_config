@@ -8,6 +8,11 @@ require("lazyLauncher")
 -- TODO:
 -- November 1st, 2023
 
+-- Autosession, disable the "follow cwd" feature
+	-- Ask for a pull request which can disable this feature
+	-- Or go back to a prior commit
+	-- Or copy the source code, modify it, and have my own mini plugin
+
 -- Get a basic spellchecker with a dictionary of valid words
 
 -- Look into DAP, Linters, and Formatters
