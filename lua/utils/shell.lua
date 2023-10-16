@@ -3,10 +3,10 @@ local os = require("utils.os")
 
 -- Flags that we can use in other files that depend on the current shell specifics
 local function set_flags()
-	M.is_powershell = vim.o.shell == "powershell"
-	M.is_cmd = vim.o.shell == "cmd.exe" -- Windows command line (default for windows)
-	M.is_bash = vim.o.shell == "bash"
-	M.is_zsh = vim.o.shell == "zsh"
+	M.is_powershell = vim.o.shell:find("powershell") ~= nil
+	M.is_cmd = vim.o.shell:find("cmd.exe") ~= nil -- Windows command line (default for windows)
+	M.is_bash = vim.o.shell:find("bash") ~= nil
+	M.is_zsh = vim.o.shell:find("zsh") ~= nil
 end
 
 function M.set_shell()
