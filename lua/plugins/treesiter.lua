@@ -8,7 +8,7 @@ return {{
 	config = function()
 		-- Zig is the easiest compiler to get on Windows and WSL, but not on for MacOS or Linux
 		local treesitter_compilers
-		if os.is_windows or os.is_wsl then
+		if os.is_windows then
 			treesitter_compilers = { "zig" }
 		else
 			treesitter_compilers = { "cc" }

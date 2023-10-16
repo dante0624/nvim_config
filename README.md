@@ -28,7 +28,7 @@ This can be installed with:
 ### MacOS
 Need to have c compiler `cc` be installed and on the path. This should come by default.
 
-### Linux
+### Linux and WSL
 Need to have c compiler `cc` be installed and on the path. This can be installed by any linux disto's package manager.
 
 ## Node and NPM
