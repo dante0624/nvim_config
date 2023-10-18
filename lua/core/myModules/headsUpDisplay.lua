@@ -102,19 +102,20 @@ for display_name, display in pairs(M) do
 end
 
 
-Map('', '<Leader>tk', M.header.toggle)
-Map('', '<Leader>tj', M.footer.toggle)
-Map('', '<Leader>tl', M.numbers.toggle)
-Map('', '<Leader>th', M.git_signs.toggle)
+-- s, short for "show"
+Map('', '<Leader>sk', M.header.toggle)
+Map('', '<Leader>sj', M.footer.toggle)
+Map('', '<Leader>sl', M.numbers.toggle)
+Map('', '<Leader>sh', M.git_signs.toggle)
 
 -- Open or close all display options
-Map('', '<Leader>to', function()
+Map('', '<Leader>so', function()
 	for _, display in pairs(M) do
 		display.show()
 	end
 end)
 
-Map('', '<Leader>tc', function()
+Map('', '<Leader>sc', function()
 	for _, display in pairs(M) do
 		display.hide()
 	end
