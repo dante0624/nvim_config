@@ -7,7 +7,7 @@ return {{
 		'nvim-tree/nvim-web-devicons',
 		'lewis6991/gitsigns.nvim',
 	},
-	event = "VeryLazy",
+	lazy = false, -- Don't lazy load, for my session management
 	config = function()
 		require('barbar').setup({
 			animation = false,

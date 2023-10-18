@@ -17,7 +17,6 @@ return {
 		keys = {
 			-- Normal Tree
 			{'t<CR>', '<Cmd>Neotree<CR>', mode = {"n", "v"}},
-			{'to', '<Cmd>Neotree action=show<CR>', mode = {"n", "v"}}, -- Open "quietly" (without going to the tree)
 
 			-- Git Status Tree
 			{'ts', '<Cmd>Neotree git_status<CR>', mode = {"n", "v"}},
@@ -27,12 +26,11 @@ return {
 
 			-- Other
 			{'tf', '<Cmd>Neotree reveal_force_cwd<CR>', mode = {"n", "v"}}, -- Reveal focuses on the current file
-			{'tq', '<Cmd>Neotree action=close<CR>', mode = {"n", "v"}},
 		},
 		opts = {
         	close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
 			window = {
-				width = 35,
+				width = "90%",
 				mappings = {
 					-- New
 					["s"] = { "show_help", nowait=false, config = { title = "Order by", prefix_key = "s" }},
@@ -43,8 +41,8 @@ return {
 					["sn"] = { "order_by_name", nowait = false },
 					["ss"] = { "order_by_size", nowait = false },
 					["st"] = { "order_by_type", nowait = false },
-					["h"] = "open_split",
-					["v"] = "open_vsplit",
+					["<C-h>"] = "open_split",
+					["<C-v>"] = "open_vsplit",
 					["c"] = "close_node",
 					["C"] = "close_all_nodes",
 					["y"] = "copy_to_clipboard",
@@ -52,10 +50,15 @@ return {
 					-- Setting keys to nothing
 					["."] = "noop",
 					["<bs>"] = "noop",
+					["<"] = "noop",
+					[">"] = "noop",
 					["[g"] = "noop",
 					["]g"] = "noop",
 					["<C-x>"] = "noop",
 					["<Space>"] = "noop",
+					["P"] = "noop",
+					["l"] = "noop",
+					["H"] = "noop",
 					["oc"] = "noop",
 					["od"] = "noop",
 					["og"] = "noop",
@@ -110,6 +113,7 @@ return {
 			},
 			filesystem = {
 				window = {
+					position = "current",
 					mappings = {
 						-- New
 						["-"] = "navigate_up",
@@ -119,6 +123,7 @@ return {
 						["gj"] = "next_git_modified",
 						["F"] = "fuzzy_finder",
 						["S"] = "fuzzy_sorter",
+						["I"] = "toggle_hidden",
 
 						-- Setting keys to nothing
 						["/"] = "noop",
@@ -141,6 +146,9 @@ return {
 				},
 			},
 			buffers = {
+				window = {
+					position = "float",
+				},
 				follow_current_file = {
 					enabled = true,
 				},

@@ -18,8 +18,7 @@ function single_flush.LSP_Log()
 end
 
 function single_flush.Sessions()
-	vim.cmd("!rm -r " .. dir.Data_Dir .. "sessions/")
-	vim.cmd("!rm -r " .. dir.Data_Dir .. "auto_session/")
+	vim.cmd("!rm -r " .. dir.Sessions)
 end
 
 function Flush.All()

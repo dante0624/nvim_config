@@ -8,10 +8,13 @@ require("lazyLauncher")
 -- TODO:
 -- November 1st, 2023
 
--- Autosession, disable the "follow cwd" feature
-	-- Ask for a pull request which can disable this feature
-	-- Or go back to a prior commit
-	-- Or copy the source code, modify it, and have my own mini plugin
+-- Move all LSP setup calls to ftplugin/*
+	-- Rename handlers to commonLSP or something
+	-- Each file type can import the on_attach function from here, and use it
+	-- Lazy's profiling tool shows Mason takes 14.5 ms to startup, try to decrease
+		-- Good idea, this way when we add more languages, the startup time is not affeected
+
+-- Get https://github.com/iamcco/markdown-preview.nvim
 
 -- Get a basic spellchecker with a dictionary of valid words
 

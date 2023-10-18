@@ -12,9 +12,7 @@ if single_file then
 	root_dir = vim.fn.expand('%:p:h') -- The folder that the current buffer is in
 end
 
-local root_dir_ending = vim.fn.fnamemodify(root_dir, ':t')
-
-local inferred_workspace = dir.Java_Workspaces .. root_dir_ending
+local inferred_workspace = dir.Java_Workspaces .. dir.serialize_path(root_dir)
 local jdtls_dir = dir.Data_Dir .. "mason/packages/jdtls/"
 local os_config
 if os.is_linux_os or os.is_wsl then

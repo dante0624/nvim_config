@@ -39,8 +39,6 @@ for _, server in pairs(servers) do
 		capabilities = completion_capabilities,
 	}
 
-	server = vim.split(server, "@")[1]
-
 	-- Adding language specific settings
 	local require_ok, conf_opts = pcall(require, "lsp.language_specific." .. server)
 	if require_ok then

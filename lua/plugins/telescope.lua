@@ -6,10 +6,6 @@ return {
 			'nvim-lua/plenary.nvim',
 			'nvim-telescope/telescope-fzy-native.nvim',
 		},
-
-		-- Need this line because auto-sesion calles "require("telescope")" for functionality that I don't use
-		-- So if I don't have this line, then auto-session will break the lazy loading of telescope
-		module = false,
 		keys = {
 			{'<leader>f', '<Cmd>Telescope find_files<CR>', mode = {"n", "v"},},
 			{'<leader>g', '<Cmd>Telescope live_grep<CR>', mode = {"n", "v"},},

@@ -41,8 +41,8 @@ Map('i', '<C-v>', '<Esc>"+pa')
 Map('v', '<TAB>', '>gv')
 Map('v', '<S-TAB>', '<gv')
 
--- Lets me use cs (clear search) to stop highlighting search results
-Map('n', 'cs', '<Cmd>noh<CR>')
+-- Removes the highlighting from the screen that comes with searching via "/"
+Map('n', '<Leader>n', '<Cmd>noh<CR>')
 
 -- Write buffers quickly
 Map('', '<leader>w', '<Cmd>w<CR>')
@@ -69,9 +69,4 @@ Map({ 'n', 'v', 's', 'i', 't' }, '<C-Right>', '<Cmd>vertical resize +2<CR>')
 
 -- Easier redo command
 Map('', 'R', '<C-r>')
-
-Map('', 'tn', function()
-	local api = require('nvim-tree.api')
-	api.tree.focus()
-end)
 

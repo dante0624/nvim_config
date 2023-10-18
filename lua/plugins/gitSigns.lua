@@ -1,6 +1,3 @@
-local Map = require("utils.map").Map
-local HUD = require("core.myModules.HUD")
-
 local function git_on_attach(bufnr)
 	local gs = package.loaded.gitsigns
 
@@ -45,16 +42,12 @@ end
 return {{
 	'lewis6991/gitsigns.nvim',
 	tag = "v0.6",
-    event = { "BufReadPre", "BufNewFile" },
-	config = function()
-		require("gitsigns").setup({
-			on_attach = git_on_attach,
-			current_line_blame_opts = {
-				virt_text = false,
-			},
-		})
-
-		Map('', '<Leader>th', HUD.toggle_git_signs)
-	end,
+	lazy = false, -- Don't lazy load, for my session management
+	opts = {
+		on_attach = git_on_attach,
+		current_line_blame_opts = {
+			virt_text = false,
+		},
+	},
 }}
 

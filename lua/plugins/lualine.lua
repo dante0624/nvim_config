@@ -2,7 +2,7 @@ return {{
 	'nvim-lualine/lualine.nvim',
 	tag = "compat-nvim-0.6",
 	dependencies = { 'nvim-tree/nvim-web-devicons', },
-    event = "VeryLazy",
+	lazy = false, -- Don't lazy load, for my session management
 	opts = {
 		sections = {
 			lualine_a = {'mode'},
