@@ -101,9 +101,9 @@ return {
 					format = function(entry, vim_item)
 						vim_item.kind = string.format("%s", kind_icons[vim_item.kind])
 						vim_item.menu = ({
+							luasnip = "[Snippet]",
 							nvim_lua = "[Nvim Lua]",
 							nvim_lsp = "[LSP]",
-							luasnip = "[Snippet]",
 							buffer = "[Buffer]",
 							path = "[Path]",
 						})[entry.source.name]
@@ -111,9 +111,9 @@ return {
 					end,
 				},
 				sources = {
+					{ name = "luasnip" },
 					{ name = "nvim_lua" },
 					{ name = "nvim_lsp"},
-					{ name = "luasnip" },
 					{ name = "buffer" },
 					{ name = "path" },
 				},
