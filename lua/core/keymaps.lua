@@ -70,3 +70,4 @@ Map({ 'n', 'v', 's', 'i', 't' }, '<C-Right>', '<Cmd>vertical resize +2<CR>')
 -- Easier redo command
 Map('', 'R', '<C-r>')
 
+

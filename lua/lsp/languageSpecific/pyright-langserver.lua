@@ -1,8 +1,8 @@
 return {
-	settings = {
+	pre_attach_settings = {
 		python = {
 			analysis = {
-				typeCheckingMode = "off",
+				typeCheckingMode = "on",
 			},
 		},
 	},

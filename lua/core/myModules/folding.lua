@@ -1,49 +1,111 @@
-local Map = require("utils.map").Map
-local Local_Map = require("utils.map").Local_Map
+--[[ Fixes a strange issue with neovim folding
+For some reason, folds are computed initially, but not recomputed after the buffer is modified
 
---[[ Treesitter initially parses where all folds should be perfectly a buffer first opens
-But sometimes if a newline is added, the new lines that should be folded don't get updated
-Hacky solution to make treesitter re-parse where the folds should be.
-Just set the foldmethod to expr again]]
-local reset_expr = '<Cmd>set foldmethod=expr<CR>'
-Map('', 'zz', reset_expr..'za')
-Map('', 'ze', reset_expr..']z')
-Map('', 'zb', reset_expr..'[z')
+For example, lets say we open a new buffer with the following lines:
+	1  if true then
+	2      print("hello")
+	3  end
+Then vim will correctly compute that lines 1-3 should be folded,
+assuming we are using the syntax or expr (treesitter) folding methods.
 
-Map('', 'za', reset_expr..'za')
-Map('', 'zo', reset_expr..'zo')
-Map('', 'zO', reset_expr..'zO')
-Map('', 'zc', reset_expr..'zc')
-Map('', 'zC', reset_expr..'zC')
-Map('', 'zR', reset_expr..'zR')
-Map('', 'zM', reset_expr..'zM')
+But, lets say we add a new line in the middle:
+	1  if true then
+	2      print("hello")
+	3      print("world")
+	4  end
+For some reason vim will still think that only lines 1-3 should be folded, leading to an incorrect fold
 
--- Treesitter doesn't work with making folds for json files
--- So we use foldmethod=syntax instead, because json has a simple syntax and this works
-vim.api.nvim_create_autocmd({'BufWinEnter'}, {
-	pattern = { "*.json" },
-	callback = function()
-		vim.opt.foldmethod="syntax"
+One way to fix this is to save the buffer, and then reload with :e
+But usually we do not want to save just because we are folding!
 
-		local reset_syntax = '<Cmd>set foldmethod=syntax<CR>'
-		Local_Map('', 'zz', reset_syntax..'za')
-		Local_Map('', 'ze', reset_syntax..']z')
-		Local_Map('', 'zb', reset_syntax..'[z')
-		Local_Map('', 'za', reset_syntax..'za')
-		Local_Map('', 'zo', reset_syntax..'zo')
-		Local_Map('', 'zO', reset_syntax..'zO')
-		Local_Map('', 'zc', reset_syntax..'zc')
-		Local_Map('', 'zC', reset_syntax..'zC')
-		Local_Map('', 'zR', reset_syntax..'zR')
-		Local_Map('', 'zM', reset_syntax..'zM')
+A strange solution is that changing the foldmethod with vim.o.foldmethod = "method"
+will force a recomputation of what needs to be folded.
+This even works if we set this option back to the value that it originally had!
+
+So, below is a script which forces this trick to happen before all folding keybinds]]
+
+-- Assume that lhs and rhs are both strings
+-- We will wrap the rhs in a folding reset
+local function fold_keymap(mode, lhs, rhs, opts)
+	local options = { noremap = true, silent = true, }
+	if opts then
+		options = vim.tbl_extend("force", options, opts)
 	end
+	vim.keymap.set(
+		mode,
+		lhs,
+		function()
+			local method = vim.o.foldmethod
+			vim.opt.foldmethod = method
+
+			-- The exclamation point means to not use remappings
+			-- Important, because without it we would have infinite recursion
+			-- It would which would crash vim
+			vim.cmd("normal! " .. rhs)
+		end,
+		options
+	)
+end
+
+fold_keymap('', 'zz', 'za')
+fold_keymap('', 'ze', ']z')
+fold_keymap('', 'zb', '[z')
+
+fold_keymap('', 'za', 'za')
+fold_keymap('', 'zo', 'zo')
+fold_keymap('', 'zO', 'zO')
+fold_keymap('', 'zc', 'zc')
+fold_keymap('', 'zC', 'zC')
+fold_keymap('', 'zR', 'zR')
+fold_keymap('', 'zM', 'zM')
+
+
+-- Set the folding filetype based on filetype
+local fold_method_picker = vim.api.nvim_create_augroup('fold_method_picker', {clear = true})
+
+-- These filetypes do not have good tressiter parsers, but have good builtin syntax parsers
+local syntax_filetypes = {
+	"*.json",
+}
+
+-- Manually ensure that this matches Treesitter's 'ensure_installed'
+-- Found under the the plugin configuration
+local treesitter_expr_filetypes = {
+	'*.lua',
+	'*.py',
+	'*.java',
+	'*.kt',
+	'*.html',
+	'*.css',
+	'*.js',
+}
+
+-- Autocommands go off in the order they are specified
+-- So we default to manual, but have tressiter_expr or syntax as specific options
+vim.api.nvim_create_autocmd({'BufWinEnter'}, {
+	pattern = '*',
+	group = fold_method_picker,
+	command = "set foldmethod=manual",
+})
+
+vim.api.nvim_create_autocmd({'BufWinEnter'}, {
+	pattern = syntax_filetypes,
+	group = fold_method_picker,
+	command = "set foldmethod=syntax",
+})
+
+vim.api.nvim_create_autocmd({'BufWinEnter'}, {
+	pattern = treesitter_expr_filetypes,
+	group = fold_method_picker,
+	command = "set foldmethod=expr",
 })
 
 -- These options come from Treesitter's README on how to set up folding
-vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldenable = false
 
+
+-- Set custom text which appears whenever we have a fold
 function _G.MyFoldText()
 	local first_line = vim.fn.getline(vim.v.foldstart)
 	local last_line = vim.fn.getline(vim.v.foldend):gsub("^%s*", "") -- Removes leading whitespaces
@@ -74,21 +136,10 @@ vim.opt.foldtext = 'v:lua.MyFoldText()'
 vim.opt.fillchars:append({fold = " "}) -- Gets rid of trailing dots that vim automatically adds in
 
 
--- Manually ensure that this matches Treesitter's 'ensure_installed'
--- Found under the the plugin configuration
-local folding_file_types = {
-	'*.lua',
-	'*.py',
-	'*.java',
-	'*.kt',
-	'*.html',
-	'*.css',
-	'*.js',
-	'*.json'
-}
-
 -- Automatically remembers folds after closing and reopening
 local remember_folds = vim.api.nvim_create_augroup('remember_folds', {clear = true})
+local folding_file_types = vim.tbl_extend("force", syntax_filetypes, treesitter_expr_filetypes)
+
 vim.api.nvim_create_autocmd({'BufWinLeave', 'BufWritePost',}, {
 	pattern = folding_file_types,
 	group = remember_folds,
@@ -100,7 +151,7 @@ vim.api.nvim_create_autocmd({'BufWinEnter',}, {
 	group = remember_folds,
 	callback = function()
 		vim.cmd([[
-			normal zR
+			normal! zR
 			noautocmd silent! loadview
 		]])
 	end,

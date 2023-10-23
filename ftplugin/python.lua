@@ -1,3 +1,5 @@
+require("lsp.languageCommon").start_or_attach("pyright-langserver", {'--stdio'})
+
 -- Buffer scoped variable that I made up for folding
 vim.b.fold_text_bottom = false
 

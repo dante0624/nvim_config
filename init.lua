@@ -5,14 +5,11 @@ require("core")
 -- Launches lazy.nvim, which then sets up and manages all plugins
 require("lazyLauncher")
 
+-- Sets up things which are common to all LSPs
+require("lsp.languageCommon").setup()
+
 -- TODO:
 -- November 1st, 2023
-
--- Move all LSP setup calls to ftplugin/*
-	-- Rename handlers to commonLSP or something
-	-- Each file type can import the on_attach function from here, and use it
-	-- Lazy's profiling tool shows Mason takes 14.5 ms to startup, try to decrease
-		-- Good idea, this way when we add more languages, the startup time is not affeected
 
 -- Get https://github.com/iamcco/markdown-preview.nvim
 

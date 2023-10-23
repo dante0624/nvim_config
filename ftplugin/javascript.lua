@@ -1,3 +1,5 @@
+require("lsp.languageCommon").start_or_attach("typescript-language-server", {'--stdio'})
+
 -- %:p expands out to be the complete path to the current buffer
 local full_fname = vim.fn.expand('%:p')
 

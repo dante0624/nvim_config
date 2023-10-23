@@ -1,32 +1,40 @@
 return {
 	{
+		'williamboman/mason-lspconfig.nvim',
+		dependencies = {
+			'williamboman/mason.nvim',
+		},
+		tag = 'v1.17.1',
+		lazy = false,
+		opts = {
+			ensure_installed = {
+				"lua_ls", -- Lua
+				"pyright", -- Python
+				"jdtls", -- Java
+				"tsserver", -- Typescript and Javascript
+				"html", -- HTML
+				"cssls", -- CSS
+			},
+		},
+	},
+	{
 		'williamboman/mason.nvim',
 		tag = 'v1.8.0',
-		dependencies = {
-			'williamboman/mason-lspconfig.nvim',
-			'neovim/nvim-lspconfig',
-			'hrsh7th/cmp-nvim-lsp',
+		lazy = false,
+		opts = {
+			install_root_dir = require("utils.directories").Mason_Dir,
+			PATH = "skip",
+			ui = {
+				width = 0.9,
+				height = 0.9,
+				keymaps = {
+					toggle_help = "?",
+				},
+			},
+			registries = {
+				"github:mason-org/mason-registry@2023-10-23-stormy-end",
+			},
 		},
-		config = function()
-			require('lsp') -- My folder, handles all setting up of all LSP stuff
-		end,
-	},
-	{
-		'williamboman/mason-lspconfig.nvim',
-		tag = 'v1.17.1',
-		lazy = true,
-	},
-	{
-		'neovim/nvim-lspconfig',
-
-		-- Latest tag breaks my configuration for some reason
-		commit = '710d5386df1894ff5c84da48836e959b47294b5e',
-		lazy = true,
-	},
-	{
-		'hrsh7th/cmp-nvim-lsp',
-		commit = '78924d1d677b29b3d1fe429864185341724ee5a2',
-		lazy = true,
 	},
 	{
 		'mfussenegger/nvim-jdtls',

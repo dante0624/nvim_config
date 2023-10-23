@@ -2,7 +2,7 @@ local dir = require("utils.directories")
 local os = require("utils.os")
 
 -- Gives me the same keymaps as other lsps
-local lsp_on_attach = require("lsp.handlers").on_attach
+local lsp_on_attach = require("lsp.languageCommon").on_attach
 
 -- Find the root directory, returns nil if not found
 local root_dir = require('jdtls.setup').find_root({'.git', 'mvnw', 'gradlew'})
@@ -13,7 +13,7 @@ if single_file then
 end
 
 local inferred_workspace = dir.Java_Workspaces .. dir.serialize_path(root_dir)
-local jdtls_dir = dir.Data_Dir .. "mason/packages/jdtls/"
+local jdtls_dir = dir.Mason_Dir .. "packages/jdtls/"
 local os_config
 if os.is_linux_os or os.is_wsl then
 	os_config = "config_linux"
@@ -60,10 +60,6 @@ local config = {
 
 	-- Gives me the same Keybinds as other LSPs and highlighting stuff
 	on_attach = lsp_on_attach,
-
-	-- Trying to make LspInfo look nice
-	autostart = true,
-	filetypes = { 'java', },
 
 	-- Here you can configure eclipse.jdt.ls specific settings
 	-- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request for a list of options

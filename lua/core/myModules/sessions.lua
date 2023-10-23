@@ -54,8 +54,8 @@ vim.api.nvim_create_autocmd({'VimEnter',}, {
 		vim.cmd("silent! source " .. source_file)
 
 		-- Sometimes restoring the file messes with the cwd, set it back to what it should be
-		vim.cmd('silent! bufdo cd' .. initial_directory)
 		local starting_buffer = vim.fn.bufnr()
+		vim.cmd('silent! bufdo cd' .. initial_directory)
 		vim.cmd('buffer ' .. starting_buffer)
 
 		-- Sometimes neo-tree will leave behind a buffer of itself, delete this if accidentally restored
