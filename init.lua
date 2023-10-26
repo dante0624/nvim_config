@@ -11,6 +11,9 @@ require("lsp.languageCommon").setup()
 -- TODO:
 -- November 1st, 2023
 
+-- Add ESLint and markdown, from the VS-Code-Extracted npm package
+-- Get the complete VS code experience, especially in HTML files
+
 -- Get https://github.com/iamcco/markdown-preview.nvim
 
 -- Get a basic spellchecker with a dictionary of valid words
