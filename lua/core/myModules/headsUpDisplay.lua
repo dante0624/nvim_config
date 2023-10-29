@@ -101,16 +101,6 @@ function M.diagnostics.hide()
 	vim.diagnostic.disable()
 end
 
--- TODO:
--- Use vim.diagnostic with 3 methods calls to optionally hide diagnostics
--- enable, disable, and is_diabled
--- Wrap functions calls by saying that it is being enabled or disabled
--- Then make toggle call these wrapped functions
--- This is nice, because now toggle will tell you if it is on or off
--- Could be useful for diagnostics, or gitsigns where it is unclear
--- Remap these so that they start with h
--- Then remap gitsigns so that they start with s
-
 -- Give each display option certain new methods automatically
 for display_name, display in pairs(M) do
 	-- Give the ability to toggle
