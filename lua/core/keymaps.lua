@@ -70,4 +70,7 @@ Map({ 'n', 'v', 's', 'i', 't' }, '<C-Right>', '<Cmd>vertical resize +2<CR>')
 -- Easier redo command
 Map('', 'R', '<C-r>')
 
-
+-- Within a plugin I like to remap Control-A for Tab Selection
+-- So use Leader-A for this behavior
+-- When hovered over a number, it will cause this number to be incremented
+Map('', '<leader>a', '<C-a>')
