@@ -5,16 +5,15 @@ require("core")
 -- Launches lazy.nvim, which then sets up and manages all plugins
 require("lazyLauncher")
 
--- Sets up things which are common to all LSPs
+-- Sets up things which are common to all LSPs, Linters
 require("lsp.languageCommon").setup()
+require("linting.lintCommon").setup()
 
 -- TODO:
 -- November 1st, 2023
 
--- Add ESLint and markdown, from the VS-Code-Extracted npm package
--- Get the complete VS code experience, especially in HTML files
-
 -- Get https://github.com/iamcco/markdown-preview.nvim
+	-- Also get the VSCode Markdown lsp
 
 -- Get a basic spellchecker with a dictionary of valid words
 
@@ -23,6 +22,9 @@ require("lsp.languageCommon").setup()
 
 -- Find a way to quicky view all diagnostics and TODOs within a project
 	-- Possibly Trouble.nvim
+
+-- See if NeoTree or OIL can allow you to rename files and have the import paths change
+	-- Seems amazing for refactoring
 
 -- Get undotree
 

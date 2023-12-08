@@ -2,6 +2,7 @@ local os = require("utils.os")
 
 local M = {}
 
+M.Config_Dir = vim.fn.fnamemodify(vim.fn.stdpath("config"), ":p")
 M.Logs_Dir = vim.fn.fnamemodify(vim.fn.stdpath("log"), ":p")
 M.Data_Dir = vim.fn.fnamemodify(vim.fn.stdpath("data"), ":p")
 M.Sessions = M.Logs_Dir .. "sessions/"
