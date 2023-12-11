@@ -24,3 +24,5 @@ vim.opt.sw=4
 -- When a line is wrapped, we continue indent the wrapping to match
 vim.opt.breakindent=true
 
+-- Show a line at 80 characters
+vim.opt.colorcolumn = "80"

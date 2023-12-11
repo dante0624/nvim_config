@@ -7,18 +7,19 @@ end
 local M = {}
 
 --[[ Table oriented way of going about this
-Each Display is an interface which needs to implement:
+Each table is an interface which needs to implement:
 	isShow()
 		Return true, false, or nil
-		nil generally means that something is wrong, like a plugin is not loaded
-		When nil is returned, the calling function should generally do nothing
+		nil generally means that something is wrong,
+		ex: a plugin is not loaded
+		When nil is returned, the calling function should do nothing
 	show()
 		Causes the display to be shown, even if it is already shown
 	hide()
 		Causes the display to be hidden, even if it is already hidden
 
-	show() and hide() should use protected calls to check if a necessary plugin is ready,
-	if not these functions should do nothing. ]]
+	show() and hide() should use pcalls to check dependency plugins.
+		if the pcall fails, the functions should no-op ]]
 M.header = {}
 function M.header.isShown()
 	return vim.o.showtabline ~= 0
@@ -62,6 +63,19 @@ function M.line_numbers.hide()
 	vim.opt.number = false
 	vim.cmd('silent! bufdo set nonumber')
 	vim.cmd('buffer ' .. original_buffer)
+end
+
+M.color_column = {}
+function M.color_column.isShown()
+	return vim.o.colorcolumn == "80"
+end
+
+function M.color_column.show()
+	vim.opt.colorcolumn = "80"
+end
+
+function M.color_column.hide()
+	vim.opt.colorcolumn = ""
 end
 
 M.git_signs = {}
@@ -139,11 +153,13 @@ end
 Map('', '<Leader>hh', M.header.toggle)
 Map('', '<Leader>hf', M.footer.toggle)
 Map('', '<Leader>hl', M.line_numbers.toggle)
+Map('', '<Leader>hc', M.color_column.toggle)
 Map('', '<Leader>hs', M.git_signs.toggle)
 Map('', '<Leader>hd', M.diagnostics.toggle)
 
 
--- These functions can be used to quickly specify favorite sets of displays to show/hide
+-- These can be used to set "favorite" HUD settings
+-- Especially useful when set to a keymap
 local function onlyShow(tbl)
 	-- First hide everything
 	for _, display in pairs(M) do
@@ -176,13 +192,14 @@ Map('', '<Leader>ha', function()
 	onlyHide({})
 end)
 
--- My own verion of "zen mode". I think its important to still show diagnostics
+-- My own verion of "zen mode".
+-- I think its important to still show diagnostics
 Map('', '<Leader>hz', function()
 	onlyShow({'diagnostics'})
 end)
 
 -- Get rid of the header because "The Primagen" (p) suggests not using it
--- Use this when trying to immediately jump to buffers with <Control> {a-f}
+-- Use this when trying to immediately jump to buffers with <Control> {a-g}
 Map('', '<Leader>hp', function()
 	onlyHide({'header'})
 end)
