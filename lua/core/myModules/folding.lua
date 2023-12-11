@@ -1,5 +1,5 @@
 --[[ Fixes a strange issue with neovim folding
-For some reason, folds are computed initially, but not recomputed after the buffer is modified
+Folds are computed initially, but not recomputed after the buffer is modified
 
 For example, lets say we open a new buffer with the following lines:
 	1  if true then
@@ -13,16 +13,17 @@ But, lets say we add a new line in the middle:
 	2      print("hello")
 	3      print("world")
 	4  end
-For some reason vim will still think that only lines 1-3 should be folded, leading to an incorrect fold
+Still, vim will think that only lines 1-3 should be folded.
+This leads to an incorrect and confusing fold:
 
 One way to fix this is to save the buffer, and then reload with :e
 But usually we do not want to save just because we are folding!
 
-A strange solution is that changing the foldmethod with vim.o.foldmethod = "method"
-will force a recomputation of what needs to be folded.
-This even works if we set this option back to the value that it originally had!
+A strange solution is that updating the foldmethod with
+vim.o.foldmethod = "method" will force vim to recompute folds.
+This even works if we set the option to its current value!
 
-So, below is a script which forces this trick to happen before all folding keybinds]]
+We use this trick before all folding keybinds]]
 
 -- Assume that lhs and rhs are both strings
 -- We will wrap the rhs in a folding reset
@@ -39,8 +40,8 @@ local function fold_keymap(mode, lhs, rhs, opts)
 			vim.opt.foldmethod = method
 
 			-- The exclamation point means to not use remappings
-			-- Important, because without it we would have infinite recursion
-			-- It would which would crash vim
+			-- No exclamation point would be infinite recursion,
+			-- and would which would crash vim
 			vim.cmd("normal! " .. rhs)
 		end,
 		options
@@ -61,9 +62,13 @@ fold_keymap('', 'zM', 'zM')
 
 
 -- Set the folding filetype based on filetype
-local fold_method_picker = vim.api.nvim_create_augroup('fold_method_picker', {clear = true})
+local fold_method_picker = vim.api.nvim_create_augroup(
+	'fold_method_picker',
+	{clear = true}
+)
 
--- These filetypes do not have good tressiter parsers, but have good builtin syntax parsers
+-- These filetypes do not have good tressiter parsers,
+-- but they have good builtin syntax parsers
 local syntax_filetypes = {
 	"*.json",
 }
@@ -81,7 +86,7 @@ local treesitter_expr_filetypes = {
 }
 
 -- Autocommands go off in the order they are specified
--- So we default to manual, but have tressiter_expr or syntax as specific options
+-- So we default to manual, but can specify treesitter_expr or syntax
 vim.api.nvim_create_autocmd({'BufWinEnter'}, {
 	pattern = '*',
 	group = fold_method_picker,
@@ -108,7 +113,9 @@ vim.opt.foldenable = false
 -- Set custom text which appears whenever we have a fold
 function _G.MyFoldText()
 	local first_line = vim.fn.getline(vim.v.foldstart)
-	local last_line = vim.fn.getline(vim.v.foldend):gsub("^%s*", "") -- Removes leading whitespaces
+
+	 -- Removes leading whitespaces
+	local last_line = vim.fn.getline(vim.v.foldend):gsub("^%s*", "")
 	local line_count = vim.v.foldend - vim.v.foldstart
 
 	local fold_message = ' +--- ' .. line_count .. ' lines ---+ '
@@ -116,10 +123,11 @@ function _G.MyFoldText()
 		fold_message = fold_message:gsub("lines", "line")
 	end
 
-	--[[ If line_count is zero (something went wrong) then first_line==last_line so only display once
-	Some buffers can manually set fold_text_bottom to false to hide the last line
-		Most buffers don't set it at all, so it will be nil. Then nil==false returns false
-		Languages like python should set this in their ftplugin/python.lua file ]]
+	--[[ Two scenerios for not including the last line:
+		If line_count is zero then first_line==last_line.
+			But we only want to show this line once
+		Some filetypes look better like this (python)
+			These buffers can manually set fold_text_bottom to false]]
 	if line_count == 0 or vim.b.fold_text_bottom == false then
 		last_line = ""
 	end
@@ -127,18 +135,26 @@ function _G.MyFoldText()
     local fold_text =  first_line .. fold_message .. last_line
 
 	-- Turn tabs into appropriate number of spaces
-	-- Need to do this now because default behavior later is to turn one tab into one space
+	-- If we don't do this, the foldtext turns 1 tab into 1 space
 	local tab_spaces = string.rep(" ", vim.o.ts)
 	return fold_text:gsub("\t",tab_spaces)
 end
 
 vim.opt.foldtext = 'v:lua.MyFoldText()'
-vim.opt.fillchars:append({fold = " "}) -- Gets rid of trailing dots that vim automatically adds in
+
+ -- Get rid of trailing dots that vim automatically adds in
+vim.opt.fillchars:append({fold = " "})
 
 
 -- Automatically remembers folds after closing and reopening
-local remember_folds = vim.api.nvim_create_augroup('remember_folds', {clear = true})
-local folding_file_types = vim.tbl_extend("force", syntax_filetypes, treesitter_expr_filetypes)
+local remember_folds = vim.api.nvim_create_augroup(
+	'remember_folds',
+	{clear = true}
+)
+local folding_file_types = vim.tbl_extend("force",
+	syntax_filetypes,
+	treesitter_expr_filetypes
+)
 
 vim.api.nvim_create_autocmd({'BufWinLeave', 'BufWritePost',}, {
 	pattern = folding_file_types,

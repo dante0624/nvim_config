@@ -29,16 +29,30 @@ return {
 		tag = "v0.8.0",
 		opts = {},
 		keys = {
-			{'C', function() require('Comment.api').toggle.linewise.current() end, mode = 'n'},
-			{'C', '<Plug>(comment_toggle_linewise_visual)gv', mode = 'v'},
+			{'C', function()
+				require('Comment.api').toggle.linewise.current()
+			end, mode = 'n'},
+			{'C',
+				'<Plug>(comment_toggle_linewise_visual)gv',
+			mode = 'v'},
 
 			-- "cm" is supposed to be short for "comment multi-line"
-			{'<leader>cm', function() require('Comment.api').toggle.blockwise.current() end, mode = 'n'},
-			{'<leader>cm', '<Plug>(comment_toggle_blockwise_visual)gv', mode = 'v', },
+			{'<leader>cm', function()
+				require('Comment.api').toggle.blockwise.current()
+			end, mode = 'n'},
+			{'<leader>cm',
+				'<Plug>(comment_toggle_blockwise_visual)gv',
+			mode = 'v', },
 
-			{'<leader>ck', function() require('Comment.api').insert.linewise.above() end, mode = 'n'},
-			{'<leader>cj', function() require('Comment.api').insert.linewise.below() end, mode = 'n'},
-			{'<leader>cl', function() require('Comment.api').insert.linewise.eol() end, mode = 'n'},
+			{'<leader>ck', function()
+				require('Comment.api').insert.linewise.above()
+			end, mode = 'n'},
+			{'<leader>cj', function()
+				require('Comment.api').insert.linewise.below()
+			end, mode = 'n'},
+			{'<leader>cl', function()
+				require('Comment.api').insert.linewise.eol()
+			end, mode = 'n'},
 		},
 	},
 }

@@ -1,4 +1,4 @@
--- Things which should work with neovim itself, without needing any external plugins
+-- Things which should work with neovim, without needing any plugins
 -- Includes basic keymaps, options, and mini modules which I made myself
 require("core")
 
@@ -23,7 +23,9 @@ require("linting.lintCommon").setup()
 -- Find a way to quicky view all diagnostics and TODOs within a project
 	-- Possibly Trouble.nvim
 
--- See if NeoTree or OIL can allow you to rename files and have the import paths change
+-- See if NeoTree or OIL can allow you to refactor filenames and location
+	-- Critically, it should update import statements automatically
+	-- Needs to hook into an LSP which supports this feature
 	-- Seems amazing for refactoring
 
 -- Get undotree

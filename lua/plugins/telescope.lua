@@ -17,25 +17,27 @@ return {
 			This is known about, as a flaw with telescope itself: 
 				https://github.com/nvim-telescope/telescope.nvim/issues/1277
 			There are 2 fixes:
-				1: When using telescope, exit its insertion mode first (go to normal mode),
-				and then choose the file.
+				1: When using telescope, exit its insertion mode first
+				(go to normal mode), and then choose the file.
 					For some reason this works
 					The bug does not happen from telescope's normal mode
-				2: Automate solution 1, such that some insertion mode keymappings
+				2: Automate solution 1, such that certain keymappings
 				will first go to normal mode first and then execute.
 					First, make use of :stopinsert
 					Then execute a command that opens the file
-					I found a solution online that does this
-						Scroll down really far to see this answer
-						https://github.com/nvim-telescope/telescope.nvim/issues/1048
-						Also implements multi_open after selecting with TAB ]]
+
+			I found a solution online that does this
+				Scroll down really far to see this answer
+				https://github.com/nvim-telescope/telescope.nvim/issues/1048
+				Also implements multi_open after selecting with TAB
+
+			Below is a modified version of that online solution]]
 
 			local actions = require("telescope.actions")
 			local transform_mod = require("telescope.actions.mt").transform_mod
 			local action_state = require("telescope.actions.state")
 
 			-- Helper functions from github issues page
-			-- This was heavily modified by me to make grep work with multi_selection
 			local function multi_open(prompt_bufnr, method)
 				local cmd_map = {
 					vertical = "vsplit",
@@ -54,15 +56,23 @@ return {
 						local section = vim.fn.split(entry.value, ":")
 
 						local filename = section[1]
-						local row = tonumber(section[2]) -- Will be nil if doesn't exist
-						local col = tonumber(section[3]) -- Will be nil if doesn't exist
+
+						-- Will be nil if they don't exist
+						local row = tonumber(section[2])
+						local col = tonumber(section[3])
 
 						vim.cmd(string.format("%s %s", cmd, filename))
 
 						if row and col then
-							local ok, err_msg = pcall(vim.api.nvim_win_set_cursor, 0, { row, col })
+							local ok, err_msg = pcall(
+								vim.api.nvim_win_set_cursor, 0,
+								{ row, col }
+							)
 							if not ok then
-								print("Failed to move to cursor:", err_msg, row, col)
+								print(
+									"Failed to move to cursor:",
+									err_msg, row, col
+								)
 							end
 						end
 					end
@@ -95,12 +105,20 @@ return {
 				i = {
 					["<C-c>"] = actions.close,
 
-					["<C-v>"] = stop_insert(custom_actions.multi_selection_open_vertical),
-					["<C-x>"] = stop_insert(custom_actions.multi_selection_open_horizontal),
-					["<CR>"]  = stop_insert(custom_actions.multi_selection_open),
+					["<C-v>"] = stop_insert(
+						custom_actions.multi_selection_open_vertical
+					),
+					["<C-x>"] = stop_insert(
+						custom_actions.multi_selection_open_horizontal
+					),
+					["<CR>"]  = stop_insert(
+						custom_actions.multi_selection_open
+					),
 
-					["<Tab>"] = actions.toggle_selection + actions.move_selection_worse,
-					["<S-Tab>"] = actions.toggle_selection + actions.move_selection_better,
+					["<Tab>"] = actions.toggle_selection +
+						actions.move_selection_worse,
+					["<S-Tab>"] = actions.toggle_selection +
+						actions.move_selection_better,
 
 					["<C-j>"] = actions.move_selection_next,
 					["<C-k>"] = actions.move_selection_previous,
@@ -112,8 +130,10 @@ return {
 					["<C-d>"] = actions.preview_scrolling_down,
 
 					["<C-l>"] = actions.open_qflist,
-					["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
-					-- ["<M-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+					["<C-q>"] = actions.send_to_qflist +
+						actions.open_qflist,
+					--[[ ["<M-q>"] = actions.send_selected_to_qflist +
+						actions.open_qflist, ]]
 
 					-- ["<C-l>"] = actions.complete_tag,
 
@@ -127,8 +147,10 @@ return {
 					["x"] = custom_actions.multi_selection_open_horizontal,
 					["<CR>"] = custom_actions.multi_selection_open,
 
-					["<Tab>"] = actions.toggle_selection + actions.move_selection_worse,
-					["<S-Tab>"] = actions.toggle_selection + actions.move_selection_better,
+					["<Tab>"] = actions.toggle_selection +
+						actions.move_selection_worse,
+					["<S-Tab>"] = actions.toggle_selection +
+						actions.move_selection_better,
 
 					["j"] = actions.move_selection_next,
 					["k"] = actions.move_selection_previous,
@@ -145,8 +167,10 @@ return {
 					["d"] = actions.preview_scrolling_down,
 
 					["l"] = actions.open_qflist,
-					["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
-					-- ["<M-q>"] = actions.send_selected_to_qflist + actions.open_qflist,
+					["<C-q>"] = actions.send_to_qflist +
+						actions.open_qflist,
+					--[[ ["<M-q>"] = actions.send_selected_to_qflist +
+						actions.open_qflist, ]]
 
 					["?"] = actions.which_key,
 				}
@@ -164,11 +188,15 @@ return {
 						theme = "dropdown",
 					},
 					live_grep = {
-						preview = "true", -- The preview is useful for grep
+
+						-- The preview is useful for grep
+						preview = "true",
 					},
 				},
 				defaults = {
-					preview = false, -- The preview is not really useful otherwise imo
+
+					-- The preview is not really useful for file finding imo
+					preview = false,
 					sorting_strategy = "ascending",
 					layout_config = {
 						prompt_position = 'top',

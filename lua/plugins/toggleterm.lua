@@ -9,7 +9,7 @@ function _G.set_term_keymaps()
 		vim.keymap.set(mode, lhs, rhs, options)
 	end
 
-	-- For some reason <C-\><C-n> has the effect of going from terminal mode to normal mode
+	-- For some reason <C-\><C-n> goes from terminal mode to normal mode
 	-- The intention here is to exit the terminal with <j & k>, q
 	term_map('t', 'jk', [[<C-\><C-n>]])
 	term_map('t', 'kj', [[<C-\><C-n>]])
@@ -49,11 +49,17 @@ return {{
 
 		require("toggleterm").setup({
 			direction = 'float',
-			size = 20, -- Only relevant if I switch to horizontal
+
+			-- Only relevant if I switch to horizontal
+			size = 20,
 			shade_terminals = false,
 			open_mapping = open_mapping,
-			insert_mappings = false, -- whether or not the open mapping applies in insert mode
-			terminal_mappings = false, -- whether or not the open mapping applies in terminal mode
+
+			-- whether or not the open mapping applies in insert mode
+			insert_mappings = false,
+
+			-- whether or not the open mapping applies in terminal mode
+			terminal_mappings = false,
 			persist_mode = false,
 			float_opts = {
 				width = function() return math.floor(vim.o.columns * 0.9) end,

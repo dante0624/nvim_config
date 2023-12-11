@@ -3,8 +3,12 @@ return {{
 
 	"folke/tokyonight.nvim",
 	tag = "v2.3.0",
-	lazy = false, -- make sure we load this during startup if it is your main colorscheme
-	priority = 1000, -- make sure to load this before all the other start plugins
+
+	-- make sure we load this during startup if it is your main colorscheme
+	lazy = false,
+
+	-- make sure to load this before all the other start plugins
+	priority = 1000,
 	config = function()
 		-- load the colorscheme here
 		vim.cmd([[colorscheme tokyonight]])
@@ -19,7 +23,8 @@ return {{
 		-- Remove background highlighting on folds
 		vim.cmd.highlight("Folded", "guibg=none")
 
-		-- Make DocStrings have the same hue as normal strings, just less bright and italicized
+		-- Make DocStrings have the same hue as normal strings,
+		-- just less bright and italicized
 		vim.cmd.highlight("@string.documentation", "guifg=#a6c478")
 		vim.cmd.highlight("@string.documentation", "cterm=italic")
 		vim.cmd.highlight("@string.documentation", "gui=italic")

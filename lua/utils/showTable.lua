@@ -33,13 +33,13 @@ local function tbl_lines_body(tbl, indent, ignored)
 	return stringified_lines
 end
 
---[[ Turns some associative table of key-value pairs (may be nested) to a big strigified version
-Returns that strigified version, with each line being split up into different values of a numeric table
-In other words, each table entry is a new line in the strigified version ]]
+--[[ Turns a lua table (may be nested) to a big strigified version.
+This strigified version has tabs for indenting.
+
+Returns that strigified version as a new table,
+where each entry is a single line of the big strigified version.]]
 local function tbl_to_lines(tbl, ignored_keys)
-
-
-	-- Turn this into an associative table, this way we can instantly index later
+	-- Make an associative table, this way we can instantly index later
 	local ignored = {}
 	for _, key in ipairs(ignored_keys) do
 		ignored[key] = key
@@ -53,7 +53,7 @@ local function tbl_to_lines(tbl, ignored_keys)
 	table.insert(return_tbl, '}')
 
 	-- Remove all newline characters that might exist
-	-- We want the only newlines to come from being separate entries in this table
+	-- We separate lines by having seperate entries in this table
 	for k, v in ipairs(return_tbl) do
 		return_tbl[k] = v:gsub("\n", "")
 	end
@@ -77,8 +77,8 @@ vim.cmd([[
 
 --[[ Defines how we highlight a buffer
 Return all string parsing information for a single line
-Returns a numberic table, where each value in that table is a sub-table
-Each sub-table has the format {"Highlight group", "starting column index", "ending column index"}
+Returns a numberic table, where each value has the structure:
+	{"Highlight group", "starting column index", "ending column index"}
 The indicies are based on 0 indexing, and the end is not included ]]
 local function parse_line(line)
 	-- Edge case of just the first line
@@ -89,7 +89,9 @@ local function parse_line(line)
 	-- Edge case of closing bracket
 	local close_bracket_index = string.find(line, "}")
 	if close_bracket_index ~= nil then
-		return {{"@constructor", close_bracket_index - 1, close_bracket_index}}
+		return {
+			{"@constructor", close_bracket_index - 1, close_bracket_index}
+		}
 	end
 
 	-- All other lines should have '=' in them and be indented at least once
@@ -128,10 +130,10 @@ local function get_parsing(buffer_number)
 	for line_num, line in ipairs(all_lines) do
 		local line_groups = parse_line(line)
 		for _, line_group in ipairs(line_groups) do
-			-- First add the line number to the line_group, and convert it from 1-index to 0-index
+			-- Add line number to line_group, and convert to 0-index
 			table.insert(line_group, line_num - 1)
 
-			-- Then add to the big table of all groups
+			-- Add to the big table of all groups
 			table.insert(parsed_groups, line_group)
 		end
 	end
@@ -141,11 +143,18 @@ end
 
 local function highlight_buffer(buffer_number)
 	for _, parsing in ipairs(get_parsing(buffer_number)) do
-		vim.api.nvim_buf_add_highlight(buffer_number, -1, parsing[1], parsing[4], parsing[2], parsing[3])
+		vim.api.nvim_buf_add_highlight(
+			buffer_number,
+			-1,
+			parsing[1],
+			parsing[4],
+			parsing[2],
+			parsing[3]
+		)
 	end
 end
 
--- If the name is already in use, then just return the buffer number attached to that name
+-- If the name is already in use, then its existing buffer number
 -- Otherwise, create a new buffer and return the new buffer number
 local function create_buffer(name)
 	local existing_buffer_number = vim.fn.bufnr(name)
@@ -179,11 +188,13 @@ end
 local function focus_buffer(buffer_number)
 	-- Get the window the buffer is in and set the cursor position to the top
 	vim.cmd("buffer " .. buffer_number)
-	local buffer_window = vim.api.nvim_call_function("bufwinid", { buffer_number })
+	local buffer_window = vim.api.nvim_call_function(
+		"bufwinid",
+		{ buffer_number }
+	)
 	vim.api.nvim_win_set_cursor(buffer_window, { 1, 0 })
 
 	-- Make the buffer listed when we focus it
-	-- Because it is a scratch buffer, neovim automatically unlists it when we leave the buffer
 	vim.bo[buffer_number].buflisted = true
 
 	-- Set the folding type to be correct
@@ -194,10 +205,9 @@ local function focus_buffer(buffer_number)
 	vim.cmd("normal! zR")
 end
 
---[[ Given a table, send it to an output buffer to be visualized
-Give that buffer a unique name (Should not clash with any existing buffer names!)
-And specify a list of keys to ignore from the table
-This should just be a numeric table, which contains the keys as string values ]]
+--[[ Given a table, send it to an output buffer to be visualized.
+Give that buffer a unique name (emphasis on unique!)
+and specify a list of keys (as strings) to ignore from the table]]
 return function (tbl, name, ignored_keys)
 	if name == nil then
 		name = "((showTable output))"

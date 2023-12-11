@@ -14,7 +14,8 @@ return {
 		hostInfo = 'neovim',
 		tsserver = {
 			logDirectory = utils.Logs_Dir,
-			logVerbosity = 'off', -- Can set to 'off', 'terse', 'normal', 'requestTime', 'verbose'
+			-- Can set to 'off', 'terse', 'normal', 'requestTime', 'verbose'
+			logVerbosity = 'off',
 		},
 		npmLocation = npmLocation,
 	},

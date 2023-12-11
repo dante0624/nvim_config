@@ -9,7 +9,8 @@ local root_dir = require('jdtls.setup').find_root({'.git', 'mvnw', 'gradlew'})
 local single_file = root_dir == nil
 
 if single_file then
-	root_dir = vim.fn.expand('%:p:h') -- The folder that the current buffer is in
+	 -- Set to the folder that the current buffer is in
+	root_dir = vim.fn.expand('%:p:h')
 end
 
 local inferred_workspace = dir.Java_Workspaces .. dir.serialize_path(root_dir)
@@ -24,15 +25,14 @@ elseif os.is_windows then
 end
 
 -- Essentially do a regex search on a directory to find this jar file
-local launcher_file_path = vim.fn.globpath(jdtls_dir .. 'plugins', '*launcher_*')
+local launcher_file = vim.fn.globpath(jdtls_dir .. 'plugins', '*launcher_*')
 
--- See `:help vim.lsp.start_client` for an overview of the supported `config` options.local config = {
--- The command that starts the language server
+-- See `:help vim.lsp.start_client` for the supported `config` options.
 -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
 local config = {
 	cmd = {
 		'java', -- or '/path/to/java17_or_newer/bin/java'
-				-- depends on if `java` is in your $PATH env variable and if it points to the right version.
+				-- java17 or newer needs to be on the path
 
 		'-Declipse.application=org.eclipse.jdt.ls.core.id1',
 		'-Dosgi.bundles.defaultStartLevel=4',
@@ -44,13 +44,14 @@ local config = {
 		'--add-opens', 'java.base/java.util=ALL-UNNAMED',
 		'--add-opens', 'java.base/java.lang=ALL-UNNAMED',
 
-		-- This line was modified by me, it is a jar file that can vary based on version or os
-		'-jar', launcher_file_path,
+		-- This will depend on the version of jdtls installed
+		'-jar', launcher_file,
 
-		-- Same with this line, the ending is dependent on operating system
+		-- This will depend on the machine os
 		'-configuration', jdtls_dir .. os_config,
 
-		-- Very proud of how I handled this, it creates data directories under a new folder in the Data_Dir
+		-- Very proud of how I handled this
+		-- It creates data directories under a new folder in the Data_Dir
 		-- But it makes a new, nicely named folder, for each different project
 		'-data', inferred_workspace
 	},
@@ -62,7 +63,7 @@ local config = {
 	on_attach = lsp_on_attach,
 
 	-- Here you can configure eclipse.jdt.ls specific settings
-	-- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request for a list of options
+	-- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
 	settings = {
 		java = {
 			autobuild = {
@@ -72,7 +73,7 @@ local config = {
 	},
 
 	-- Language server `initializationOptions`
-	-- You need to extend the `bundles` with paths to jar files if you want to use additional eclipse.jdt.ls plugins.
+	-- 'bundles' can specify paths to jar files for eclipse.jdt.ls plugins
 	-- See https://github.com/mfussenegger/nvim-jdtls#java-debug-installation
 	-- This could later be used for debuggers
 	init_options = {

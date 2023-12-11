@@ -1,3 +1,8 @@
+-- Wrap this in a function because of lazy loading
+local function get_neotree_commands()
+	return require("neo-tree.sources.filesystem.commands")
+end
+
 return {
 	{
 		"nvim-neo-tree/neo-tree.nvim",
@@ -5,11 +10,15 @@ return {
 		dependencies = {
 			"nvim-tree/nvim-web-devicons",
 			"MunifTanjim/nui.nvim",
-			"nvim-lua/plenary.nvim", -- version of this plugin is locked by telescope.lua file
+
+			-- version of this plugin is locked by telescope.lua file
+			"nvim-lua/plenary.nvim",
 		},
+		-- Normally we lazy load the plugin based on keymappings
+		-- However, we also load if the user starts vim on a directory
 		init = function()
-			local cmdline_arg = vim.v.argv[3]
-			if cmdline_arg ~= nil and vim.fn.isdirectory(cmdline_arg) == 1 then
+			local vim_arg = vim.v.argv[3]
+			if vim_arg ~= nil and vim.fn.isdirectory(vim_arg) == 1 then
 				vim.cmd("do User started_on_directory")
 			end
 		end,
@@ -24,16 +33,19 @@ return {
 			-- Buffers Tree
 			{'tb', '<Cmd>Neotree buffers<CR>', mode = {"n", "v"}},
 
-			-- Other
-			{'tf', '<Cmd>Neotree reveal_force_cwd<CR>', mode = {"n", "v"}}, -- Reveal focuses on the current file
+			-- Reveal focuses on the current file
+			{'tf', '<Cmd>Neotree reveal_force_cwd<CR>', mode = {"n", "v"}},
 		},
 		opts = {
-        	close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
+        	close_if_last_window = true,
 			window = {
 				width = "90%",
 				mappings = {
-					-- New
-					["s"] = { "show_help", nowait=false, config = { title = "Order by", prefix_key = "s" }},
+					-- New keymappings
+					["s"] = { "show_help", nowait=false, config = {
+						title = "Order by",
+						prefix_key = "s"
+					}},
 					["sc"] = { "order_by_created", nowait = false },
 					["sd"] = { "order_by_diagnostics", nowait = false },
 					["sg"] = { "order_by_git_status", nowait = false },
@@ -80,9 +92,11 @@ return {
 			},
 			commands = {
 				open_silently = function(state)
-					local cmds = require("neo-tree.sources.filesystem.commands")
+					local cmds = get_neotree_commands()
 					local node = state.tree:get_node()
-					local current_buff = vim.fn.expand('#:p') -- Need alternative because the current buffer is the tree
+
+					-- Need alternative because the current buffer is the tree
+					local current_buff = vim.fn.expand('#:p')
 
 					if node.type == "directory" then
 						cmds.open(state)
@@ -92,7 +106,9 @@ return {
 					-- If we are currently looking at the [No Name] buffer
 					if current_buff == "" then
 						cmds.open(state)
-						vim.cmd("Neotree") -- Return focus to the tree
+
+						-- Return focus to the tree
+						vim.cmd("Neotree")
 
 					-- If we are currently looking at a non-null buffer
 					else
@@ -101,7 +117,7 @@ return {
 
 				end,
 				open_and_go = function(state)
-					local cmds = require("neo-tree.sources.filesystem.commands")
+					local cmds = get_neotree_commands()
 					local node = state.tree:get_node()
 
 					cmds.open(state)
@@ -135,7 +151,7 @@ return {
 				},
 				commands = {
 					set_root_or_open = function(state)
-						local cmds = require("neo-tree.sources.filesystem.commands")
+						local cmds = get_neotree_commands()
 						local node = state.tree:get_node()
 						if node.type == "file" then
 							cmds.open(state)

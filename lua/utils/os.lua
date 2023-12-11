@@ -1,6 +1,6 @@
 local M = {}
 
--- Flags that we can use in other files to came the Nvim config work on all OS versions
+-- Use these flags with if statements to guard OS specific lines of code
 M.is_linux_os = vim.fn.has("unix") == 1
 M.is_macos = vim.fn.has("mac") == 1
 M.is_windows = vim.fn.has("win32") == 1

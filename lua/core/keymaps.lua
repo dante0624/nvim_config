@@ -21,7 +21,7 @@ Map('', 'L', '$')
 Map('', 'K', '020kzz')
 Map('', 'J', '020jzz')
 
--- Paste from register 0 instead of the unnamed register, such that we only paste what we yank
+-- Only paste what we "yank", not the deleted text
 Map('', 'p', '"0p')
 Map('', 'P', '"0gP') -- Moves the cursor after pasting with shift
 
@@ -33,7 +33,8 @@ Map('', '<C-p>', '"+p')
 Map('', '<C-y>', '"+y')
 Map('', '<C-x>', '"+x')
 
--- Use Control to paste while in insertion mode. p for default, v for clipboard
+-- Use Control to paste while in insertion mode.
+-- p for default, v for clipboard
 Map('i', '<C-p>', '<Esc>"0pa')
 Map('i', '<C-v>', '<Esc>"+pa')
 

@@ -31,7 +31,9 @@ return {
 					{
 						line = 1,
 						column = 1,
-						text = "Stylelint error, run `stylelint " .. vim.fn.expand("%") .. "` for more info.",
+						text = "Stylelint error, run `stylelint " ..
+							vim.fn.expand("%") ..
+							"` for more info.",
 						severity = "error",
 						rule = "none",
 					},

@@ -6,7 +6,8 @@ return {{
 	build = ":TSUpdate",
 	event = { "BufReadPost", "BufNewFile" },
 	config = function()
-		-- Zig is the easiest compiler to get on Windows and WSL, but not on for MacOS or Linux
+		-- Most OS can install cc pretty easily, except for windows
+		-- Zig is the easiest compiler to get on Windows
 		local treesitter_compilers
 		if os.is_windows then
 			treesitter_compilers = { "zig" }
@@ -19,9 +20,8 @@ return {{
 		require('nvim-treesitter.configs').setup({
 			highlight = { enable = true },
 
-			-- Note that treesitter for json sucks, and the default syntax works perfectly
+			-- Treesitter for json sucks, and the default syntax works
 			ensure_installed = {
-				"comment", -- If I don't have this, WSL bugs out on every comment
 				"lua",
 				"python",
 				"java",
@@ -29,6 +29,9 @@ return {{
 				"html",
 				"css",
 				"javascript",
+
+				-- If I don't have this, WSL bugs out on every comment
+				"comment",
 			},
 		})
 	end,
