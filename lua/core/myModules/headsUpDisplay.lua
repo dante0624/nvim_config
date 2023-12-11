@@ -4,6 +4,14 @@ local function toboolean(str)
 	return str == "true"
 end
 
+-- Sets an option to all buffers, then returns to the original_buffer
+-- Happens immediately, appearing that the original buffer was never left
+local function set_all(option)
+	local original_buffer = vim.fn.bufnr()
+	vim.cmd('silent! bufdo set ' .. option)
+	vim.cmd('buffer ' .. original_buffer)
+end
+
 local M = {}
 
 --[[ Table oriented way of going about this
@@ -52,17 +60,11 @@ function M.line_numbers.isShown()
 end
 
 function M.line_numbers.show()
-	local original_buffer = vim.fn.bufnr()
-	vim.opt.number = true
-	vim.cmd('silent! bufdo set number')
-	vim.cmd('buffer ' .. original_buffer)
+	set_all("number")
 end
 
 function M.line_numbers.hide()
-	local original_buffer = vim.fn.bufnr()
-	vim.opt.number = false
-	vim.cmd('silent! bufdo set nonumber')
-	vim.cmd('buffer ' .. original_buffer)
+	set_all("nonumber")
 end
 
 M.color_column = {}
@@ -71,11 +73,11 @@ function M.color_column.isShown()
 end
 
 function M.color_column.show()
-	vim.opt.colorcolumn = "80"
+	set_all("colorcolumn=80")
 end
 
 function M.color_column.hide()
-	vim.opt.colorcolumn = ""
+	set_all('colorcolumn=""')
 end
 
 M.git_signs = {}
