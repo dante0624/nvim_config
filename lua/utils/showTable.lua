@@ -200,7 +200,7 @@ And specify a list of keys to ignore from the table
 This should just be a numeric table, which contains the keys as string values ]]
 return function (tbl, name, ignored_keys)
 	if name == nil then
-		name = "[[showTable output]]"
+		name = "((showTable output))"
 	end
 	if ignored_keys == nil then
 		ignored_keys = {}

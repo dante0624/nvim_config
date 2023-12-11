@@ -6,7 +6,7 @@ local M = {}
 -- Defines a new global method for debugging table information
 function M.setup()
 	function LintInfo()
-		showTable(lint_tbl.linters, "[[Lint Info]]")
+		showTable(lint_tbl.linters, "((Lint Info))")
 	end
 end
 

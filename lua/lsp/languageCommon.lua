@@ -100,7 +100,7 @@ function M.setup()
 			}
 		end
 
-		showTable(vim.lsp.get_active_clients(), "[[Lsp Info]]", ignored_keys)
+		showTable(vim.lsp.get_active_clients(), "((Lsp Info))", ignored_keys)
 	end
 end
 
