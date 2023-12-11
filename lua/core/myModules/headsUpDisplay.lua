@@ -16,7 +16,7 @@ local M = {}
 
 --[[ Table oriented way of going about this
 Each table is an interface which needs to implement:
-	isShow()
+	isShown()
 		Return true, false, or nil
 		nil generally means that something is wrong,
 		ex: a plugin is not loaded
