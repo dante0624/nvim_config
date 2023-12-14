@@ -1,23 +1,5 @@
 return {
 	{
-		'williamboman/mason-lspconfig.nvim',
-		dependencies = {
-			'williamboman/mason.nvim',
-		},
-		tag = 'v1.17.1',
-		lazy = false,
-		opts = {
-			ensure_installed = {
-				"lua_ls", -- Lua LSP
-				"pyright", -- Python LSP
-				"jdtls", -- Java LSP
-				"tsserver", -- Typescript and Javascript LSP
-				"html", -- HTML LSP
-				"cssls", -- CSS LSP
-			},
-		},
-	},
-	{
 		'williamboman/mason.nvim',
 		tag = 'v1.8.0',
 		lazy = false,
@@ -33,11 +15,28 @@ return {
 			},
 			-- This version locks all LSPs, Linters, Formatters, and DAPs
 			registries = {
-				"github:mason-org/mason-registry@2023-10-23-stormy-end",
+				"github:mason-org/mason-registry@2023-12-13-smug-hamlet",
 			},
 		},
 	},
-	-- Not actually a mason related plugin
+	{
+		'WhoIsSethDaniel/mason-tool-installer.nvim',
+		dependencies = {
+			'williamboman/mason.nvim',
+		},
+		commit = '8b70e7f1e0a4119c1234c3bde4a01c241cabcc74',
+		lazy = false,
+		opts = {
+			ensure_installed = {
+				"lua-language-server", -- Lua LSP
+				"pyright", -- Python LSP
+				"jdtls", -- Java LSP
+				"typescript-language-server", -- Typescript and Javascript LSP
+				"html-lsp", -- HTML LSP
+				"css-lsp", -- CSS LSP
+			},
+		},
+	},
 	-- This just helps run jdtls, so it fits nicely here
 	{
 		'mfussenegger/nvim-jdtls',
