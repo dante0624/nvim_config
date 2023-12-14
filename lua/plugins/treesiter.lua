@@ -19,6 +19,7 @@ return {{
 		require('nvim-treesitter.install').prefer_git = true
 		require('nvim-treesitter.configs').setup({
 			highlight = { enable = true },
+			indent = { enable = true },
 
 			-- Treesitter for json sucks, and the default syntax works
 			ensure_installed = {
