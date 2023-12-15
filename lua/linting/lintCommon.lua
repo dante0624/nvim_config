@@ -12,20 +12,6 @@ function M.setup()
 	end
 end
 
--- Only configures a linter if it hasn't been configured yet
-function M.safe_configure(linter_name)
-	--[[ Checks if it was already configured
-	The nvimLint plugin author already configured several linter names
-	Mine generally begin with mason_ because they reference a full mason path
-	It also makes my linter_names unique from the plugin author's.]]
-	if linters[linter_name] then
-		return
-	end
-
-	-- Set to my configuration
-	linters[linter_name] = require("linting.lintSpecific." .. linter_name)
-end
-
 -- This is the function which should be called by each filetype under ftplugin
 function M.setup_linters(linter_names)
 	-- These will group which linters can be called on stdin and which cannot
@@ -34,12 +20,21 @@ function M.setup_linters(linter_names)
 
 	-- First configure everything and group everything
 	for _, linter_name in ipairs(linter_names) do
-		M.safe_configure(linter_name)
+		--[[ The nvimLint author already configured several linter names
+		Mine begin with mason_ because they reference a full mason path
+		It also makes my linter_names unique from the plugin author's.]]
+		local mason_name = "mason_" .. linter_name
 
-		if linters[linter_name].stdin then
-			table.insert(stdin_linters, linter_name)
+		if linters[mason_name] == nil then
+			linters[mason_name] = require(
+				"linting.lintSpecific." .. linter_name
+			)
+		end
+
+		if linters[mason_name].stdin then
+			table.insert(stdin_linters, mason_name)
 		else
-			table.insert(file_linters, linter_name)
+			table.insert(file_linters, mason_name)
 		end
 	end
 
@@ -49,8 +44,8 @@ function M.setup_linters(linter_names)
 		{
 			buffer = 0,
 			callback = function()
-				for _, linter_name in ipairs(stdin_linters) do
-					try_lint(linter_name)
+				for _, mason_name in ipairs(stdin_linters) do
+					try_lint(mason_name)
 				end
 			end,
 		}
@@ -60,8 +55,8 @@ function M.setup_linters(linter_names)
 	vim.api.nvim_create_autocmd("BufWritePost", {
 		buffer = 0,
 		callback = function()
-			for _, linter_name in ipairs(file_linters) do
-				try_lint(linter_name)
+			for _, mason_name in ipairs(file_linters) do
+				try_lint(mason_name)
 			end
 		end,
 	})
