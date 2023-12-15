@@ -1,6 +1,51 @@
--- Wrap this in a function because of lazy loading
-local function get_neotree_commands()
-	return require("neo-tree.sources.filesystem.commands")
+-- Helper functions for defining my own custom commands in the tree
+local function get_neotree_commands(source)
+	if source == "filesystem" then
+		return require("neo-tree.sources.filesystem.commands")
+	end
+
+	-- Applies to git status and buffers
+	return require("neo-tree.sources.common.commands")
+
+end
+
+-- Open a tree node silently, should work for any source
+local function common_open_silently(state, source)
+	local cmds = get_neotree_commands(source)
+	local node = state.tree:get_node()
+
+	-- Need alternative because the current buffer is the tree
+	local current_buff = vim.fn.expand('#:p')
+
+	if node.type == "directory" then
+		cmds.open(state)
+		return
+	end
+
+	-- If we are currently looking at the [No Name] buffer
+	if current_buff == "" then
+		cmds.open(state)
+
+		-- Return focus to the tree
+		vim.cmd("Neotree")
+
+	-- If we are currently looking at a non-null buffer
+	else
+		vim.cmd("badd "..node.path)
+	end
+
+end
+
+-- Open a tree node and go, should work for any source
+local function common_open_and_go(state, source)
+	local cmds = get_neotree_commands(source)
+	local node = state.tree:get_node()
+
+	cmds.open(state)
+
+	if node.type == "file" then
+		vim.cmd("Neotree action=close")
+	end
 end
 
 return {
@@ -84,48 +129,7 @@ return {
 					["z"] = "noop",
 					["e"] = "noop",
 					["w"] = "noop",
-
-					-- The custom mappings
-					["o"] = "open_silently",
-					["<CR>"] = "open_and_go",
 				},
-			},
-			commands = {
-				open_silently = function(state)
-					local cmds = get_neotree_commands()
-					local node = state.tree:get_node()
-
-					-- Need alternative because the current buffer is the tree
-					local current_buff = vim.fn.expand('#:p')
-
-					if node.type == "directory" then
-						cmds.open(state)
-						return
-					end
-
-					-- If we are currently looking at the [No Name] buffer
-					if current_buff == "" then
-						cmds.open(state)
-
-						-- Return focus to the tree
-						vim.cmd("Neotree")
-
-					-- If we are currently looking at a non-null buffer
-					else
-						vim.cmd("badd "..node.path)
-					end
-
-				end,
-				open_and_go = function(state)
-					local cmds = get_neotree_commands()
-					local node = state.tree:get_node()
-
-					cmds.open(state)
-
-					if node.type == "file" then
-						vim.cmd("Neotree action=close")
-					end
-				end,
 			},
 			filesystem = {
 				window = {
@@ -147,11 +151,13 @@ return {
 
 						-- The custom mappings
 						["O"] = "set_root_or_open",
+						["o"] = "open_silently",
+						["<CR>"] = "open_and_go",
 					},
 				},
 				commands = {
 					set_root_or_open = function(state)
-						local cmds = get_neotree_commands()
+						local cmds = get_neotree_commands("filesystem")
 						local node = state.tree:get_node()
 						if node.type == "file" then
 							cmds.open(state)
@@ -159,11 +165,30 @@ return {
 							cmds.set_root(state)
 						end
 					end,
+					open_silently = function(state)
+						common_open_silently(state, "filesystem")
+					end,
+					open_and_go = function(state)
+						common_open_and_go(state, "filesystem")
+					end
 				},
 			},
 			buffers = {
 				window = {
 					position = "float",
+					mappings = {
+						-- The custom mappings
+						["o"] = "open_silently",
+						["<CR>"] = "open_and_go",
+					},
+				},
+				commands = {
+					open_silently = function(state)
+						common_open_silently(state, "buffers")
+					end,
+					open_and_go = function(state)
+						common_open_and_go(state, "buffers")
+					end
 				},
 				follow_current_file = {
 					enabled = true,
@@ -172,6 +197,19 @@ return {
 			git_status = {
 				window = {
 					position = "float",
+					mappings = {
+						-- The custom mappings
+						["o"] = "open_silently",
+						["<CR>"] = "open_and_go",
+					},
+				},
+				commands = {
+					open_silently = function(state)
+						common_open_silently(state, "git_status")
+					end,
+					open_and_go = function(state)
+						common_open_and_go(state, "git_status")
+					end
 				},
 			},
 			default_component_configs = {
