@@ -14,12 +14,8 @@ return {
 		"-f",
 		"json",
 		"--stdin",
-		"--stdin-filename",
-		function()
-			return vim.fn.expand("%:p")
-		end,
 	},
-	stream = "stdout",
+	stream = "stderr",
 	ignore_exitcode = true,
 	parser = function(output)
 		local status, decoded = pcall(vim.json.decode, output)

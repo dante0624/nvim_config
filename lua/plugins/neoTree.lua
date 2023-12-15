@@ -1,3 +1,5 @@
+local lazy_map = require("utils.map").lazy_map
+
 -- Helper functions for defining my own custom commands in the tree
 local function get_neotree_commands(source)
 	if source == "filesystem" then
@@ -68,23 +70,44 @@ return {
 			end
 		end,
 		event = "User started_on_directory",
-		keys = {
-			-- Normal Tree
-			{'t<CR>', '<Cmd>Neotree<CR>', mode = {"n", "v"}},
+		keys = lazy_map({
+			-- Close the tree
+			{'<leader>tq', '<Cmd>Neotree close<CR>'},
+
+			-- Netrw-style Tree
+			{'<leader>to', '<Cmd>Neotree<CR>'},
+			{'<leader>tp', '<Cmd>Neotree reveal_force_cwd<CR>'},
+
+			--[[ 4 Slightly different ways to open the tree on the left (asdf)
+			I prefer Netrw-style, because I don't like the split screen
+			Main use case is importing a file, but I forgot the full path ]]
+			{
+				'<leader>ta',
+				'<Cmd>Neotree position=left<CR>'
+			},
+			{
+				'<leader>ts',
+				'<Cmd>Neotree position=left reveal_force_cwd<CR>'
+			},
+			{
+				'<leader>td',
+				'<Cmd>Neotree position=left action=show<CR>'
+			},
+			{
+				'<leader>tf',
+				'<Cmd>Neotree position=left action=show reveal_force_cwd<CR>'
+			},
 
 			-- Git Status Tree
-			{'ts', '<Cmd>Neotree git_status<CR>', mode = {"n", "v"}},
+			{'<leader>tg', '<Cmd>Neotree git_status<CR>'},
 
 			-- Buffers Tree
-			{'tb', '<Cmd>Neotree buffers<CR>', mode = {"n", "v"}},
+			{'<leader>tb', '<Cmd>Neotree buffers<CR>'},
 
-			-- Reveal focuses on the current file
-			{'tf', '<Cmd>Neotree reveal_force_cwd<CR>', mode = {"n", "v"}},
-		},
+		}),
 		opts = {
         	close_if_last_window = true,
 			window = {
-				width = "90%",
 				mappings = {
 					-- New keymappings
 					["s"] = { "show_help", nowait=false, config = {

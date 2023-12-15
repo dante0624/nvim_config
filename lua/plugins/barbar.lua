@@ -1,4 +1,4 @@
-local Map = require("utils.map").Map
+local map = require("utils.map").map
 
 return {{
 	'romgrk/barbar.nvim',
@@ -17,19 +17,19 @@ return {{
 		})
 
 		-- Manipulate Buffer Tabs
-		Map('n', '<S-TAB>', '<Cmd>BufferPrev<CR>')
-		Map('n', '<TAB>', '<Cmd>BufferNext<CR>')
-		Map('', '<leader><S-TAB>', '<Cmd>BufferMovePrev<CR>')
-		Map('', '<leader><TAB>', '<Cmd>BufferMoveNext<CR>')
+		map('n', '<S-TAB>', '<Cmd>BufferPrev<CR>')
+		map('n', '<TAB>', '<Cmd>BufferNext<CR>')
+		map('', '<leader><S-TAB>', '<Cmd>BufferMovePrev<CR>')
+		map('', '<leader><TAB>', '<Cmd>BufferMoveNext<CR>')
 
-		Map('', '<leader>q', '<Cmd>BufferClose<CR>')
+		map('', '<leader>q', '<Cmd>BufferClose<CR>')
 
 		-- Pick buffer to immediately jump to a buffer
-		Map('', '<C-a>', '<Cmd>BufferGoto 1<CR>')
-		Map('', '<C-s>', '<Cmd>BufferGoto 2<CR>')
-		Map('', '<C-d>', '<Cmd>BufferGoto 3<CR>')
-		Map('', '<C-f>', '<Cmd>BufferGoto 4<CR>')
-		Map('', '<C-g>', '<Cmd>BufferGoto 5<CR>')
+		map('', '<C-a>', '<Cmd>BufferGoto 1<CR>')
+		map('', '<C-s>', '<Cmd>BufferGoto 2<CR>')
+		map('', '<C-d>', '<Cmd>BufferGoto 3<CR>')
+		map('', '<C-f>', '<Cmd>BufferGoto 4<CR>')
+		map('', '<C-g>', '<Cmd>BufferGoto 5<CR>')
 
 	end,
 }}

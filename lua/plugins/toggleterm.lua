@@ -1,4 +1,7 @@
-local open_mapping = 'tt'
+local lazy_map = require("utils.map").lazy_map
+
+-- Short for "shell open"
+local open_mapping = '<leader>so'
 
 function _G.set_term_keymaps()
 	local function term_map(mode, lhs, rhs, opts)
@@ -19,29 +22,25 @@ end
 return {{
 	'akinsho/toggleterm.nvim',
 	tag = "v2.8.0",
-	keys = {
-		{open_mapping, '<CMD>ToggleTerm<CR>', mode={'n', 'v',}},
-		{
-			'<Leader><CR>',
-			function()
-				local toggleterm = require("toggleterm")
-				local run_command = vim.b.run_command
-				if run_command == nil then return end
+	keys = lazy_map({
+		{ open_mapping, '<CMD>ToggleTerm<CR>' },
 
-				if require("utils.shell").is_powershell then
-					run_command = run_command:gsub(" && ", " ; ")
-				end
+		-- Short for "shell run"
+		{ '<Leader>sr', function()
+			local toggleterm = require("toggleterm")
+			local run_command = vim.b.run_command
+			if run_command == nil then return end
 
-				toggleterm.exec(run_command)
-			end,
-			mode={'n', 'v',}
-		},
-		{
-			'<Leader>p', --For Previous
-			'<CMD>ToggleTerm<CR><Up><CR>',
-			mode={'n', 'v',}
-		}
-	},
+			if require("utils.shell").is_powershell then
+				run_command = run_command:gsub(" && ", " ; ")
+			end
+
+			toggleterm.exec(run_command)
+		end },
+
+		-- Short for "shell previous" (command)
+		{ '<Leader>sp', '<CMD>ToggleTerm<CR><Up><CR>' }
+	}),
 	config = function()
 		require("utils.shell").set_shell()
 

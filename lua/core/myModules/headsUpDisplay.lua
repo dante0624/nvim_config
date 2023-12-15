@@ -1,4 +1,4 @@
-local Map = require("utils.map").Map
+local map = require("utils.map").map
 
 local function toboolean(str)
 	return str == "true"
@@ -152,12 +152,12 @@ for display_name, display in pairs(M) do
 end
 
 -- Prefix with h for HeadsUpDisplay
-Map('', '<Leader>hh', M.header.toggle)
-Map('', '<Leader>hf', M.footer.toggle)
-Map('', '<Leader>hl', M.line_numbers.toggle)
-Map('', '<Leader>hc', M.color_column.toggle)
-Map('', '<Leader>hs', M.git_signs.toggle)
-Map('', '<Leader>hd', M.diagnostics.toggle)
+map('', '<Leader>hh', M.header.toggle)
+map('', '<Leader>hf', M.footer.toggle)
+map('', '<Leader>hl', M.line_numbers.toggle)
+map('', '<Leader>hc', M.color_column.toggle)
+map('', '<Leader>hg', M.git_signs.toggle)
+map('', '<Leader>hd', M.diagnostics.toggle)
 
 
 -- These can be used to set "favorite" HUD settings
@@ -185,24 +185,24 @@ end
 
 
 -- Show no displays
-Map('', '<Leader>hq', function()
+map('', '<Leader>hq', function()
 	onlyShow({})
 end)
 
 -- Show all displays
-Map('', '<Leader>ha', function()
+map('', '<Leader>ha', function()
 	onlyHide({})
 end)
 
 -- My own verion of "zen mode".
 -- I think its important to still show diagnostics
-Map('', '<Leader>hz', function()
+map('', '<Leader>hz', function()
 	onlyShow({'diagnostics'})
 end)
 
 -- Get rid of the header because "The Primagen" (p) suggests not using it
 -- Use this when trying to immediately jump to buffers with <Control> {a-g}
-Map('', '<Leader>hp', function()
+map('', '<Leader>hp', function()
 	onlyHide({'header'})
 end)
 

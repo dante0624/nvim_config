@@ -1,3 +1,5 @@
+local lazy_map = require("utils.map").lazy_map
+
 return {
 	{
 		'nvim-telescope/telescope.nvim',
@@ -6,10 +8,10 @@ return {
 			'nvim-lua/plenary.nvim',
 			'nvim-telescope/telescope-fzy-native.nvim',
 		},
-		keys = {
-			{'<leader>f', '<Cmd>Telescope find_files<CR>', mode = {"n", "v"},},
-			{'<leader>g', '<Cmd>Telescope live_grep<CR>', mode = {"n", "v"},},
-		},
+		keys = lazy_map({
+			{'<leader>f', '<Cmd>Telescope find_files<CR>'},
+			{'<leader>F', '<Cmd>Telescope live_grep<CR>'},
+		}),
 		config = function()
 			--[[
 			We have a problem where if we open files through telescope,

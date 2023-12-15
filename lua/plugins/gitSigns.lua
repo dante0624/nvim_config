@@ -1,5 +1,5 @@
 local function git_on_attach(bufnr)
-	local gs = package.loaded.gitsigns
+	local git_signs = package.loaded.gitsigns
 
 	local function map(mode, l, r, opts)
 		opts = opts or {}
@@ -8,39 +8,32 @@ local function git_on_attach(bufnr)
 	end
 
 	-- Navigation
-	map('n', '<leader>sj', function()
-		if vim.wo.diff then return '<leader>hj' end
-		vim.schedule(function() gs.next_hunk() end)
-		return '<Ignore>'
-	end, {expr=true})
-
-	map('n', '<leader>sk', function()
-		if vim.wo.diff then return '<leader>hk' end
-		vim.schedule(function() gs.prev_hunk() end)
-		return '<Ignore>'
-	end, {expr=true})
+	map('n', '<leader>gj', git_signs.next_hunk)
+	map('n', '<leader>gk', git_signs.prev_hunk)
 
 	-- Actions
-	-- map('n', '<leader>ss', gs.stage_hunk)
-	--[[ map('v', '<leader>ss',
-		function() gs.stage_hunk {vim.fn.line("."), vim.fn.line("v")}
-	end) ]]
-	-- map('n', '<leader>sS', gs.stage_buffer)
-	-- map('n', '<leader>su', gs.undo_stage_hunk)
-	map('n', '<leader>sr', gs.reset_hunk)
-	map('v', '<leader>sr',
-		function() gs.reset_hunk {vim.fn.line("."), vim.fn.line("v")}
+	map('n', '<leader>gs', git_signs.stage_hunk)
+	map('v', '<leader>gs',
+		function() git_signs.stage_hunk {vim.fn.line("."), vim.fn.line("v")}
 	end)
-	map('n', '<leader>sR', gs.reset_buffer)
-	map('n', '<leader>sp', gs.preview_hunk)
-	map('n', '<leader>sb',
-		function() gs.blame_line{full=true}
-	end)
-	map('n', '<leader>sd', gs.diffthis)
-	map('n', '<leader>st', gs.toggle_deleted)
+
+	map('n', '<leader>gS', git_signs.stage_buffer)
+	map('n', '<leader>gu', git_signs.undo_stage_hunk)
+
+	map('n', '<leader>gr', git_signs.reset_hunk)
+	map('v', '<leader>gr',
+		function()
+			git_signs.reset_hunk { vim.fn.line("."), vim.fn.line("v") }
+		end)
+
+	map('n', '<leader>gR', git_signs.reset_buffer)
+	map('n', '<leader>gp', git_signs.preview_hunk)
+	map('n', '<leader>gb', git_signs.blame_line)
+	map('n', '<leader>gd', git_signs.diffthis)
+	map('n', '<leader>gt', git_signs.toggle_deleted)
 end
 
-return {{
+return { {
 	'lewis6991/gitsigns.nvim',
 	tag = "v0.6",
 	lazy = false, -- Don't lazy load, for my session management
@@ -50,5 +43,4 @@ return {{
 			virt_text = false,
 		},
 	},
-}}
-
+} }

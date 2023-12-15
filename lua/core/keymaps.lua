@@ -1,77 +1,77 @@
-local Map = require("utils.map").Map
+local map = require("utils.map").map
 
 -- Maps leader to the spacebar (pretty universal)
-Map("", "<Space>", "<Nop>")
+map("", "<Space>", "<Nop>")
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- Lets me press j and k at the same time to escape insertion mode
-Map('i', 'jk', '<Esc>')
-Map('i', 'kj', '<Esc>')
+map('i', 'jk', '<Esc>')
+map('i', 'kj', '<Esc>')
 
 -- Lets me use Alt + hjkl to move in insert and command mode
-Map({'i', 'c', 't',}, '<A-h>', '<Left>')
-Map({'i', 'c', 't',}, '<A-j>', '<Down>')
-Map({'i', 'c', 't',}, '<A-k>', '<Up>')
-Map({'i', 'c', 't',}, '<A-l>', '<Right>')
+map({'i', 'c', 't',}, '<A-h>', '<Left>')
+map({'i', 'c', 't',}, '<A-j>', '<Down>')
+map({'i', 'c', 't',}, '<A-k>', '<Up>')
+map({'i', 'c', 't',}, '<A-l>', '<Right>')
 
 -- My remapings for moving far vertically and horizontally
-Map('', 'H', '^')
-Map('', 'L', '$')
-Map('', 'K', '020kzz')
-Map('', 'J', '020jzz')
+map('', 'H', '^')
+map('', 'L', '$')
+map('', 'K', '020kzz')
+map('', 'J', '020jzz')
 
 -- Only paste what we "yank", not the deleted text
-Map('', 'p', '"0p')
-Map('', 'P', '"0gP') -- Moves the cursor after pasting with shift
+map('', 'p', '"0p')
+map('', 'P', '"0gP') -- Moves the cursor after pasting with shift
 
 -- Make x, only while in visual mode, cut text into register 0
-Map('v', 'x', '"0x')
+map('v', 'x', '"0x')
 
 -- Use control to copy, cut, and paste from clipboard
-Map('', '<C-p>', '"+p')
-Map('', '<C-y>', '"+y')
-Map('', '<C-x>', '"+x')
+map('', '<C-p>', '"+p')
+map('', '<C-y>', '"+y')
+map('', '<C-x>', '"+x')
 
 -- Use Control to paste while in insertion mode.
 -- p for default, v for clipboard
-Map('i', '<C-p>', '<Esc>"0pa')
-Map('i', '<C-v>', '<Esc>"+pa')
+map('i', '<C-p>', '<Esc>"0pa')
+map('i', '<C-v>', '<Esc>"+pa')
 
 -- Intuitive tab indentation, only in visual mode
-Map('v', '<TAB>', '>gv')
-Map('v', '<S-TAB>', '<gv')
+map('v', '<TAB>', '>gv')
+map('v', '<S-TAB>', '<gv')
 
 -- Removes the highlighting from the screen that comes with searching via "/"
-Map('n', '<Leader>n', '<Cmd>noh<CR>')
+map('n', '<Leader>n', '<Cmd>noh<CR>')
 
 -- Write buffers quickly
-Map('', '<leader>w', '<Cmd>w<CR>')
-Map('', '<leader>W', '<Cmd>wa<CR>')
+map('', '<leader>w', '<Cmd>w<CR>')
+map('', '<leader>W', '<Cmd>wa<CR>')
 
 -- Close a window quickly
-Map('', '<leader>Q', '<Cmd>q<CR>')
+map('', '<leader>Q', '<Cmd>q<CR>')
 
 -- Open and close the quickfix list easily
-Map('', '<leader>ro', '<Cmd>copen<CR>')
-Map('', '<leader>rq', '<Cmd>cclose<CR>')
+map('', '<leader>ro', '<Cmd>copen<CR>')
+map('', '<leader>rq', '<Cmd>cclose<CR>')
 
 -- Switch between windows quickly
-Map({ 'n', 'v', 's', 'i', 't' }, '<C-h>', '<C-w>h')
-Map({ 'n', 'v', 's', 'i', 't' }, '<C-j>', '<C-w>j')
-Map({ 'n', 'v', 's', 'i', 't' }, '<C-k>', '<C-w>k')
-Map({ 'n', 'v', 's', 'i', 't' }, '<C-l>', '<C-w>l')
+map({ 'n', 'v', 's', 'i', 't' }, '<C-h>', '<C-w>h')
+map({ 'n', 'v', 's', 'i', 't' }, '<C-j>', '<C-w>j')
+map({ 'n', 'v', 's', 'i', 't' }, '<C-k>', '<C-w>k')
+map({ 'n', 'v', 's', 'i', 't' }, '<C-l>', '<C-w>l')
 
 -- Resize windows quickly
-Map({ 'n', 'v', 's', 'i', 't' }, '<C-Up>', '<Cmd>resize -2<CR>')
-Map({ 'n', 'v', 's', 'i', 't' }, '<C-Down>', '<Cmd>resize +2<CR>')
-Map({ 'n', 'v', 's', 'i', 't' }, '<C-Left>', '<Cmd>vertical resize -2<CR>')
-Map({ 'n', 'v', 's', 'i', 't' }, '<C-Right>', '<Cmd>vertical resize +2<CR>')
+map({ 'n', 'v', 's', 'i', 't' }, '<C-Up>', '<Cmd>resize -2<CR>')
+map({ 'n', 'v', 's', 'i', 't' }, '<C-Down>', '<Cmd>resize +2<CR>')
+map({ 'n', 'v', 's', 'i', 't' }, '<C-Left>', '<Cmd>vertical resize -2<CR>')
+map({ 'n', 'v', 's', 'i', 't' }, '<C-Right>', '<Cmd>vertical resize +2<CR>')
 
 -- Easier redo command
-Map('', 'R', '<C-r>')
+map('', 'R', '<C-r>')
 
 -- Within a plugin I like to remap Control-A for Tab Selection
 -- So use Leader-A for this behavior
 -- When hovered over a number, it will cause this number to be incremented
-Map('', '<leader>a', '<C-a>')
+map('', '<leader>a', '<C-a>')

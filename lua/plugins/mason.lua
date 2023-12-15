@@ -28,12 +28,17 @@ return {
 		lazy = false,
 		opts = {
 			ensure_installed = {
-				"lua-language-server", -- Lua LSP
-				"pyright", -- Python LSP
-				"jdtls", -- Java LSP
-				"typescript-language-server", -- Typescript and Javascript LSP
-				"html-lsp", -- HTML LSP
-				"css-lsp", -- CSS LSP
+				-- LSPs
+				"lua-language-server", -- Lua
+				"pyright", -- Python
+				"jdtls", -- Java
+				"typescript-language-server", -- Typescript and Javascript
+				"html-lsp", -- HTML
+				"css-lsp", -- CSS
+
+				-- Linters
+				"stylelint", -- CSS
+
 			},
 		},
 	},
