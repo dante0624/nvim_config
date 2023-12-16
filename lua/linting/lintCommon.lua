@@ -52,9 +52,14 @@ function M.setup_linters(linter_names)
 	)
 
 	-- The file linters
-	vim.api.nvim_create_autocmd("BufWritePost", {
+	vim.api.nvim_create_autocmd({"BufWritePost", "BufWinEnter"}, {
 		buffer = 0,
 		callback = function()
+			-- Useful for BufWinEnter event, as the buffer may be modified
+			-- If so, do not lint because diagnostics may be outdated
+			if vim.api.nvim_buf_get_option(0, "modified") then
+				return
+			end
 			for _, mason_name in ipairs(file_linters) do
 				try_lint(mason_name)
 			end
