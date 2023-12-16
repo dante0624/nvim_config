@@ -5,8 +5,10 @@ local severities = {
 	error = vim.diagnostic.severity.ERROR,
 }
 
+local linter_name = "stylelint"
+
 return {
-	cmd = dir.Mason_Dir .. "bin/stylelint",
+	cmd = dir.Mason_Dir .. "bin/" ..linter_name,
 	stdin = true,
 	args = {
 		"-c",
@@ -19,32 +21,35 @@ return {
 	ignore_exitcode = true,
 	parser = function(output)
 		local status, decoded = pcall(vim.json.decode, output)
-		if status then
-			decoded = decoded[1]
-		else
-			decoded = {
-				warnings = {
-					{
-						line = 1,
-						column = 1,
-						text = "Stylelint error, run `stylelint " ..
-							vim.fn.expand("%") ..
-							"` for more info.",
-						severity = "error",
-						rule = "none",
-					},
-				},
-				errored = true,
-			}
+		if not status then
+			return {{
+				lnum = 0,
+				col = 0,
+				message = "error parsing linter output, run `" ..
+				linter_name .. " -f json " .. vim.fn.expand("%:p") ..
+				"` to begin debugging",
+				source = linter_name,
+			}}
 		end
+
 		local diagnostics = {}
-		for _, message in ipairs(decoded.warnings) do
+		for _, message in ipairs(decoded[1].warnings) do
+			-- Hotfix col and end_col being only 1 apart
+			-- Just make them the same thing, so that nothing is underlined
+			if message.endColumn == message.column + 1 then
+				message.endColumn = message.column
+			end
+
 			table.insert(diagnostics, {
 				lnum = message.line - 1,
 				col = message.column - 1,
 				end_lnum = message.line - 1,
-				end_col = message.column - 1,
-				message = message.text,
+				end_col = message.endColumn - 1,
+
+				-- The message code is added to the message text
+				-- It is always in parenthesis, so take it out manually
+				message = message.text:gsub(" %(.*%)", ""),
+
 				code = message.rule,
 				user_data = {
 					lsp = {
@@ -52,7 +57,7 @@ return {
 					}
 				},
 				severity = severities[message.severity],
-				source = "stylelint",
+				source = linter_name,
 			})
 		end
 		return diagnostics

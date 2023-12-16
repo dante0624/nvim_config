@@ -29,14 +29,15 @@ return {
 		opts = {
 			ensure_installed = {
 				-- LSPs
+				"html-lsp", -- HTML
+				"css-lsp", -- CSS
+				"typescript-language-server", -- Typescript and Javascript
 				"lua-language-server", -- Lua
 				"pyright", -- Python
 				"jdtls", -- Java
-				"typescript-language-server", -- Typescript and Javascript
-				"html-lsp", -- HTML
-				"css-lsp", -- CSS
 
 				-- Linters
+				"htmlhint", -- HTML
 				"stylelint", -- CSS
 
 			},
