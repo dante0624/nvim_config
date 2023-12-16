@@ -1,14 +1,14 @@
 local dir = require("utils.directories")
 
 local severities = {
-	warning = vim.diagnostic.severity.WARN,
-	error = vim.diagnostic.severity.ERROR,
+	error = vim.diagnostic.severity.INFO,
+	warning = vim.diagnostic.severity.HINT,
 }
 
 local linter_name = "stylelint"
 
 return {
-	cmd = dir.Mason_Dir .. "bin/" ..linter_name,
+	cmd = dir.Mason_Dir .. "bin/" .. linter_name,
 	stdin = true,
 	args = {
 		"-c",
@@ -22,14 +22,14 @@ return {
 	parser = function(output)
 		local status, decoded = pcall(vim.json.decode, output)
 		if not status then
-			return {{
+			return { {
 				lnum = 0,
 				col = 0,
 				message = "error parsing linter output, run `" ..
-				linter_name .. " -f json " .. vim.fn.expand("%:p") ..
-				"` to begin debugging",
+					linter_name .. " -f json " .. vim.fn.expand("%:p") ..
+					"` to begin debugging",
 				source = linter_name,
-			}}
+			} }
 		end
 
 		local diagnostics = {}

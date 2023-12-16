@@ -3,14 +3,14 @@ local dir = require("utils.directories")
 local pattern = '.*: line (%d+), col (%d+), (%a+) %- (.+) %((.+)%)'
 local groups = { 'lnum', 'col', 'severity', 'message', 'code' }
 local severities = {
-  error = vim.diagnostic.severity.ERROR,
-  warning = vim.diagnostic.severity.WARN,
+	error = vim.diagnostic.severity.INFO,
+	warning = vim.diagnostic.severity.HINT,
 }
 
 local linter_name = "htmlhint"
 
 return {
-	cmd = dir.Mason_Dir .. "bin/" ..linter_name,
+	cmd = dir.Mason_Dir .. "bin/" .. linter_name,
 	stdin = true,
 	args = {
 		"stdin",
