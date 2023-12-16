@@ -39,6 +39,7 @@ return {
 				-- Linters
 				"htmlhint", -- HTML
 				"stylelint", -- CSS
+				"eslint_d", -- Javascript
 
 			},
 		},

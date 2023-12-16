@@ -1,0 +1,11 @@
+{
+	"env": {
+		"browser": true,
+		"node": true
+	},
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": "latest"
+	},
+ 	"extends": "eslint:recommended"
+}
