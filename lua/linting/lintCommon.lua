@@ -1,19 +1,20 @@
-local lint_tbl = require("lint")
-local linters = lint_tbl.linters
-local try_lint = lint_tbl.try_lint
-local showTable = require("utils.showTable")
-
 local M = {}
 
 -- Defines a new global method for debugging table information
 function M.setup()
 	function LintInfo()
+		local showTable = require("utils.showTable")
+		local linters = require("lint").linters
 		showTable(linters, "((Lint Info))")
 	end
 end
 
 -- This is the function which should be called by each filetype under ftplugin
 function M.setup_linters(linter_names)
+	local lint_tbl = require("lint")
+	local linters = lint_tbl.linters
+	local try_lint = lint_tbl.try_lint
+
 	-- These will group which linters can be called on stdin and which cannot
 	local stdin_linters = {}
 	local file_linters = {}
@@ -52,7 +53,7 @@ function M.setup_linters(linter_names)
 	)
 
 	-- The file linters
-	vim.api.nvim_create_autocmd({"BufWritePost", "BufWinEnter"}, {
+	vim.api.nvim_create_autocmd({"BufWinEnter", "BufWritePost"}, {
 		buffer = 0,
 		callback = function()
 			-- Useful for BufWinEnter event, as the buffer may be modified
