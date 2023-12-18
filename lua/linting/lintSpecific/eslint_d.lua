@@ -1,12 +1,12 @@
-local dir = require("utils.directories")
+local paths = require("utils.paths")
 
 local linter_name = "eslint_d"
 
 return {
-	cmd = dir.Mason_Dir .. "bin/" ..linter_name,
+	cmd = paths.Mason_Bin ..linter_name,
 	args = {
 		'-c',
-		dir.Config_Dir .. "resources/lintConfigs/eslintrc.json",
+		paths.Config_Path .. "resources/lintConfigs/eslintrc.json",
 		'-f',
 		'json',
 		'--stdin',

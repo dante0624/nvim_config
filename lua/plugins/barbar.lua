@@ -22,7 +22,9 @@ return {{
 		map('', '<leader><S-TAB>', '<Cmd>BufferMovePrev<CR>')
 		map('', '<leader><TAB>', '<Cmd>BufferMoveNext<CR>')
 
-		map('', '<leader>q', '<Cmd>BufferClose<CR>')
+		-- Close Buffer Tabs
+		map('', '<leader>e', '<Cmd>BufferClose<CR>')
+		map('', '<leader>E', '<Cmd>BufferCloseBuffersRight<CR>')
 
 		-- Pick buffer to immediately jump to a buffer
 		map('', '<C-a>', '<Cmd>BufferGoto 1<CR>')

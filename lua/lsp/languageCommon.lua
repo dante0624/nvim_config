@@ -1,4 +1,4 @@
-local mason_dir = require("utils.directories").Mason_Dir
+local paths = require("utils.paths")
 local showTable = require("utils.showTable")
 
 local M = {}
@@ -126,6 +126,7 @@ function M.start_or_attach(mason_name, cmd_extra, root_files)
 	local root_dir = vim.fs.dirname(
 		vim.fs.find(root_files, { upward = true })[1]
 	)
+
 	local single_file_mode
 	if root_dir == nil then
 		single_file_mode = true
@@ -135,6 +136,19 @@ function M.start_or_attach(mason_name, cmd_extra, root_files)
 	else
 		single_file_mode = false
 	end
+
+	root_dir = vim.fn.fnamemodify(root_dir, ":p")
+
+	-- Lua hotifx, make the root dir start at lua/ rather than before it
+	if mason_name == "lua-language-server" then
+		for name, type in vim.fs.dir(root_dir) do
+			if name == "lua" and type == "directory" then
+				root_dir = root_dir .. "lua/"
+				break
+			end
+		end
+	end
+
 
 	-- Trying to attach to active clients
 	-- If sucessful, attach and then return early
@@ -147,7 +161,7 @@ function M.start_or_attach(mason_name, cmd_extra, root_files)
 		end
 	end
 
-	local cmd = { mason_dir .. "bin/" .. mason_name }
+	local cmd = { paths.Mason_Bin .. mason_name }
 	for _, v in ipairs(cmd_extra) do
 		table.insert(cmd, v)
 	end

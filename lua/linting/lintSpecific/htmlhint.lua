@@ -1,4 +1,4 @@
-local dir = require("utils.directories")
+local paths = require("utils.paths")
 
 local pattern = '.*: line (%d+), col (%d+), (%a+) %- (.+) %((.+)%)'
 local groups = { 'lnum', 'col', 'severity', 'message', 'code' }
@@ -10,7 +10,7 @@ local severities = {
 local linter_name = "htmlhint"
 
 return {
-	cmd = dir.Mason_Dir .. "bin/" .. linter_name,
+	cmd = paths.Mason_Bin .. linter_name,
 	stdin = true,
 	args = {
 		"stdin",

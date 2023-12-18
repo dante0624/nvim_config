@@ -4,7 +4,7 @@ return {
 		tag = 'v1.8.0',
 		lazy = false,
 		opts = {
-			install_root_dir = require("utils.directories").Mason_Dir,
+			install_root_dir = require("utils.paths").Mason_Path,
 			PATH = "skip",
 			ui = {
 				width = 0.9,

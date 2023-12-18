@@ -1,4 +1,4 @@
-local dir = require("utils.directories")
+local paths = require("utils.paths")
 
 local severities = {
 	error = vim.diagnostic.severity.INFO,
@@ -8,11 +8,11 @@ local severities = {
 local linter_name = "stylelint"
 
 return {
-	cmd = dir.Mason_Dir .. "bin/" .. linter_name,
+	cmd = paths.Mason_Bin .. linter_name,
 	stdin = true,
 	args = {
 		"-c",
-		dir.Config_Dir .. "resources/lintConfigs/stylelintrc.json",
+		paths.Config_Path .. "resources/lintConfigs/stylelintrc.json",
 		"-f",
 		"json",
 		"--stdin",

@@ -50,11 +50,12 @@ map('', '<leader>w', '<Cmd>w<CR>')
 map('', '<leader>W', '<Cmd>wa<CR>')
 
 -- Close a window quickly
-map('', '<leader>Q', '<Cmd>q<CR>')
+map('', '<leader>q', '<Cmd>q<CR>')
+map('', '<leader>Q', '<Cmd>q!<CR>')
 
 -- Open and close the quickfix list easily
-map('', '<leader>ro', '<Cmd>copen<CR>')
-map('', '<leader>rq', '<Cmd>cclose<CR>')
+map('', 'go', '<Cmd>copen<CR>')
+map('', 'gq', '<Cmd>cclose<CR>')
 
 -- Switch between windows quickly
 map({ 'n', 'v', 's', 'i', 't' }, '<C-h>', '<C-w>h')

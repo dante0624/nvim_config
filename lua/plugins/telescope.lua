@@ -66,16 +66,10 @@ return {
 						vim.cmd(string.format("%s %s", cmd, filename))
 
 						if row and col then
-							local ok, err_msg = pcall(
+							pcall(
 								vim.api.nvim_win_set_cursor, 0,
 								{ row, col }
 							)
-							if not ok then
-								print(
-									"Failed to move to cursor:",
-									err_msg, row, col
-								)
-							end
 						end
 					end
 				else

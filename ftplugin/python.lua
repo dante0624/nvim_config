@@ -1,3 +1,5 @@
+-- TODO:
+-- Replace this with the other LSP
 require("lsp.languageCommon").start_or_attach(
 	"pyright-langserver",
 	{'--stdio'}

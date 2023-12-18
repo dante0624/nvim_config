@@ -1,4 +1,4 @@
-local dir = require("utils.directories")
+local paths = require("utils.paths")
 Flush = {}
 
 -- Contains the functions which flush out an single, set of tmp files
@@ -6,19 +6,19 @@ Flush = {}
 local single_flush = {}
 
 function single_flush.Java_Workspaces()
-	vim.cmd("!rm -r " .. dir.Java_Workspaces)
+	vim.cmd("!rm -r " .. paths.Java_Workspaces)
 end
 
 function single_flush.Views()
-	vim.cmd("!rm -r " .. dir.Logs_Dir.."view/")
+	vim.cmd("!rm -r " .. paths.Logs_Path.."view/")
 end
 
 function single_flush.LSP_Log()
-	vim.cmd("!rm -r " .. dir.Logs_Dir .. "lsp.log")
+	vim.cmd("!rm -r " .. paths.Logs_Path .. "lsp.log")
 end
 
 function single_flush.Sessions()
-	vim.cmd("!rm -r " .. dir.Sessions)
+	vim.cmd("!rm -r " .. paths.Sessions)
 end
 
 function Flush.All()

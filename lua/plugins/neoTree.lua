@@ -8,7 +8,6 @@ local function get_neotree_commands(source)
 
 	-- Applies to git status and buffers
 	return require("neo-tree.sources.common.commands")
-
 end
 
 -- Open a tree node silently, should work for any source
@@ -31,11 +30,10 @@ local function common_open_silently(state, source)
 		-- Return focus to the tree
 		vim.cmd("Neotree")
 
-	-- If we are currently looking at a non-null buffer
+		-- If we are currently looking at a non-null buffer
 	else
-		vim.cmd("badd "..node.path)
+		vim.cmd("badd " .. node.path)
 	end
-
 end
 
 -- Open a tree node and go, should work for any source
@@ -72,11 +70,11 @@ return {
 		event = "User started_on_directory",
 		keys = lazy_map({
 			-- Close the tree
-			{'<leader>tq', '<Cmd>Neotree close<CR>'},
+			{ '<leader>tq', '<Cmd>Neotree close<CR>' },
 
 			-- Netrw-style Tree
-			{'<leader>to', '<Cmd>Neotree<CR>'},
-			{'<leader>tp', '<Cmd>Neotree reveal_force_cwd<CR>'},
+			{ '<leader>to', '<Cmd>Neotree<CR>' },
+			{ '<leader>tp', '<Cmd>Neotree reveal_force_cwd<CR>' },
 
 			--[[ 4 Slightly different ways to open the tree on the left (asdf)
 			I prefer Netrw-style, because I don't like the split screen
@@ -99,21 +97,25 @@ return {
 			},
 
 			-- Git Status Tree
-			{'<leader>tg', '<Cmd>Neotree git_status<CR>'},
+			{ '<leader>tg', '<Cmd>Neotree git_status<CR>' },
 
 			-- Buffers Tree
-			{'<leader>tb', '<Cmd>Neotree buffers<CR>'},
+			{ '<leader>tb', '<Cmd>Neotree buffers<CR>' },
 
 		}),
 		opts = {
-        	close_if_last_window = true,
+			close_if_last_window = true,
 			window = {
 				mappings = {
 					-- New keymappings
-					["s"] = { "show_help", nowait=false, config = {
-						title = "Order by",
-						prefix_key = "s"
-					}},
+					["s"] = {
+						"show_help",
+						nowait = false,
+						config = {
+							title = "Order by",
+							prefix_key = "s"
+						}
+					},
 					["sc"] = { "order_by_created", nowait = false },
 					["sd"] = { "order_by_diagnostics", nowait = false },
 					["sg"] = { "order_by_git_status", nowait = false },
@@ -267,4 +269,3 @@ return {
 		lazy = true,
 	},
 }
-

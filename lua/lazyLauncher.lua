@@ -1,6 +1,6 @@
-local dir = require("utils.directories")
+local paths = require("utils.paths")
 
-local lazypath = dir.Data_Dir .. "/lazy/lazy.nvim"
+local lazypath = paths.Data_Path .. "/lazy/lazy.nvim"
 
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({

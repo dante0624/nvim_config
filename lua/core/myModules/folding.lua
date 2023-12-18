@@ -3,15 +3,15 @@ Folds are computed initially, but not recomputed after the buffer is modified
 
 For example, lets say we open a new buffer with the following lines:
 	1  if true then
-	2      print("hello")
+	2      x = 1
 	3  end
 Then vim will correctly compute that lines 1-3 should be folded,
 assuming we are using the syntax or expr (treesitter) folding methods.
 
 But, lets say we add a new line in the middle:
 	1  if true then
-	2      print("hello")
-	3      print("world")
+	2      x = 1
+	3      y = 2
 	4  end
 Still, vim will think that only lines 1-3 should be folded.
 This leads to an incorrect and confusing fold:

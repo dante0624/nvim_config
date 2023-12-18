@@ -3,20 +3,20 @@ if vim.v.argv[3] ~= nil then
 	return
 end
 
-local dir = require("utils.directories")
+local paths = require("utils.paths")
 local hud = require("core.myModules.headsUpDisplay")
 
 -- Session loads and restores should only depend on the initial cwd
 local initial_directory = vim.fn.getcwd()
 
-local session_file_name = dir.serialize_path(initial_directory) .. ".vim"
-local full_session_path = dir.Sessions .. session_file_name
+local session_file_name = paths.serialize_path(initial_directory) .. ".vim"
+local full_session_path = paths.Sessions .. session_file_name
 
 -- Add in needed escape characters
 local source_file = vim.fn.fnameescape(full_session_path)
 
 -- Make sure the the desired directory exists
-vim.fn.mkdir(dir.Sessions, "p")
+vim.fn.mkdir(paths.Sessions, "p")
 
 -- Globals are needed for extra things:
 	-- Tabline orderings
