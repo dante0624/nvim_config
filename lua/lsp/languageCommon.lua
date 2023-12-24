@@ -1,10 +1,8 @@
-local paths = require("utils.paths")
 local showTable = require("utils.showTable")
-
 local M = {}
 
 -- When LSP is attached to a buffer, this sets the keymaps for that buffer
-function M.on_attach(_, bufnr)
+function M.on_attach_keymaps(_, bufnr)
 	-- Helper function to be less repetitive
 	local function lsp_map(mode, lhs, rhs, opts)
 		local options = { buffer = bufnr }
@@ -19,10 +17,12 @@ function M.on_attach(_, bufnr)
 	lsp_map("n", "gd", vim.lsp.buf.definition)
 	lsp_map("n", "gD", vim.lsp.buf.type_definition)
 	lsp_map("n", "gr", vim.lsp.buf.references)
+	lsp_map("", "<leader>la", vim.lsp.buf.code_action)
+	lsp_map("n", "<leader>ls", vim.lsp.buf.document_symbol)
+	lsp_map("", "<leader>lf", vim.lsp.buf.format)
 	lsp_map("n", "<leader>lh", vim.lsp.buf.hover)
-	lsp_map("n", "<leader>la", vim.lsp.buf.code_action)
 	lsp_map("n", "<leader>lr", vim.lsp.buf.rename)
-	lsp_map("n", "<leader>lf", vim.lsp.buf.format)
+	lsp_map("n", "<leader>lw", vim.lsp.buf.workspace_symbol)
 end
 
 -- Sets up Diganostic signs, diagnostic config, and lsp handlers
@@ -67,14 +67,13 @@ function M.setup()
 	)
 
 	-- Go up or down (k and j) the list of diagnostics
-	-- di for diagnostic inspect
 	vim.keymap.set("n", "<leader>dk", function()
 		vim.diagnostic.goto_prev({ border = "rounded" })
 	end)
 	vim.keymap.set("n", "<leader>dj", function()
 		vim.diagnostic.goto_next({ border = "rounded" })
 	end)
-	vim.keymap.set("n", "<leader>di", vim.diagnostic.open_float)
+	vim.keymap.set("n", "<leader>do", vim.diagnostic.open_float)
 
 
 	function LspInfo(all_keys)
@@ -87,8 +86,12 @@ function M.setup()
 			ignored_keys = {}
 		else
 			ignored_keys = {
-				"capabilities",
-				"server_capabilities",
+				-- "capabilities",
+				-- "server_capabilities",
+				"completionItem",
+				"triggerCharacters",
+				"tokenModifiers",
+				"tokenTypes",
 				"rpc",
 				"get_language_id",
 				"on_attach",
@@ -118,8 +121,7 @@ end
 -- If no match, it starts a new LSP client and attaches to that
 -- Returns true for "single_file_mode"
 -- Returns false otherwise
-function M.start_or_attach(mason_name, cmd_extra, root_files)
-	if cmd_extra == nil then cmd_extra = {} end
+function M.start_or_attach(config_name, root_files)
 	if root_files == nil then root_files = { '.git' } end
 
 	-- Check for a root directory and set single_file_mode accordingly
@@ -131,7 +133,7 @@ function M.start_or_attach(mason_name, cmd_extra, root_files)
 	if root_dir == nil then
 		single_file_mode = true
 
-	 	-- The folder that the current buffer is in
+		-- The folder that the current buffer is in
 		root_dir = vim.fn.expand('%:p:h')
 	else
 		single_file_mode = false
@@ -140,7 +142,7 @@ function M.start_or_attach(mason_name, cmd_extra, root_files)
 	root_dir = vim.fn.fnamemodify(root_dir, ":p")
 
 	-- Lua hotifx, make the root dir start at lua/ rather than before it
-	if mason_name == "lua-language-server" then
+	if config_name == "lua-language-server" then
 		for name, type in vim.fs.dir(root_dir) do
 			if name == "lua" and type == "directory" then
 				root_dir = root_dir .. "lua/"
@@ -155,51 +157,44 @@ function M.start_or_attach(mason_name, cmd_extra, root_files)
 	for client_id, client_opts in pairs(vim.lsp.get_active_clients()) do
 		local client_name = client_opts.config.name
 		local client_root = client_opts.config.root_dir
-		if client_name == mason_name and client_root == root_dir then
+		if client_name == config_name and client_root == root_dir then
 			vim.lsp.buf_attach_client(0, client_id)
 			return single_file_mode
 		end
 	end
 
-	local cmd = { paths.Mason_Bin .. mason_name }
-	for _, v in ipairs(cmd_extra) do
-		table.insert(cmd, v)
-	end
-
 	-- All of these can be overwritten by language specific settings
 	local init_options = {}
 	local pre_attach_settings = {}
-	local on_attach = M.on_attach
+	local on_attach = M.on_attach_keymaps
 
-	local settings_ok, settings = pcall(
-		require,
-		"lsp.languageSpecific." .. mason_name
-	)
-	if settings_ok then
-		if settings.init_options ~= nil then
-			init_options = settings.init_options
-		end
-		if settings.pre_attach_settings ~= nil then
-			pre_attach_settings = settings.pre_attach_settings
-		end
-		if settings.post_attach_settings ~= nil then
-			on_attach = function(_, bufnr)
-				M.on_attach(_, bufnr)
-				vim.lsp.buf_notify(
-					bufnr,
-					"workspace/didChangeConfiguration",
-					settings.post_attach_settings
-				)
-			end
+	local settings = require("lsp.languageSpecific." .. config_name)
+
+	assert(settings.cmd, "LSP configuration needs a cmd attribute")
+
+	if settings.init_options ~= nil then
+		init_options = settings.init_options
+	end
+	if settings.pre_attach_settings ~= nil then
+		pre_attach_settings = settings.pre_attach_settings
+	end
+	if settings.post_attach_settings ~= nil then
+		on_attach = function(_, bufnr)
+			M.on_attach_keymaps(_, bufnr)
+			vim.lsp.buf_notify(
+				bufnr,
+				"workspace/didChangeConfiguration",
+				settings.post_attach_settings
+			)
 		end
 	end
 
 	vim.lsp.start({
-		name = mason_name,
-		cmd = cmd,
+		name = config_name,
+		cmd = settings.cmd,
 		root_dir = root_dir,
-		init_options = init_options,
 		settings = pre_attach_settings,
+		init_options = init_options,
 		on_attach = on_attach,
 		capabilities = require("cmp_nvim_lsp").default_capabilities(),
 

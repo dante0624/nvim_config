@@ -40,7 +40,7 @@ return {
 				"htmlhint", -- HTML
 				"stylelint", -- CSS
 				"eslint_d", -- Javascript
-				"flake8" , "pydocstyle", -- Python
+				"ruff", -- Python
 			},
 		},
 	},

@@ -1,6 +1,10 @@
 local paths = require("utils.paths")
 
 return {
+	cmd = {
+		paths.Mason_Bin .. "typescript-language-server",
+		"--stdio",
+	},
 	init_options = {
 		hostInfo = 'neovim',
 		tsserver = {

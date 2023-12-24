@@ -1,8 +1,8 @@
-local dir = require("utils.directories")
+local paths = require("utils.paths")
 local os = require("utils.os")
 
 -- Gives me the same keymaps as other lsps
-local lsp_on_attach = require("lsp.languageCommon").on_attach
+local lsp_on_attach = require("lsp.languageCommon").on_attach_keymaps
 
 -- Find the root directory, returns nil if not found
 local root_dir = require('jdtls.setup').find_root({'.git', 'mvnw', 'gradlew'})
@@ -13,8 +13,8 @@ if single_file then
 	root_dir = vim.fn.expand('%:p:h')
 end
 
-local inferred_workspace = dir.Java_Workspaces .. dir.serialize_path(root_dir)
-local jdtls_dir = dir.Mason_Dir .. "packages/jdtls/"
+local inferred_workspace = paths.Java_Workspaces .. paths.serialize_path(root_dir)
+local jdtls_dir = paths.Mason_Path .. "packages/jdtls/"
 local os_config
 if os.is_linux_os or os.is_wsl then
 	os_config = "config_linux"

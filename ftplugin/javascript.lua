@@ -1,7 +1,4 @@
-require("lsp.languageCommon").start_or_attach(
-	"typescript-language-server",
-	{'--stdio'}
-)
+require("lsp.languageCommon").start_or_attach("typescript-language-server")
 require("linting.lintCommon").setup_linters({"eslint_d"})
 
 -- %:p expands out to be the complete path to the current buffer
