@@ -14,7 +14,7 @@ return {
 	stdin = true,
 	args = {
 		"--config",
-		paths.Config_Path .. "resources/lintConfigs/ruff.toml",
+		paths.Lint_Fallback .. "ruff.toml",
 		"--force-exclude",
 		"--quiet",
 		"--stdin-filename",
@@ -30,20 +30,20 @@ return {
 	stream = "stdout",
 	parser = function(output)
 		local diagnostics = {}
-		local ok, results = pcall(vim.json.decode, output)
+		local ok, decoded = pcall(vim.json.decode, output)
 		if not ok then
 			return diagnostics
 		end
-		for _, result in ipairs(results or {}) do
+		for _, lint_response in ipairs(decoded or {}) do
 			local diagnostic = {
-				message = result.message,
-				col = result.location.column - 1,
-				end_col = result.end_location.column - 1,
-				lnum = result.location.row - 1,
-				end_lnum = result.end_location.row - 1,
-				code = result.code,
-				severity = severities[result.code] or warn,
-				source = "ruff",
+				message = lint_response.message,
+				col = lint_response.location.column - 1,
+				end_col = lint_response.end_location.column - 1,
+				lnum = lint_response.location.row - 1,
+				end_lnum = lint_response.end_location.row - 1,
+				code = lint_response.code,
+				severity = severities[lint_response.code] or warn,
+				source = linter_name,
 			}
 			table.insert(diagnostics, diagnostic)
 		end

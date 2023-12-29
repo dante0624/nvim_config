@@ -6,7 +6,7 @@ return {
 	cmd = paths.Mason_Bin ..linter_name,
 	args = {
 		'-c',
-		paths.Config_Path .. "resources/lintConfigs/eslintrc.json",
+		paths.Lint_Fallback .. "eslintrc.json",
 		'-f',
 		'json',
 		'--stdin',

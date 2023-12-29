@@ -1,7 +1,7 @@
 return {
 	{
 		"mfussenegger/nvim-lint",
-		commit = "5b42e12f397e9fd2629e6f0ce1c780a12b9e6597",
+		commit = "f98b1efe0d20b98b64fd0fd117435883b5c22eb3",
 		lazy = true,
 	}
 }

@@ -1,9 +1,5 @@
 local map = require("utils.map").map
 
-local function toboolean(str)
-	return str == "true"
-end
-
 -- Sets an option to all buffers, then returns to the original_buffer
 -- Happens immediately, appearing that the original buffer was never left
 local function set_all(option)
@@ -117,6 +113,23 @@ function M.diagnostics.hide()
 	vim.diagnostic.disable()
 end
 
+M.strict = {}
+function M.strict.isShown()
+	return vim.g.ignore_strict_diagnostics ~= true
+end
+
+function M.strict.show()
+	vim.g.ignore_strict_diagnostics = false
+	require("linting.lintCommon").update_strictness()
+	vim.cmd("do User call_lint")
+end
+
+function M.strict.hide()
+	vim.g.ignore_strict_diagnostics = true
+	require("linting.lintCommon").update_strictness()
+	vim.cmd("do User call_lint")
+end
+
 -- Give each display option certain new methods automatically
 for display_name, display in pairs(M) do
 	-- Give the ability to toggle
@@ -140,12 +153,11 @@ for display_name, display in pairs(M) do
 
 	-- Give the ability to restore
 	function display.restore()
-		local saved_option = toboolean(vim.g["HUD_" .. display_name])
-		if saved_option == true then
+		local saved_option = vim.g["HUD_" .. display_name]
+		if saved_option == "true" then
 			display.show()
 		end
-
-		if saved_option == false then
+		if saved_option == "false" then
 			display.hide()
 		end
 	end
@@ -158,6 +170,7 @@ map('', '<Leader>hl', M.line_numbers.toggle)
 map('', '<Leader>hc', M.color_column.toggle)
 map('', '<Leader>hg', M.git_signs.toggle)
 map('', '<Leader>hd', M.diagnostics.toggle)
+map('', '<Leader>hs', M.strict.toggle)
 
 
 -- These can be used to set "favorite" HUD settings
@@ -190,7 +203,7 @@ map('', '<Leader>hq', function()
 end)
 
 -- Show all displays
-map('', '<Leader>ha', function()
+map('', '<Leader>ho', function()
 	onlyHide({})
 end)
 

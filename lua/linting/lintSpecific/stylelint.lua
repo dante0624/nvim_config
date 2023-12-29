@@ -12,7 +12,7 @@ return {
 	stdin = true,
 	args = {
 		"-c",
-		paths.Config_Path .. "resources/lintConfigs/stylelintrc.json",
+		paths.Lint_Fallback .. "stylelintrc.json",
 		"-f",
 		"json",
 		"--stdin",
@@ -20,43 +20,23 @@ return {
 	stream = "stderr",
 	ignore_exitcode = true,
 	parser = function(output)
-		local status, decoded = pcall(vim.json.decode, output)
-		if not status then
-			return { {
-				lnum = 0,
-				col = 0,
-				message = "error parsing linter output, run `" ..
-					linter_name .. " -f json " .. vim.fn.expand("%:p") ..
-					"` to begin debugging",
-				source = linter_name,
-			} }
+		local diagnostics = {}
+		local ok, decoded = pcall(vim.json.decode, output)
+		if not ok then
+			return diagnostics
 		end
 
-		local diagnostics = {}
-		for _, message in ipairs(decoded[1].warnings) do
-			-- Hotfix col and end_col being only 1 apart
-			-- Just make them the same thing, so that nothing is underlined
-			if message.endColumn == message.column + 1 then
-				message.endColumn = message.column
-			end
-
+		for _, lint_response in ipairs(decoded[1].warnings) do
 			table.insert(diagnostics, {
-				lnum = message.line - 1,
-				col = message.column - 1,
-				end_lnum = message.line - 1,
-				end_col = message.endColumn - 1,
-
 				-- The message code is added to the message text
 				-- It is always in parenthesis, so take it out manually
-				message = message.text:gsub(" %(.*%)", ""),
-
-				code = message.rule,
-				user_data = {
-					lsp = {
-						code = message.rule,
-					}
-				},
-				severity = severities[message.severity],
+				message = lint_response.text:gsub(" %(.*%)", ""),
+				col = lint_response.column - 1,
+				end_col = lint_response.endColumn - 1,
+				lnum = lint_response.line - 1,
+				end_lnum = lint_response.line - 1,
+				code = lint_response.rule,
+				severity = severities[lint_response.severity],
 				source = linter_name,
 			})
 		end
