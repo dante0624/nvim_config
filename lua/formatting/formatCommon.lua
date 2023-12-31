@@ -12,11 +12,9 @@ function M.setup()
 	end
 end
 
-
 M.already_configured = {}
 
-
---[[ This is the function which should be called by each filetype under ftplugin
+--[[ This function should be called by each filetype under ftplugin
 Adds the correct setting to the plugin's formatters table (if needed)
 Names is a list of linter names, which will be applied in order
 lsp_fallback = { true | false | "always" } ]]
@@ -44,4 +42,4 @@ function M.setup_formatters(names, lsp_fallback)
 	end)
 end
 
-
+return M

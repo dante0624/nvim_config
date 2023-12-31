@@ -6,12 +6,11 @@ return {
 		"--stdio",
 	},
 	init_options = {
-		hostInfo = 'neovim',
+		hostInfo = "neovim",
 		tsserver = {
 			logDirectory = paths.Logs_Path,
 			-- Can set to 'off', 'terse', 'normal', 'requestTime', 'verbose'
-			logVerbosity = 'off',
+			logVerbosity = "off",
 		},
 	},
 }
-

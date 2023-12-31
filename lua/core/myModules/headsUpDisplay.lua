@@ -4,8 +4,8 @@ local map = require("utils.map").map
 -- Happens immediately, appearing that the original buffer was never left
 local function set_all(option)
 	local original_buffer = vim.fn.bufnr()
-	vim.cmd('silent! bufdo set ' .. option)
-	vim.cmd('buffer ' .. original_buffer)
+	vim.cmd("silent! bufdo set " .. option)
+	vim.cmd("buffer " .. original_buffer)
 end
 
 local M = {}
@@ -83,20 +83,20 @@ function M.git_signs.isShown()
 		return nil
 	end
 
-	return require('gitsigns.config').config.signcolumn
+	return require("gitsigns.config").config.signcolumn
 end
 
 function M.git_signs.show()
 	local shown = M.git_signs.isShown()
 	if shown == false then
-		vim.cmd('silent! Gitsigns toggle_signs')
+		vim.cmd("silent! Gitsigns toggle_signs")
 	end
 end
 
 function M.git_signs.hide()
 	local shown = M.git_signs.isShown()
 	if shown == true then
-		vim.cmd('silent! Gitsigns toggle_signs')
+		vim.cmd("silent! Gitsigns toggle_signs")
 	end
 end
 
@@ -164,14 +164,13 @@ for display_name, display in pairs(M) do
 end
 
 -- Prefix with h for HeadsUpDisplay
-map('', '<Leader>hh', M.header.toggle)
-map('', '<Leader>hf', M.footer.toggle)
-map('', '<Leader>hl', M.line_numbers.toggle)
-map('', '<Leader>hc', M.color_column.toggle)
-map('', '<Leader>hg', M.git_signs.toggle)
-map('', '<Leader>hd', M.diagnostics.toggle)
-map('', '<Leader>hs', M.strict.toggle)
-
+map("", "<Leader>hh", M.header.toggle)
+map("", "<Leader>hf", M.footer.toggle)
+map("", "<Leader>hl", M.line_numbers.toggle)
+map("", "<Leader>hc", M.color_column.toggle)
+map("", "<Leader>hg", M.git_signs.toggle)
+map("", "<Leader>hd", M.diagnostics.toggle)
+map("", "<Leader>hs", M.strict.toggle)
 
 -- These can be used to set "favorite" HUD settings
 -- Especially useful when set to a keymap
@@ -196,27 +195,26 @@ local function onlyHide(tbl)
 	end
 end
 
-
 -- Show no displays
-map('', '<Leader>hq', function()
+map("", "<Leader>hq", function()
 	onlyShow({})
 end)
 
 -- Show all displays
-map('', '<Leader>ho', function()
+map("", "<Leader>ho", function()
 	onlyHide({})
 end)
 
 -- My own verion of "zen mode".
 -- I think its important to still show diagnostics
-map('', '<Leader>hz', function()
-	onlyShow({'diagnostics'})
+map("", "<Leader>hz", function()
+	onlyShow({ "diagnostics" })
 end)
 
 -- Get rid of the header because "The Primagen" (p) suggests not using it
 -- Use this when trying to immediately jump to buffers with <Control> {a-g}
-map('', '<Leader>hp', function()
-	onlyHide({'header'})
+map("", "<Leader>hp", function()
+	onlyHide({ "header" })
 end)
 
 return M

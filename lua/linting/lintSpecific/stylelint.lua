@@ -41,5 +41,5 @@ return {
 			})
 		end
 		return diagnostics
-	end
+	end,
 }

@@ -10,7 +10,7 @@ function single_flush.Java_Workspaces()
 end
 
 function single_flush.Views()
-	vim.cmd("!rm -r " .. paths.Logs_Path.."view/")
+	vim.cmd("!rm -r " .. paths.Logs_Path .. "view/")
 end
 
 function single_flush.LSP_Log()
@@ -28,4 +28,3 @@ function Flush.All()
 end
 
 Flush = vim.tbl_extend("keep", Flush, single_flush)
-

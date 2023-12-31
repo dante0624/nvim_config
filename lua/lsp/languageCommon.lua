@@ -56,15 +56,11 @@ function M.setup()
 		},
 	})
 
-	vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-		vim.lsp.handlers.hover,
-		{ border = "rounded" }
-	)
+	vim.lsp.handlers["textDocument/hover"] =
+		vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 
-	vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-		vim.lsp.handlers.signature_help,
-		{ border = "rounded" }
-	)
+	vim.lsp.handlers["textDocument/signatureHelp"] =
+		vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 
 	-- Go up or down (k and j) the list of diagnostics
 	vim.keymap.set("n", "<leader>dk", function()
@@ -74,7 +70,6 @@ function M.setup()
 		vim.diagnostic.goto_next({ border = "rounded" })
 	end)
 	vim.keymap.set("n", "<leader>do", vim.diagnostic.open_float)
-
 
 	function LspInfo(all_keys)
 		if all_keys == nil then
@@ -122,19 +117,20 @@ end
 -- Returns true for "single_file_mode"
 -- Returns false otherwise
 function M.start_or_attach(config_name, root_files)
-	if root_files == nil then root_files = { '.git' } end
+	if root_files == nil then
+		root_files = { ".git" }
+	end
 
 	-- Check for a root directory and set single_file_mode accordingly
-	local root_dir = vim.fs.dirname(
-		vim.fs.find(root_files, { upward = true })[1]
-	)
+	local root_dir =
+		vim.fs.dirname(vim.fs.find(root_files, { upward = true })[1])
 
 	local single_file_mode
 	if root_dir == nil then
 		single_file_mode = true
 
 		-- The folder that the current buffer is in
-		root_dir = vim.fn.expand('%:p:h')
+		root_dir = vim.fn.expand("%:p:h")
 	else
 		single_file_mode = false
 	end
@@ -150,7 +146,6 @@ function M.start_or_attach(config_name, root_files)
 			end
 		end
 	end
-
 
 	-- Trying to attach to active clients
 	-- If sucessful, attach and then return early
@@ -197,7 +192,6 @@ function M.start_or_attach(config_name, root_files)
 		init_options = init_options,
 		on_attach = on_attach,
 		capabilities = require("cmp_nvim_lsp").default_capabilities(),
-
 	})
 
 	return single_file_mode

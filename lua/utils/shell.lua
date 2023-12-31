@@ -14,9 +14,9 @@ end
 function M.set_shell()
 	local powershell_options = {
 		shell = "powershell",
-		shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned " ..
-			"-Command [Console]::InputEncoding=[Console]::" ..
-			"OutputEncoding=[System.Text.Encoding]::UTF8;",
+		shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned "
+			.. "-Command [Console]::InputEncoding=[Console]::"
+			.. "OutputEncoding=[System.Text.Encoding]::UTF8;",
 		shellredir = "-RedirectStandardOutput %s -NoNewWindow -Wait",
 		shellpipe = "2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode",
 		shellquote = "",
@@ -25,7 +25,7 @@ function M.set_shell()
 
 	if os.is_windows then
 		for option, value in pairs(powershell_options) do
-		  vim.opt[option] = value
+			vim.opt[option] = value
 		end
 	end
 
@@ -37,4 +37,3 @@ end
 set_flags()
 
 return M
-

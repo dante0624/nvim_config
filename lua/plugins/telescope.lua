@@ -2,15 +2,15 @@ local lazy_map = require("utils.map").lazy_map
 
 return {
 	{
-		'nvim-telescope/telescope.nvim',
-		tag = '0.1.1',
+		"nvim-telescope/telescope.nvim",
+		tag = "0.1.1",
 		dependencies = {
-			'nvim-lua/plenary.nvim',
-			'nvim-telescope/telescope-fzy-native.nvim',
+			"nvim-lua/plenary.nvim",
+			"nvim-telescope/telescope-fzy-native.nvim",
 		},
 		keys = lazy_map({
-			{'<leader>f', '<Cmd>Telescope find_files<CR>'},
-			{'<leader>F', '<Cmd>Telescope live_grep<CR>'},
+			{ "<leader>f", "<Cmd>Telescope find_files<CR>" },
+			{ "<leader>F", "<Cmd>Telescope live_grep<CR>" },
 		}),
 		config = function()
 			--[[
@@ -44,7 +44,7 @@ return {
 				local cmd_map = {
 					vertical = "vsplit",
 					horizontal = "split",
-					default = "edit"
+					default = "edit",
 				}
 				local picker = action_state.get_current_picker(prompt_bufnr)
 				local multi_selection = picker:get_multi_selection()
@@ -66,10 +66,7 @@ return {
 						vim.cmd(string.format("%s %s", cmd, filename))
 
 						if row and col then
-							pcall(
-								vim.api.nvim_win_set_cursor, 0,
-								{ row, col }
-							)
+							pcall(vim.api.nvim_win_set_cursor, 0, { row, col })
 						end
 					end
 				else
@@ -107,14 +104,12 @@ return {
 					["<C-x>"] = stop_insert(
 						custom_actions.multi_selection_open_horizontal
 					),
-					["<CR>"]  = stop_insert(
-						custom_actions.multi_selection_open
-					),
+					["<CR>"] = stop_insert(custom_actions.multi_selection_open),
 
-					["<Tab>"] = actions.toggle_selection +
-						actions.move_selection_worse,
-					["<S-Tab>"] = actions.toggle_selection +
-						actions.move_selection_better,
+					["<Tab>"] = actions.toggle_selection
+						+ actions.move_selection_worse,
+					["<S-Tab>"] = actions.toggle_selection
+						+ actions.move_selection_better,
 
 					["<C-j>"] = actions.move_selection_next,
 					["<C-k>"] = actions.move_selection_previous,
@@ -126,27 +121,26 @@ return {
 					["<C-d>"] = actions.preview_scrolling_down,
 
 					["<C-l>"] = actions.open_qflist,
-					["<C-q>"] = actions.send_to_qflist +
-						actions.open_qflist,
+					["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
 					--[[ ["<M-q>"] = actions.send_selected_to_qflist +
 						actions.open_qflist, ]]
 
 					-- ["<C-l>"] = actions.complete_tag,
 
 					["<C-/>"] = actions.which_key,
-				  },
+				},
 
-				  n = {
+				n = {
 					["q"] = actions.close,
 
 					["v"] = custom_actions.multi_selection_open_vertical,
 					["x"] = custom_actions.multi_selection_open_horizontal,
 					["<CR>"] = custom_actions.multi_selection_open,
 
-					["<Tab>"] = actions.toggle_selection +
-						actions.move_selection_worse,
-					["<S-Tab>"] = actions.toggle_selection +
-						actions.move_selection_better,
+					["<Tab>"] = actions.toggle_selection
+						+ actions.move_selection_worse,
+					["<S-Tab>"] = actions.toggle_selection
+						+ actions.move_selection_better,
 
 					["j"] = actions.move_selection_next,
 					["k"] = actions.move_selection_previous,
@@ -163,21 +157,20 @@ return {
 					["d"] = actions.preview_scrolling_down,
 
 					["l"] = actions.open_qflist,
-					["<C-q>"] = actions.send_to_qflist +
-						actions.open_qflist,
+					["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
 					--[[ ["<M-q>"] = actions.send_selected_to_qflist +
 						actions.open_qflist, ]]
 
 					["?"] = actions.which_key,
-				}
+				},
 			}
 
-			require('telescope').setup({
+			require("telescope").setup({
 				extensions = {
 					fzy_native = {
 						override_generic_sorter = false,
 						override_file_sorter = true,
-					}
+					},
 				},
 				pickers = {
 					find_files = {
@@ -195,7 +188,7 @@ return {
 					preview = false,
 					sorting_strategy = "ascending",
 					layout_config = {
-						prompt_position = 'top',
+						prompt_position = "top",
 					},
 					prompt_prefix = " ",
 					selection_caret = " ",
@@ -204,18 +197,17 @@ return {
 					mappings = my_telescope_keymaps,
 				},
 			})
-			require('telescope').load_extension('fzy_native')
+			require("telescope").load_extension("fzy_native")
 		end,
 	},
 	{
-			'nvim-lua/plenary.nvim',
-			tag = 'v0.1.2',
-			lazy = true,
+		"nvim-lua/plenary.nvim",
+		tag = "v0.1.2",
+		lazy = true,
 	},
 	{
-			'nvim-telescope/telescope-fzy-native.nvim',
-			commit = "282f069504515eec762ab6d6c89903377252bf5b",
-			lazy = true,
+		"nvim-telescope/telescope-fzy-native.nvim",
+		commit = "282f069504515eec762ab6d6c89903377252bf5b",
+		lazy = true,
 	},
 }
-

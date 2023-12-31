@@ -1,5 +1,5 @@
---[[ TODO:Create my own simple wrapper around Mason and Treesitter called Carpenter
-	Implement this if I use a remote server, and don't want to install all 
+--[[ TODO:Create my own wrapper around Mason and Treesitter called Carpenter
+	Implement this if I use a remote server, and don't want to install all
 		Lsps, Linters, Formatters, etc for every single language
 	
 	This should allow me to install everything I need on a per-language basis
@@ -20,8 +20,8 @@
 		Then make mason lazy loaded ]]
 return {
 	{
-		'williamboman/mason.nvim',
-		tag = 'v1.8.0',
+		"williamboman/mason.nvim",
+		tag = "v1.8.0",
 		lazy = false,
 		opts = {
 			install_root_dir = require("utils.paths").Mason_Path,
@@ -40,11 +40,11 @@ return {
 		},
 	},
 	{
-		'WhoIsSethDaniel/mason-tool-installer.nvim',
+		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		dependencies = {
-			'williamboman/mason.nvim',
+			"williamboman/mason.nvim",
 		},
-		commit = '8b70e7f1e0a4119c1234c3bde4a01c241cabcc74',
+		commit = "8b70e7f1e0a4119c1234c3bde4a01c241cabcc74",
 		lazy = false,
 		opts = {
 			ensure_installed = {
@@ -72,8 +72,8 @@ return {
 	},
 	-- This just helps run jdtls, so it fits nicely here
 	{
-		'mfussenegger/nvim-jdtls',
-		tag = '0.2.0',
+		"mfussenegger/nvim-jdtls",
+		tag = "0.2.0",
 		ft = "java",
 	},
 }

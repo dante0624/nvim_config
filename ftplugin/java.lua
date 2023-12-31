@@ -1,19 +1,20 @@
-local paths = require("utils.paths")
 local os = require("utils.os")
+local paths = require("utils.paths")
 
 -- Gives me the same keymaps as other lsps
 local lsp_on_attach = require("lsp.languageCommon").on_attach_keymaps
 
 -- Find the root directory, returns nil if not found
-local root_dir = require('jdtls.setup').find_root({'.git', 'mvnw', 'gradlew'})
+local root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" })
 local single_file = root_dir == nil
 
 if single_file then
-	 -- Set to the folder that the current buffer is in
-	root_dir = vim.fn.expand('%:p:h')
+	-- Set to the folder that the current buffer is in
+	root_dir = vim.fn.expand("%:p:h")
 end
 
-local inferred_workspace = paths.Java_Workspaces .. paths.serialize_path(root_dir)
+local inferred_workspace = paths.Java_Workspaces
+	.. paths.serialize_path(root_dir)
 local jdtls_dir = paths.Mason_Path .. "packages/jdtls/"
 local os_config
 if os.is_linux_os or os.is_wsl then
@@ -25,35 +26,40 @@ elseif os.is_windows then
 end
 
 -- Essentially do a regex search on a directory to find this jar file
-local launcher_file = vim.fn.globpath(jdtls_dir .. 'plugins', '*launcher_*')
+local launcher_file = vim.fn.globpath(jdtls_dir .. "plugins", "*launcher_*")
 
 -- See `:help vim.lsp.start_client` for the supported `config` options.
 -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
 local config = {
 	cmd = {
-		'java', -- or '/path/to/java17_or_newer/bin/java'
-				-- java17 or newer needs to be on the path
+		"java", -- or '/path/to/java17_or_newer/bin/java'
+		-- java17 or newer needs to be on the path
 
-		'-Declipse.application=org.eclipse.jdt.ls.core.id1',
-		'-Dosgi.bundles.defaultStartLevel=4',
-		'-Declipse.product=org.eclipse.jdt.ls.core.product',
-		'-Dlog.protocol=true',
-		'-Dlog.level=ALL',
-		'-Xmx1g',
-		'--add-modules=ALL-SYSTEM',
-		'--add-opens', 'java.base/java.util=ALL-UNNAMED',
-		'--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+		"-Declipse.application=org.eclipse.jdt.ls.core.id1",
+		"-Dosgi.bundles.defaultStartLevel=4",
+		"-Declipse.product=org.eclipse.jdt.ls.core.product",
+		"-Dlog.protocol=true",
+		"-Dlog.level=ALL",
+		"-Xmx1g",
+		"--add-modules=ALL-SYSTEM",
+		"--add-opens",
+		"java.base/java.util=ALL-UNNAMED",
+		"--add-opens",
+		"java.base/java.lang=ALL-UNNAMED",
 
 		-- This will depend on the version of jdtls installed
-		'-jar', launcher_file,
+		"-jar",
+		launcher_file,
 
 		-- This will depend on the machine os
-		'-configuration', jdtls_dir .. os_config,
+		"-configuration",
+		jdtls_dir .. os_config,
 
 		-- Very proud of how I handled this
 		-- It creates data directories under a new folder in the Data_Dir
 		-- But it makes a new, nicely named folder, for each different project
-		'-data', inferred_workspace
+		"-data",
+		inferred_workspace,
 	},
 
 	-- This is critical for the LSP to work project wide
@@ -86,18 +92,20 @@ local config = {
 
 -- This starts a new client & server,
 -- or attaches to an existing client & server depending on the `root_dir`.
-require('jdtls').start_or_attach(config)
-
+require("jdtls").start_or_attach(config)
 
 local run_command
 if single_file then
-	local full_fname = vim.fn.expand('%:p')
-	local build_cmd = 'javac "'..full_fname..'"'
-	local class_name = vim.fn.expand('%:p:t:r')
-	run_command = build_cmd..' && java -cp "'..root_dir..'" '..class_name
+	local full_fname = vim.fn.expand("%:p")
+	local build_cmd = 'javac "' .. full_fname .. '"'
+	local class_name = vim.fn.expand("%:p:t:r")
+	run_command = build_cmd
+		.. ' && java -cp "'
+		.. root_dir
+		.. '" '
+		.. class_name
 else
-	run_command = 'gradle build'
+	run_command = "gradle build"
 end
 
 vim.b.run_command = run_command
-

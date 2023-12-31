@@ -6,17 +6,17 @@ return {
 		commit = "5dce1b778b85c717f6614e3f4da45e9f19f54435",
 		event = "InsertEnter",
 		dependencies = {
-			'L3MON4D3/LuaSnip',
-			'hrsh7th/cmp-buffer',
-			'hrsh7th/cmp-path',
-			'hrsh7th/cmp-nvim-lsp',
-			'hrsh7th/cmp-nvim-lua',
-			'saadparwaiz1/cmp_luasnip',
-			'rafamadriz/friendly-snippets',
+			"L3MON4D3/LuaSnip",
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-nvim-lsp",
+			"hrsh7th/cmp-nvim-lua",
+			"saadparwaiz1/cmp_luasnip",
+			"rafamadriz/friendly-snippets",
 		},
 		config = function()
-			local cmp = require('cmp')
-			local luasnip = require('luasnip')
+			local cmp = require("cmp")
+			local luasnip = require("luasnip")
 
 			-- This line actually gives me snippets
 			require("luasnip/loaders/from_vscode").lazy_load()
@@ -62,17 +62,14 @@ return {
 					cmp.mapping.scroll_docs(1),
 					{ "i", "c" }
 				),
-				["<C-a>"] = cmp.mapping(
-					cmp.mapping.complete(),
-					{ "i", "c" }
-				),
-				["<C-l>"] = cmp.mapping {
+				["<C-a>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
+				["<C-l>"] = cmp.mapping({
 					i = cmp.mapping.abort(),
 					c = cmp.mapping.close(),
-				},
+				}),
 
 				-- Need to select option with tab before hitting enter
-				["<CR>"] = cmp.mapping.confirm { select = false },
+				["<CR>"] = cmp.mapping.confirm({ select = false }),
 
 				-- Idea is to make Tab do many things based on context
 				-- It is known as "superTab"
@@ -86,7 +83,7 @@ return {
 					else
 						fallback()
 					end
-				end, { "i", "s", }),
+				end, { "i", "s" }),
 
 				["<S-Tab>"] = cmp.mapping(function(fallback)
 					if cmp.visible() then
@@ -96,9 +93,9 @@ return {
 					else
 						fallback()
 					end
-				end, { "i", "s", }),
+				end, { "i", "s" }),
 			}
-			cmp.setup {
+			cmp.setup({
 				snippet = {
 					expand = function(args)
 						luasnip.lsp_expand(args.body)
@@ -108,10 +105,8 @@ return {
 				formatting = {
 					fields = { "kind", "abbr", "menu" },
 					format = function(entry, vim_item)
-						vim_item.kind = string.format(
-							"%s",
-							kind_icons[vim_item.kind]
-						)
+						vim_item.kind =
+							string.format("%s", kind_icons[vim_item.kind])
 						vim_item.menu = ({
 							luasnip = "[Snippet]",
 							nvim_lua = "[Nvim Lua]",
@@ -125,7 +120,7 @@ return {
 				sources = {
 					{ name = "luasnip" },
 					{ name = "nvim_lua" },
-					{ name = "nvim_lsp"},
+					{ name = "nvim_lsp" },
 					{ name = "buffer" },
 					{ name = "path" },
 				},
@@ -140,44 +135,43 @@ return {
 					ghost_text = false,
 					native_menu = false,
 				},
-			}
+			})
 		end,
 	},
 	{
-		'L3MON4D3/LuaSnip',
+		"L3MON4D3/LuaSnip",
 		tag = "v2.0.0",
 		lazy = true,
 	},
 
 	{
-		'hrsh7th/cmp-buffer',
+		"hrsh7th/cmp-buffer",
 		commit = "3022dbc9166796b644a841a02de8dd1cc1d311fa",
 		lazy = true,
 	},
 	{
-		'hrsh7th/cmp-path',
+		"hrsh7th/cmp-path",
 		commit = "91ff86cd9c29299a64f968ebb45846c485725f23",
 		lazy = true,
 	},
 	{
-		'hrsh7th/cmp-nvim-lsp',
-		commit = '78924d1d677b29b3d1fe429864185341724ee5a2',
+		"hrsh7th/cmp-nvim-lsp",
+		commit = "78924d1d677b29b3d1fe429864185341724ee5a2",
 		lazy = true,
 	},
 	{
-		'hrsh7th/cmp-nvim-lua',
+		"hrsh7th/cmp-nvim-lua",
 		commit = "f12408bdb54c39c23e67cab726264c10db33ada8",
 		lazy = true,
 	},
 	{
-		'saadparwaiz1/cmp_luasnip',
+		"saadparwaiz1/cmp_luasnip",
 		commit = "18095520391186d634a0045dacaa346291096566",
 		lazy = true,
 	},
 	{
-		'rafamadriz/friendly-snippets',
+		"rafamadriz/friendly-snippets",
 		commit = "0368bee1cecaf3c58d436524234baad4c0e0b8cb",
 		lazy = true,
 	},
 }
-

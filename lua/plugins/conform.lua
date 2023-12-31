@@ -30,5 +30,5 @@ return {
 		"stevearc/conform.nvim",
 		tag = "v5.1.0",
 		lazy = true,
-	}
+	},
 }

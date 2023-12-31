@@ -28,80 +28,71 @@ We use this trick before all folding keybinds]]
 -- Assume that lhs and rhs are both strings
 -- We will wrap the rhs in a folding reset
 local function fold_keymap(mode, lhs, rhs, opts)
-	local options = { noremap = true, silent = true, }
+	local options = { noremap = true, silent = true }
 	if opts then
 		options = vim.tbl_extend("force", options, opts)
 	end
-	vim.keymap.set(
-		mode,
-		lhs,
-		function()
-			local method = vim.o.foldmethod
-			vim.opt.foldmethod = method
+	vim.keymap.set(mode, lhs, function()
+		local method = vim.o.foldmethod
+		vim.opt.foldmethod = method
 
-			-- The exclamation point means to not use remappings
-			-- No exclamation point would be infinite recursion,
-			-- and would which would crash vim
-			vim.cmd("normal! " .. rhs)
-		end,
-		options
-	)
+		-- The exclamation point means to not use remappings
+		-- No exclamation point would be infinite recursion,
+		-- and would which would crash vim
+		vim.cmd("normal! " .. rhs)
+	end, options)
 end
 
-fold_keymap('', 'zz', 'za')
-fold_keymap('', 'ze', ']z')
-fold_keymap('', 'zb', '[z')
+fold_keymap("", "zz", "za")
+fold_keymap("", "ze", "]z")
+fold_keymap("", "zb", "[z")
 
-fold_keymap('', 'za', 'za')
-fold_keymap('', 'zo', 'zo')
-fold_keymap('', 'zO', 'zO')
-fold_keymap('', 'zc', 'zc')
-fold_keymap('', 'zC', 'zC')
-fold_keymap('', 'zR', 'zR')
-fold_keymap('', 'zM', 'zM')
-
+fold_keymap("", "za", "za")
+fold_keymap("", "zo", "zo")
+fold_keymap("", "zO", "zO")
+fold_keymap("", "zc", "zc")
+fold_keymap("", "zC", "zC")
+fold_keymap("", "zR", "zR")
+fold_keymap("", "zM", "zM")
 
 -- Set the folding filetype based on filetype
-local fold_method_picker = vim.api.nvim_create_augroup(
-	'fold_method_picker',
-	{clear = true}
-)
+local fold_method = vim.api.nvim_create_augroup("fold_method", { clear = true })
 
 -- These filetypes do not have good tressiter parsers,
 -- but they have good builtin syntax parsers
-local syntax_filetypes = {
+local syntax_patterns = {
 	"*.json",
 }
 
 -- Manually ensure that this matches Treesitter's 'ensure_installed'
 -- Found under the the plugin configuration
-local treesitter_expr_filetypes = {
-	'*.lua',
-	'*.py',
-	'*.java',
-	'*.kt',
-	'*.html',
-	'*.css',
-	'*.js',
+local expr_patterns = {
+	"*.lua",
+	"*.py",
+	"*.java",
+	"*.kt",
+	"*.html",
+	"*.css",
+	"*.js",
 }
 
 -- Autocommands go off in the order they are specified
 -- So we default to manual, but can specify treesitter_expr or syntax
-vim.api.nvim_create_autocmd({'BufWinEnter'}, {
-	pattern = '*',
-	group = fold_method_picker,
+vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+	pattern = "*",
+	group = fold_method,
 	command = "set foldmethod=manual",
 })
 
-vim.api.nvim_create_autocmd({'BufWinEnter'}, {
-	pattern = syntax_filetypes,
-	group = fold_method_picker,
+vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+	pattern = syntax_patterns,
+	group = fold_method,
 	command = "set foldmethod=syntax",
 })
 
-vim.api.nvim_create_autocmd({'BufWinEnter'}, {
-	pattern = treesitter_expr_filetypes,
-	group = fold_method_picker,
+vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+	pattern = expr_patterns,
+	group = fold_method,
 	command = "set foldmethod=expr",
 })
 
@@ -109,16 +100,15 @@ vim.api.nvim_create_autocmd({'BufWinEnter'}, {
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldenable = false
 
-
 -- Set custom text which appears whenever we have a fold
 function _G.MyFoldText()
 	local first_line = vim.fn.getline(vim.v.foldstart)
 
-	 -- Removes leading whitespaces
+	-- Removes leading whitespaces
 	local last_line = vim.fn.getline(vim.v.foldend):gsub("^%s*", "")
 	local line_count = vim.v.foldend - vim.v.foldstart
 
-	local fold_message = ' +--- ' .. line_count .. ' lines ---+ '
+	local fold_message = " +--- " .. line_count .. " lines ---+ "
 	if line_count == 1 then
 		fold_message = fold_message:gsub("lines", "line")
 	end
@@ -132,39 +122,32 @@ function _G.MyFoldText()
 		last_line = ""
 	end
 
-    local fold_text =  first_line .. fold_message .. last_line
+	local fold_text = first_line .. fold_message .. last_line
 
 	-- Turn tabs into appropriate number of spaces
 	-- If we don't do this, the foldtext turns 1 tab into 1 space
 	local tab_spaces = string.rep(" ", vim.o.ts)
-	return fold_text:gsub("\t",tab_spaces)
+	return fold_text:gsub("\t", tab_spaces)
 end
 
-vim.opt.foldtext = 'v:lua.MyFoldText()'
+vim.opt.foldtext = "v:lua.MyFoldText()"
 
- -- Get rid of trailing dots that vim automatically adds in
-vim.opt.fillchars:append({fold = " "})
-
+-- Get rid of trailing dots that vim automatically adds in
+vim.opt.fillchars:append({ fold = " " })
 
 -- Automatically remembers folds after closing and reopening
-local remember_folds = vim.api.nvim_create_augroup(
-	'remember_folds',
-	{clear = true}
-)
-local folding_file_types = vim.tbl_extend("force",
-	syntax_filetypes,
-	treesitter_expr_filetypes
-)
+local remember = vim.api.nvim_create_augroup("remember", { clear = true })
+local all_patterns = vim.tbl_extend("force", syntax_patterns, expr_patterns)
 
-vim.api.nvim_create_autocmd({'BufWinLeave', 'BufWritePost',}, {
-	pattern = folding_file_types,
-	group = remember_folds,
+vim.api.nvim_create_autocmd({ "BufWinLeave", "BufWritePost" }, {
+	pattern = all_patterns,
+	group = remember,
 	command = "noautocmd silent! mkview",
 })
 
-vim.api.nvim_create_autocmd({'BufWinEnter',}, {
+vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
 	pattern = "*",
-	group = remember_folds,
+	group = remember,
 	callback = function()
 		vim.cmd([[
 			normal! zR
@@ -172,4 +155,3 @@ vim.api.nvim_create_autocmd({'BufWinEnter',}, {
 		]])
 	end,
 })
-

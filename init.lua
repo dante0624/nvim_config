@@ -8,6 +8,7 @@ require("lazyLauncher")
 -- Sets up things which are common to all LSPs, Linters
 require("lsp.languageCommon").setup()
 require("linting.lintCommon").setup()
+require("formatting.formatCommon").setup()
 
 -- TODO:
 --[[ Python Plan
@@ -48,19 +49,16 @@ require("linting.lintCommon").setup()
 		Apply refactor source after (if it specifies that)
 ]]
 
--- Get a plugin for viewing marks
-	-- Then toggle the marks on the HUD with <leader>hm
+--[[ Get a plugin for viewing marks
+	Then toggle the marks on the HUD with <leader>hm
 
--- Get https://github.com/iamcco/markdown-preview.nvim
--- Also get the VSCode Markdown lsp
+Get https://github.com/iamcco/markdown-preview.nvim
+	Also get the VSCode Markdown lsp
 
--- Get a basic spellchecker with a dictionary of valid words
+Get a basic spellchecker with a dictionary of valid words
 
--- Look into DAP, Linters, and Formatters
-	-- Specifically configure for python
+Look into DAP, Linters, and Formatters
+	Specifically configure for python
 
--- Look into unit testing with neotest
-	-- Should be done after DAP is working
-
--- Find a way to quicky view all diagnostics within a project
-	-- Possibly Trouble.nvim
+Look into unit testing with neotest
+	Should be done after DAP is working ]]

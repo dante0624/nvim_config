@@ -16,7 +16,7 @@ local function common_open_silently(state, source)
 	local node = state.tree:get_node()
 
 	-- Need alternative because the current buffer is the tree
-	local current_buff = vim.fn.expand('#:p')
+	local current_buff = vim.fn.expand("#:p")
 
 	if node.type == "directory" then
 		cmds.open(state)
@@ -70,38 +70,37 @@ return {
 		event = "User started_on_directory",
 		keys = lazy_map({
 			-- Close the tree
-			{ '<leader>tq', '<Cmd>Neotree close<CR>' },
+			{ "<leader>tq", "<Cmd>Neotree close<CR>" },
 
 			-- Netrw-style Tree
-			{ '<leader>to', '<Cmd>Neotree<CR>' },
-			{ '<leader>tp', '<Cmd>Neotree reveal_force_cwd<CR>' },
+			{ "<leader>to", "<Cmd>Neotree<CR>" },
+			{ "<leader>tp", "<Cmd>Neotree reveal_force_cwd<CR>" },
 
 			--[[ 4 Slightly different ways to open the tree on the left (asdf)
 			I prefer Netrw-style, because I don't like the split screen
 			Main use case is importing a file, but I forgot the full path ]]
 			{
-				'<leader>ta',
-				'<Cmd>Neotree position=left<CR>'
+				"<leader>ta",
+				"<Cmd>Neotree position=left<CR>",
 			},
 			{
-				'<leader>ts',
-				'<Cmd>Neotree position=left reveal_force_cwd<CR>'
+				"<leader>ts",
+				"<Cmd>Neotree position=left reveal_force_cwd<CR>",
 			},
 			{
-				'<leader>td',
-				'<Cmd>Neotree position=left action=show<CR>'
+				"<leader>td",
+				"<Cmd>Neotree position=left action=show<CR>",
 			},
 			{
-				'<leader>tf',
-				'<Cmd>Neotree position=left action=show reveal_force_cwd<CR>'
+				"<leader>tf",
+				"<Cmd>Neotree position=left action=show reveal_force_cwd<CR>",
 			},
 
 			-- Git Status Tree
-			{ '<leader>tg', '<Cmd>Neotree git_status<CR>' },
+			{ "<leader>tg", "<Cmd>Neotree git_status<CR>" },
 
 			-- Buffers Tree
-			{ '<leader>tb', '<Cmd>Neotree buffers<CR>' },
-
+			{ "<leader>tb", "<Cmd>Neotree buffers<CR>" },
 		}),
 		opts = {
 			close_if_last_window = true,
@@ -113,8 +112,8 @@ return {
 						nowait = false,
 						config = {
 							title = "Order by",
-							prefix_key = "s"
-						}
+							prefix_key = "s",
+						},
 					},
 					["sc"] = { "order_by_created", nowait = false },
 					["sd"] = { "order_by_diagnostics", nowait = false },
@@ -195,7 +194,7 @@ return {
 					end,
 					open_and_go = function(state)
 						common_open_and_go(state, "filesystem")
-					end
+					end,
 				},
 			},
 			buffers = {
@@ -213,7 +212,7 @@ return {
 					end,
 					open_and_go = function(state)
 						common_open_and_go(state, "buffers")
-					end
+					end,
 				},
 				follow_current_file = {
 					enabled = true,
@@ -234,7 +233,7 @@ return {
 					end,
 					open_and_go = function(state)
 						common_open_and_go(state, "git_status")
-					end
+					end,
 				},
 			},
 			default_component_configs = {
@@ -243,16 +242,16 @@ return {
 				},
 				git_status = {
 					symbols = {
-						added     = "",
-						deleted   = "",
-						modified  = "",
-						renamed   = "",
+						added = "",
+						deleted = "",
+						modified = "",
+						renamed = "",
 						-- Status type
 						untracked = "",
-						ignored   = "",
-						unstaged  = "",
-						staged    = "",
-						conflict  = "",
+						ignored = "",
+						unstaged = "",
+						staged = "",
+						conflict = "",
 					},
 				},
 			},

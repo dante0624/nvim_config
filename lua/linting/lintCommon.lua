@@ -95,14 +95,14 @@ function M.setup_linters(names)
 	for _, name in ipairs(names) do
 		if M.lint_settings.default[name] == nil then
 			-- This is guaranteed to exist on the filesystem
-			local settings_default = require(linter_settings_prefix .. name)
+			local default_path = linter_settings_prefix .. name
+			local settings_default = require(default_path)
 			M.lint_settings.default[name] = settings_default
 
 			-- This may not exist on the filesystem
-			local settings_ignore_exists, settings_ignore = pcall(
-				require, linter_settings_prefix .. name .. "Ignore"
-			)
-			if settings_ignore_exists then
+			local ignore_path = default_path .. "Ignore"
+			local ignore_exists, settings_ignore = pcall(require, ignore_path)
+			if ignore_exists then
 				M.lint_settings.ignore[name] = settings_ignore
 			end
 
@@ -114,39 +114,44 @@ function M.setup_linters(names)
 	M.update_strictness(newly_set_up)
 
 	-- The stdin linters
-	vim.api.nvim_create_autocmd(
-		{ "BufWinEnter", "InsertLeave", "TextChanged", "User call_lint", },
-		{
-			buffer = 0,
-			callback = function()
-				for _, name in ipairs(names) do
-					if M.lint_settings.default[name].stdin == true then
-						try_lint(name)
-					end
+	local stdin_events = {
+		"BufWinEnter",
+		"InsertLeave",
+		"TextChanged",
+		"User call_lint",
+	}
+	vim.api.nvim_create_autocmd(stdin_events, {
+		buffer = 0,
+		callback = function()
+			for _, name in ipairs(names) do
+				if M.lint_settings.default[name].stdin == true then
+					try_lint(name)
 				end
-			end,
-		}
-	)
+			end
+		end,
+	})
 
 	-- The file linters
-	vim.api.nvim_create_autocmd(
-		{ "BufWinEnter", "BufWritePost", "User call_lint", },
-		{
-			buffer = 0,
-			callback = function()
-				-- Useful for BufWinEnter event, as the buffer may be modified
-				-- If so, do not lint because diagnostics may be outdated
-				if vim.api.nvim_buf_get_option(0, "modified") then
-					return
+	local file_events = {
+		"BufWinEnter",
+		"BufWritePost",
+		"User call_lint",
+	}
+	vim.api.nvim_create_autocmd(file_events, {
+		buffer = 0,
+		callback = function()
+			-- Useful for BufWinEnter event, as the buffer may be modified
+			-- If so, do not lint because diagnostics may be outdated
+			if vim.api.nvim_buf_get_option(0, "modified") then
+				return
+			end
+			for _, name in ipairs(names) do
+				if M.lint_settings.default[name].stdin ~= true then
+					try_lint(name)
 				end
-				for _, name in ipairs(names) do
-					if M.lint_settings.default[name].stdin ~= true then
-						try_lint(name)
-					end
-				end
-			end,
-		}
-	)
+			end
+		end,
+	})
 end
 
 return M

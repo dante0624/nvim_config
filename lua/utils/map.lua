@@ -1,7 +1,7 @@
 local M = {}
 
 function M.map(mode, lhs, rhs, opts)
-	local options = { noremap = true, silent = true, }
+	local options = { noremap = true, silent = true }
 	if opts then
 		options = vim.tbl_extend("force", options, opts)
 	end
@@ -11,7 +11,7 @@ end
 -- Sets a keymap to only the current buffer
 -- Unused function right now, but it may be useful later
 function M.local_map(mode, lhs, rhs, opts)
-	local options = { noremap = true, silent = true, buffer = 0, }
+	local options = { noremap = true, silent = true, buffer = 0 }
 	if opts then
 		options = vim.tbl_extend("force", options, opts)
 	end
@@ -23,7 +23,7 @@ end
 function M.lazy_map(all_map_tbls)
 	for _, map_tbl in ipairs(all_map_tbls) do
 		if map_tbl.mode == nil then
-			map_tbl.mode = {"n", "v"}
+			map_tbl.mode = { "n", "v" }
 		end
 	end
 
@@ -31,4 +31,3 @@ function M.lazy_map(all_map_tbls)
 end
 
 return M
-

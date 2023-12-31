@@ -3,8 +3,8 @@ if vim.v.argv[3] ~= nil then
 	return
 end
 
-local paths = require("utils.paths")
 local hud = require("core.myModules.headsUpDisplay")
+local paths = require("utils.paths")
 
 -- Session loads and restores should only depend on the initial cwd
 local initial_directory = vim.fn.getcwd()
@@ -19,18 +19,18 @@ local source_file = vim.fn.fnameescape(full_session_path)
 vim.fn.mkdir(paths.Sessions, "p")
 
 -- Globals are needed for extra things:
-	-- Tabline orderings
-	-- The state of the HUD
-vim.opt.sessionoptions:append('globals')
+-- Tabline orderings
+-- The state of the HUD
+vim.opt.sessionoptions:append("globals")
 
-local session_group = vim.api.nvim_create_augroup('sessions', {clear = true})
-vim.api.nvim_create_autocmd({'VimLeavePre',}, {
+local session_group = vim.api.nvim_create_augroup("sessions", { clear = true })
+vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
 	pattern = "*",
 	group = session_group,
 
 	callback = function()
 		-- Save barbar order of buffers
-		vim.api.nvim_exec_autocmds('User', {pattern = 'SessionSavePre'})
+		vim.api.nvim_exec_autocmds("User", { pattern = "SessionSavePre" })
 
 		-- Save the HUD state
 		for _, display in pairs(hud) do
@@ -43,11 +43,11 @@ vim.api.nvim_create_autocmd({'VimLeavePre',}, {
 	end,
 })
 
-vim.api.nvim_create_autocmd({'VimEnter',}, {
+vim.api.nvim_create_autocmd({ "VimEnter" }, {
 	pattern = "*",
 	group = session_group,
 
-	callback = function ()
+	callback = function()
 		-- If there is no session to restore, then return early
 		if vim.fn.filereadable(full_session_path) == 0 then
 			return
@@ -60,16 +60,15 @@ vim.api.nvim_create_autocmd({'VimEnter',}, {
 		-- Sometimes restoring the file messes with the cwd,
 		-- set it back to what it should be
 		local starting_buffer = vim.fn.bufnr()
-		vim.cmd('silent! bufdo cd' .. initial_directory)
-		vim.cmd('buffer ' .. starting_buffer)
+		vim.cmd("silent! bufdo cd" .. initial_directory)
+		vim.cmd("buffer " .. starting_buffer)
 
 		-- Sometimes neo-tree will leave behind a buffer of itself,
 		-- delete this if accidentally restored
 		for _, buf in ipairs(vim.fn.getbufinfo()) do
-
 			-- Lua uses % to escape characters with string.find
 			if buf.name:find("neo%-tree filesystem") ~= nil then
-				vim.cmd("bd ".. buf.bufnr)
+				vim.cmd("bd " .. buf.bufnr)
 			end
 		end
 
@@ -77,8 +76,6 @@ vim.api.nvim_create_autocmd({'VimEnter',}, {
 		for _, display in pairs(hud) do
 			display.restore()
 		end
-
 	end,
 	nested = true,
 })
-

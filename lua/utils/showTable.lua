@@ -5,18 +5,18 @@ local function tbl_lines_body(tbl, indent, ignored)
 
 	-- Alphabetize the keys
 	local alphabetized_keys = {}
-	for k, _ in pairs(tbl) do table.insert(alphabetized_keys, k) end
+	for k, _ in pairs(tbl) do
+		table.insert(alphabetized_keys, k)
+	end
 	table.sort(alphabetized_keys)
-
 
 	for _, key in ipairs(alphabetized_keys) do
 		local value = tbl[key]
-		local key_formatted = string.rep("\t", indent) .. key .. ' = '
+		local key_formatted = string.rep("\t", indent) .. key .. " = "
 		if ignored[key] ~= nil then
 			-- Ignore this key, because it is in the ignored table
-
 		elseif type(value) == "table" then
-			table.insert(stringified_lines, key_formatted .. '{')
+			table.insert(stringified_lines, key_formatted .. "{")
 
 			local sub_tbl = tbl_lines_body(value, indent + 1, ignored)
 
@@ -24,7 +24,7 @@ local function tbl_lines_body(tbl, indent, ignored)
 				table.insert(stringified_lines, v)
 			end
 
-			table.insert(stringified_lines, string.rep("\t", indent) .. '}')
+			table.insert(stringified_lines, string.rep("\t", indent) .. "}")
 		else
 			table.insert(stringified_lines, key_formatted .. tostring(value))
 		end
@@ -45,12 +45,12 @@ local function tbl_to_lines(tbl, ignored_keys)
 		ignored[key] = key
 	end
 
-	local return_tbl = {'{'}
+	local return_tbl = { "{" }
 	local lines = tbl_lines_body(tbl, 1, ignored)
 	for _, line in ipairs(lines) do
 		table.insert(return_tbl, line)
 	end
-	table.insert(return_tbl, '}')
+	table.insert(return_tbl, "}")
 
 	-- Remove all newline characters that might exist
 	-- We separate lines by having seperate entries in this table
@@ -83,14 +83,14 @@ The indicies are based on 0 indexing, and the end is not included ]]
 local function parse_line(line)
 	-- Edge case of just the first line
 	if line == "{" then
-		return {{"@constructor", 0, 1}}
+		return { { "@constructor", 0, 1 } }
 	end
 
 	-- Edge case of closing bracket
 	local close_bracket_index = string.find(line, "}")
 	if close_bracket_index ~= nil then
 		return {
-			{"@constructor", close_bracket_index - 1, close_bracket_index}
+			{ "@constructor", close_bracket_index - 1, close_bracket_index },
 		}
 	end
 
@@ -101,21 +101,21 @@ local function parse_line(line)
 	end
 
 	local line_groups = {
-		{"@operator", equal_index - 1, equal_index},
+		{ "@operator", equal_index - 1, equal_index },
 	}
 
 	-- Get the text before the '='
 	local _, last_tab_index = string.find(line, "\t*")
-	table.insert(line_groups, {"@property", last_tab_index, equal_index - 2})
+	table.insert(line_groups, { "@property", last_tab_index, equal_index - 2 })
 
 	local line_len = #line
 	-- Case 1, the value after the '=' is a table
-	if (line:sub(line_len, line_len) == "{") then
-		table.insert(line_groups, {"@constructor", line_len - 1, line_len})
+	if line:sub(line_len, line_len) == "{" then
+		table.insert(line_groups, { "@constructor", line_len - 1, line_len })
 
 	-- Case 2, the value after the '=' is a fixed value
 	else
-		table.insert(line_groups, {"Constant", equal_index + 1, line_len})
+		table.insert(line_groups, { "Constant", equal_index + 1, line_len })
 	end
 
 	return line_groups
@@ -159,39 +159,36 @@ end
 local function create_buffer(name)
 	local existing_buffer_number = vim.fn.bufnr(name)
 
-    if existing_buffer_number == -1 then
-        local new_buffer_number = vim.api.nvim_create_buf(false, true)
+	if existing_buffer_number == -1 then
+		local new_buffer_number = vim.api.nvim_create_buf(false, true)
 		vim.api.nvim_buf_set_name(new_buffer_number, name)
 		return new_buffer_number
-    end
-
+	end
 
 	return existing_buffer_number
 end
 
 local function log(data, buffer_number)
-    if data then
+	if data then
 		-- Clear the buffer's contents incase it has been used
 		vim.api.nvim_buf_set_lines(buffer_number, 0, -1, true, {})
 
 		-- Write to the buffer
-        vim.api.nvim_buf_set_lines(buffer_number, 0, 0, true, data)
+		vim.api.nvim_buf_set_lines(buffer_number, 0, 0, true, data)
 
 		-- Say that it is unmodified, this way it can be easily deleted
 		vim.bo[buffer_number].modified = false
 
 		-- Highlight the buffer
 		highlight_buffer(buffer_number)
-    end
+	end
 end
 
 local function focus_buffer(buffer_number)
 	-- Get the window the buffer is in and set the cursor position to the top
 	vim.cmd("buffer " .. buffer_number)
-	local buffer_window = vim.api.nvim_call_function(
-		"bufwinid",
-		{ buffer_number }
-	)
+	local buffer_window =
+		vim.api.nvim_call_function("bufwinid", { buffer_number })
 	vim.api.nvim_win_set_cursor(buffer_window, { 1, 0 })
 
 	-- Make the buffer listed when we focus it
@@ -208,7 +205,7 @@ end
 --[[ Given a table, send it to an output buffer to be visualized.
 Give that buffer a unique name (emphasis on unique!)
 and specify a list of keys (as strings) to ignore from the table]]
-return function (tbl, name, ignored_keys)
+return function(tbl, name, ignored_keys)
 	if name == nil then
 		name = "((showTable output))"
 	end
@@ -220,4 +217,3 @@ return function (tbl, name, ignored_keys)
 	log(tbl_to_lines(tbl, ignored_keys), buffer_number)
 	focus_buffer(buffer_number)
 end
-
