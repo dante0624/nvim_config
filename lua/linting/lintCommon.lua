@@ -18,7 +18,6 @@ local linter_settings_prefix = require("linting.misc").linter_settings_prefix
 
 local M = {}
 
--- Defines a new global method for debugging table information
 function M.setup()
 	function LintInfo()
 		local showTable = require("utils.showTable")

@@ -1,5 +1,4 @@
---[[ TODO:
-Create my own simple wrapper around Mason and Treesitter called Carpenter
+--[[ TODO:Create my own simple wrapper around Mason and Treesitter called Carpenter
 	Implement this if I use a remote server, and don't want to install all 
 		Lsps, Linters, Formatters, etc for every single language
 	
@@ -52,15 +51,21 @@ return {
 				-- LSPs
 				"html-lsp", -- HTML
 				"css-lsp", -- CSS
-				"typescript-language-server", -- Typescript and Javascript
+				"typescript-language-server", -- JS and TS
 				"lua-language-server", -- Lua
 				"pyright", -- Python
 				"jdtls", -- Java
 
 				-- Linters
 				"htmlhint", -- HTML
+
+				-- Formatters
+				"prettierd", -- HTML, CSS, JS, TS, JSON, and Markdown
+				"stylua", -- Lua
+
+				-- Linters and Formatters
 				"stylelint", -- CSS
-				"eslint_d", -- Javascript
+				"eslint_d", -- JS
 				"ruff", -- Python
 			},
 		},
