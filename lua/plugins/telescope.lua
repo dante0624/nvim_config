@@ -3,7 +3,7 @@ local lazy_map = require("utils.map").lazy_map
 return {
 	{
 		"nvim-telescope/telescope.nvim",
-		tag = "0.1.1",
+		tag = "0.1.5",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-telescope/telescope-fzy-native.nvim",
