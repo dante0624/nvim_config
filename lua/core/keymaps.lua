@@ -64,10 +64,10 @@ map({ "n", "v", "s", "i", "t" }, "<C-k>", "<C-w>k")
 map({ "n", "v", "s", "i", "t" }, "<C-l>", "<C-w>l")
 
 -- Resize windows quickly
-map({ "n", "v", "s", "i", "t" }, "<C-Up>", "<Cmd>resize -2<CR>")
-map({ "n", "v", "s", "i", "t" }, "<C-Down>", "<Cmd>resize +2<CR>")
-map({ "n", "v", "s", "i", "t" }, "<C-Left>", "<Cmd>vertical resize -2<CR>")
-map({ "n", "v", "s", "i", "t" }, "<C-Right>", "<Cmd>vertical resize +2<CR>")
+map({ "n", "v", "s", "i", "t" }, "<Up>", "<Cmd>resize -2<CR>")
+map({ "n", "v", "s", "i", "t" }, "<Down>", "<Cmd>resize +2<CR>")
+map({ "n", "v", "s", "i", "t" }, "<Left>", "<Cmd>vertical resize -2<CR>")
+map({ "n", "v", "s", "i", "t" }, "<Right>", "<Cmd>vertical resize +2<CR>")
 
 -- Easier redo command
 map("", "R", "<C-r>")
