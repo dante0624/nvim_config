@@ -6,8 +6,8 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- Lets me press j and k at the same time to escape insertion mode
-map("i", "jk", "<Esc>")
-map("i", "kj", "<Esc>")
+-- map("i", "jk", "<Esc>")
+-- map("i", "kj", "<Esc>")
 
 -- Lets me use Alt + hjkl to move in insert and command mode
 map({ "i", "c", "t" }, "<A-h>", "<Left>")
