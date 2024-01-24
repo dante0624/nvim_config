@@ -5,9 +5,9 @@ return {
 		"smoka7/hop.nvim",
 		tag = "v2.3.2",
 		keys = lazy_map({
-			{ "<Leader>k", "<CMD>HopLineStartBC<CR>" },
-			{ "<Leader>j", "<CMD>HopLineStartAC<CR>" },
-			{ "<Leader>;", "<CMD>HopChar2<CR>" },
+			{ "<C-k>", "<CMD>HopLineStartBC<CR>" },
+			{ "<C-j>", "<CMD>HopLineStartAC<CR>" },
+			{ "<C-l>", "<CMD>HopChar2<CR>" },
 		}),
 		opts = {},
 	},

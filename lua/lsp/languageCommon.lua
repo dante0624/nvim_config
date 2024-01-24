@@ -14,15 +14,16 @@ function M.on_attach_keymaps(_, bufnr)
 	end
 
 	-- The beautiful keymaps
+    -- "a" for 'Attached' or 'Action'
 	lsp_map("n", "gd", vim.lsp.buf.definition)
 	lsp_map("n", "gD", vim.lsp.buf.type_definition)
 	lsp_map("n", "gr", vim.lsp.buf.references)
-	lsp_map("", "<leader>la", vim.lsp.buf.code_action)
-	lsp_map("n", "<leader>ls", vim.lsp.buf.document_symbol)
-	lsp_map("", "<leader>lf", vim.lsp.buf.format)
-	lsp_map("n", "<leader>lh", vim.lsp.buf.hover)
-	lsp_map("n", "<leader>lr", vim.lsp.buf.rename)
-	lsp_map("n", "<leader>lw", vim.lsp.buf.workspace_symbol)
+	lsp_map("", "<leader>aa", vim.lsp.buf.code_action)
+	lsp_map("n", "<leader>as", vim.lsp.buf.document_symbol)
+	lsp_map("", "<leader>af", vim.lsp.buf.format)
+	lsp_map("n", "<leader>ah", vim.lsp.buf.hover)
+	lsp_map("n", "<leader>ar", vim.lsp.buf.rename)
+	lsp_map("n", "<leader>aw", vim.lsp.buf.workspace_symbol)
 end
 
 -- Sets up Diganostic signs, diagnostic config, and lsp handlers
@@ -63,13 +64,13 @@ function M.setup()
 		vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 
 	-- Go up or down (k and j) the list of diagnostics
-	vim.keymap.set("n", "<leader>dk", function()
+	vim.keymap.set("n", "<leader>ak", function()
 		vim.diagnostic.goto_prev({ border = "rounded" })
 	end)
-	vim.keymap.set("n", "<leader>dj", function()
+	vim.keymap.set("n", "<leader>aj", function()
 		vim.diagnostic.goto_next({ border = "rounded" })
 	end)
-	vim.keymap.set("n", "<leader>do", vim.diagnostic.open_float)
+	vim.keymap.set("n", "<leader>ao", vim.diagnostic.open_float)
 
 	function LspInfo(all_keys)
 		if all_keys == nil then

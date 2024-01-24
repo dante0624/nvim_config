@@ -163,14 +163,14 @@ for display_name, display in pairs(M) do
 	end
 end
 
--- Prefix with h for HeadsUpDisplay
-map("", "<Leader>hh", M.header.toggle)
-map("", "<Leader>hf", M.footer.toggle)
-map("", "<Leader>hl", M.line_numbers.toggle)
-map("", "<Leader>hc", M.color_column.toggle)
-map("", "<Leader>hg", M.git_signs.toggle)
-map("", "<Leader>hd", M.diagnostics.toggle)
-map("", "<Leader>hs", M.strict.toggle)
+-- Prefix with d for HeadsUpDisplay
+map("", "<Leader>dh", M.header.toggle)
+map("", "<Leader>df", M.footer.toggle)
+map("", "<Leader>dl", M.line_numbers.toggle)
+map("", "<Leader>dc", M.color_column.toggle)
+map("", "<Leader>dg", M.git_signs.toggle)
+map("", "<Leader>dd", M.diagnostics.toggle)
+map("", "<Leader>ds", M.strict.toggle)
 
 -- These can be used to set "favorite" HUD settings
 -- Especially useful when set to a keymap
@@ -196,24 +196,24 @@ local function onlyHide(tbl)
 end
 
 -- Show no displays
-map("", "<Leader>hq", function()
+map("", "<Leader>dq", function()
 	onlyShow({})
 end)
 
 -- Show all displays
-map("", "<Leader>ho", function()
+map("", "<Leader>do", function()
 	onlyHide({})
 end)
 
 -- My own verion of "zen mode".
 -- I think its important to still show diagnostics
-map("", "<Leader>hz", function()
+map("", "<Leader>dz", function()
 	onlyShow({ "diagnostics" })
 end)
 
 -- Get rid of the header because "The Primagen" (p) suggests not using it
 -- Use this when trying to immediately jump to buffers with <Control> {a-g}
-map("", "<Leader>hp", function()
+map("", "<Leader>dp", function()
 	onlyHide({ "header" })
 end)
 

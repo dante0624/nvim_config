@@ -9,12 +9,6 @@ vim.g.maplocalleader = " "
 -- map("i", "jk", "<Esc>")
 -- map("i", "kj", "<Esc>")
 
--- Lets me use Alt + hjkl to move in insert and command mode
-map({ "i", "c", "t" }, "<A-h>", "<Left>")
-map({ "i", "c", "t" }, "<A-j>", "<Down>")
-map({ "i", "c", "t" }, "<A-k>", "<Up>")
-map({ "i", "c", "t" }, "<A-l>", "<Right>")
-
 -- My remapings for moving far vertically and horizontally
 map("", "H", "^")
 map("", "L", "$")
@@ -58,21 +52,24 @@ map("", "go", "<Cmd>copen<CR>")
 map("", "gq", "<Cmd>cclose<CR>")
 
 -- Switch between windows quickly
-map({ "n", "v", "s", "i", "t" }, "<C-h>", "<C-w>h")
-map({ "n", "v", "s", "i", "t" }, "<C-j>", "<C-w>j")
-map({ "n", "v", "s", "i", "t" }, "<C-k>", "<C-w>k")
-map({ "n", "v", "s", "i", "t" }, "<C-l>", "<C-w>l")
+map("", "<Leader>h", "<C-w>h")
+map("", "<Leader>j", "<C-w>j")
+map("", "<Leader>k", "<C-w>k")
+map("", "<Leader>l", "<C-w>l")
 
 -- Resize windows quickly
-map({ "n", "v", "s", "i", "t" }, "<Up>", "<Cmd>resize -2<CR>")
-map({ "n", "v", "s", "i", "t" }, "<Down>", "<Cmd>resize +2<CR>")
-map({ "n", "v", "s", "i", "t" }, "<Left>", "<Cmd>vertical resize -2<CR>")
-map({ "n", "v", "s", "i", "t" }, "<Right>", "<Cmd>vertical resize +2<CR>")
+map("", "<Up>", "<Cmd>resize -2<CR>")
+map("", "<Down>", "<Cmd>resize +2<CR>")
+map("", "<Left>", "<Cmd>vertical resize -2<CR>")
+map("", "<Right>", "<Cmd>vertical resize +2<CR>")
 
 -- Easier redo command
 map("", "R", "<C-r>")
 
 -- Within a plugin I like to remap Control-A for Tab Selection
--- So use Leader-A for this behavior
+-- So remap somethine else to Control-A
 -- When hovered over a number, it will cause this number to be incremented
-map("", "<leader>a", "<C-a>")
+map("", "<leader>i", "<C-a>")
+
+-- Control-X similarly was originally for decrimenting a number
+map("", "<leader>I", "<C-x>")
