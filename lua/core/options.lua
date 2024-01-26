@@ -1,4 +1,4 @@
--- Turn on hybrid line numbers
+-- Turn on line numbers
 vim.opt.number = true
 
 -- Don't automatically make the next line a comment if the current line is
@@ -30,3 +30,8 @@ vim.opt.breakindent = true
 
 -- Show a line at 80 characters
 vim.opt.colorcolumn = "80"
+
+-- All lowercase searches are case insensitive
+-- But searches with any uppercase characters are case sensitive
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
