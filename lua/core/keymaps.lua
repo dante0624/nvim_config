@@ -5,9 +5,12 @@ map("", "<Space>", "<Nop>")
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- Lets me press j and k at the same time to escape insertion mode
--- map("i", "jk", "<Esc>")
--- map("i", "kj", "<Esc>")
+-- Use control-(h,j,k,l) to move in any mode
+local all_modes = {"n", "v", "o", "i", "c"}
+map(all_modes, "<C-h>", "<Left>")
+map(all_modes, "<C-j>", "<Down>")
+map(all_modes, "<C-k>", "<Up>")
+map(all_modes, "<C-l>", "<Right>")
 
 -- My remapings for moving far vertically and horizontally
 map("", "H", "^")
@@ -66,9 +69,8 @@ map("", "<Right>", "<Cmd>vertical resize +2<CR>")
 -- Easier redo command
 map("", "R", "<C-r>")
 
--- Within a plugin I like to remap Control-A for Tab Selection
--- So remap somethine else to Control-A
--- When hovered over a number, it will cause this number to be incremented
+-- Control-A can be used to increment a number
+-- But I prefer <leader> commands to <C-> commands, so remap this
 map("", "<leader>i", "<C-a>")
 
 -- Control-X similarly was originally for decrimenting a number

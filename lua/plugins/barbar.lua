@@ -27,12 +27,12 @@ return {
 			map("", "<leader>e", "<Cmd>BufferClose<CR>")
 			map("", "<leader>E", "<Cmd>BufferCloseBuffersRight<CR>")
 
-			-- Pick buffer to immediately jump to a buffer
-			map("", "<C-a>", "<Cmd>BufferGoto 1<CR>")
-			map("", "<C-s>", "<Cmd>BufferGoto 2<CR>")
-			map("", "<C-d>", "<Cmd>BufferGoto 3<CR>")
-			map("", "<C-f>", "<Cmd>BufferGoto 4<CR>")
-			map("", "<C-g>", "<Cmd>BufferGoto 5<CR>")
+			-- O for "open" and then select a specific buffer
+			map("", "<leader>oa", "<Cmd>BufferGoto 1<CR>")
+			map("", "<leader>os", "<Cmd>BufferGoto 2<CR>")
+			map("", "<leader>od", "<Cmd>BufferGoto 3<CR>")
+			map("", "<leader>of", "<Cmd>BufferGoto 4<CR>")
+			map("", "<leader>og", "<Cmd>BufferGoto 5<CR>")
 		end,
 	},
 }

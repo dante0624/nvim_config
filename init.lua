@@ -18,8 +18,9 @@ require("formatting.formatCommon").setup()
 			-- Conform should apply both ruff reformats (format and fix)
 			-- Refactoring should only applies to nvim/rope
 			-- If other languages have non-lsp refactoring, also use <leader>ra
-		-- Then map <leader>p to reformat and then save
-		-- <leader>P should do it to all buffers
+        -- Make <leader>af use conform if it is setup, but fallback on LSP
+            -- Use <leader>p to format and save (p for "publish")
+            -- Use <leader>P to format and save all
 
 	Try out nvim/rope plugin
 		-- If it works well, attempt filenames

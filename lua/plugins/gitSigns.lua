@@ -26,7 +26,7 @@ local function git_on_attach(bufnr)
 	end)
 
 	map("n", "<leader>gR", git_signs.reset_buffer)
-	map("n", "<leader>gp", git_signs.preview_hunk)
+	map("n", "<leader>go", git_signs.preview_hunk)
 	map("n", "<leader>gb", git_signs.blame_line)
 	map("n", "<leader>gd", git_signs.diffthis)
 	map("n", "<leader>gt", git_signs.toggle_deleted)
