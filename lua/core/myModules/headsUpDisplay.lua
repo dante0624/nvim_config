@@ -63,6 +63,19 @@ function M.line_numbers.hide()
 	set_all("nonumber")
 end
 
+M.relative_line_numbers = {}
+function M.relative_line_numbers.isShown()
+	return vim.o.relativenumber
+end
+
+function M.relative_line_numbers.show()
+	set_all("relativenumber")
+end
+
+function M.relative_line_numbers.hide()
+	set_all("norelativenumber")
+end
+
 M.color_column = {}
 function M.color_column.isShown()
 	return vim.o.colorcolumn == "80"
@@ -167,6 +180,7 @@ end
 map("", "<Leader>dh", M.header.toggle)
 map("", "<Leader>df", M.footer.toggle)
 map("", "<Leader>dl", M.line_numbers.toggle)
+map("", "<Leader>dr", M.relative_line_numbers.toggle)
 map("", "<Leader>dc", M.color_column.toggle)
 map("", "<Leader>dg", M.git_signs.toggle)
 map("", "<Leader>dd", M.diagnostics.toggle)
@@ -202,7 +216,7 @@ end)
 
 -- Show all displays
 map("", "<Leader>do", function()
-	onlyHide({})
+	onlyHide({ "relative_line_numbers" })
 end)
 
 -- My own verion of "zen mode".
@@ -214,7 +228,7 @@ end)
 -- Get rid of the header because "The Primagen" (p) suggests not using it
 -- Use this when trying to immediately jump to buffers with <Control> {a-g}
 map("", "<Leader>dp", function()
-	onlyHide({ "header" })
+	onlyHide({ "header", "relative_line_numbers" })
 end)
 
 return M
