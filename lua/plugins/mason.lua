@@ -35,7 +35,7 @@ return {
 			},
 			-- This version locks all LSPs, Linters, Formatters, and DAPs
 			registries = {
-				"github:mason-org/mason-registry@2023-12-13-smug-hamlet",
+				"github:mason-org/mason-registry@2024-02-28-wavy-ziege",
 			},
 		},
 	},

@@ -13,4 +13,5 @@ return {
 			logVerbosity = "off",
 		},
 	},
+	single_file_support = true,
 }

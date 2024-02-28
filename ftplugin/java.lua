@@ -5,13 +5,11 @@ local paths = require("utils.paths")
 local lsp_on_attach = require("lsp.languageCommon").on_attach_keymaps
 
 -- Find the root directory, returns nil if not found
-local root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" })
-local single_file = root_dir == nil
-
-if single_file then
-	-- Set to the folder that the current buffer is in
-	root_dir = vim.fn.expand("%:p:h")
-end
+local root_dir, single_file = paths.find_project_root({
+	".git",
+	"mvnw",
+	"gradlew"
+})
 
 local inferred_workspace = paths.Java_Workspaces
 	.. paths.serialize_path(root_dir)

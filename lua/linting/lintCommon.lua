@@ -118,39 +118,48 @@ function M.setup_linters(names)
 		"BufWinEnter",
 		"InsertLeave",
 		"TextChanged",
-		"User call_lint",
 	}
+	local function lint_all_stdin()
+		for _, name in ipairs(names) do
+			if M.lint_settings.default[name].stdin == true then
+				try_lint(name)
+			end
+		end
+	end
 	vim.api.nvim_create_autocmd(stdin_events, {
 		buffer = 0,
-		callback = function()
-			for _, name in ipairs(names) do
-				if M.lint_settings.default[name].stdin == true then
-					try_lint(name)
-				end
-			end
-		end,
+		callback = lint_all_stdin,
+	})
+	vim.api.nvim_create_autocmd("User", {
+		pattern = "call_lint",
+		callback = lint_all_stdin,
 	})
 
 	-- The file linters
 	local file_events = {
 		"BufWinEnter",
 		"BufWritePost",
-		"User call_lint",
+		"User",
 	}
+	local function lint_all_files()
+		-- Useful for BufWinEnter event, as the buffer may be modified
+		-- If so, do not lint because diagnostics may be outdated
+		if vim.api.nvim_buf_get_option(0, "modified") then
+			return
+		end
+		for _, name in ipairs(names) do
+			if M.lint_settings.default[name].stdin ~= true then
+				try_lint(name)
+			end
+		end
+	end
 	vim.api.nvim_create_autocmd(file_events, {
 		buffer = 0,
-		callback = function()
-			-- Useful for BufWinEnter event, as the buffer may be modified
-			-- If so, do not lint because diagnostics may be outdated
-			if vim.api.nvim_buf_get_option(0, "modified") then
-				return
-			end
-			for _, name in ipairs(names) do
-				if M.lint_settings.default[name].stdin ~= true then
-					try_lint(name)
-				end
-			end
-		end,
+		callback = lint_all_files,
+	})
+	vim.api.nvim_create_autocmd("User", {
+		pattern = "call_lint",
+		callback = lint_all_files,
 	})
 end
 

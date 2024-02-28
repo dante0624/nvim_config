@@ -8,8 +8,9 @@ return {
 	pre_attach_settings = {
 		python = {
 			analysis = {
-				typeCheckingMode = "on",
+				typeCheckingMode = "strict",
 			},
 		},
 	},
+	single_file_support = true,
 }

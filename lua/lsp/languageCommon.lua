@@ -114,38 +114,11 @@ function M.setup()
 end
 
 -- Attaches to an existing client if the name and root directory match
--- If no match, it starts a new LSP client and attaches to that
--- Returns true for "single_file_mode"
--- Returns false otherwise
-function M.start_or_attach(config_name, root_files)
-	if root_files == nil then
-		root_files = { ".git" }
-	end
-
-	-- Check for a root directory and set single_file_mode accordingly
-	local root_dir =
-		vim.fs.dirname(vim.fs.find(root_files, { upward = true })[1])
-
-	local single_file_mode
-	if root_dir == nil then
-		single_file_mode = true
-
-		-- The folder that the current buffer is in
-		root_dir = vim.fn.expand("%:p:h")
-	else
-		single_file_mode = false
-	end
-
-	root_dir = vim.fn.fnamemodify(root_dir, ":p")
-
-	-- Lua hotifx, make the root dir start at lua/ rather than before it
-	if config_name == "lua-language-server" then
-		for name, type in vim.fs.dir(root_dir) do
-			if name == "lua" and type == "directory" then
-				root_dir = root_dir .. "lua/"
-				break
-			end
-		end
+-- If no match is found, then it creates and attaches to a new client
+-- Returns the client_id in either case
+function M.start_or_attach(config_name, root_dir, single_file)
+	if single_file == nil then
+		single_file = false
 	end
 
 	-- Trying to attach to active clients
@@ -155,7 +128,7 @@ function M.start_or_attach(config_name, root_files)
 		local client_root = client_opts.config.root_dir
 		if client_name == config_name and client_root == root_dir then
 			vim.lsp.buf_attach_client(0, client_id)
-			return single_file_mode
+			return client_id
 		end
 	end
 
@@ -185,7 +158,20 @@ function M.start_or_attach(config_name, root_files)
 		end
 	end
 
-	vim.lsp.start({
+	--[[ Language servers require each project to have a `root` in order to
+	provide features that require cross-file indexing.
+
+	Some servers support not passing a root directory as a proxy for single
+	file mode under which cross-file features may be degraded. 
+
+	This information came from the lspconfig doc at:
+	https://github.com/neovim/nvim-lspconfig/blob/b1a11b042d015df5b8f7f33aa026e501b639c649/doc/lspconfig.txt#L430
+	]]
+	if settings.single_file_support and single_file then
+		root_dir = nil
+	end
+
+	return vim.lsp.start({
 		name = config_name,
 		cmd = settings.cmd,
 		root_dir = root_dir,
@@ -194,8 +180,6 @@ function M.start_or_attach(config_name, root_files)
 		on_attach = on_attach,
 		capabilities = require("cmp_nvim_lsp").default_capabilities(),
 	})
-
-	return single_file_mode
 end
 
 return M

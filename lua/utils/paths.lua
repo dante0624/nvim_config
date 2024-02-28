@@ -30,4 +30,28 @@ function M.serialize_path(path)
 	return path:gsub(file_separator, "%%")
 end
 
+-- Starts at the current file's directory, searches upwards for matching files
+-- For example, if root_files is {".git"}, then find where the repo starts
+
+-- If the root_files are not found, fall back on the current file's directory
+-- When this happens, we are said to be reading a "single_file"
+-- Returns root_dir, single_file
+function M.find_project_root(root_files)
+	if root_files == nil then
+		root_files = { ".git" }
+	end
+	-- Check for a root directory and set single_file_mode accordingly
+	local root_dir =
+		vim.fs.dirname(vim.fs.find(root_files, { upward = true })[1])
+
+	local single_file = root_dir == nil
+	if single_file then
+		root_dir = vim.fn.expand("%:p:h")
+	end
+
+	root_dir = vim.fn.fnamemodify(root_dir, ":p")
+
+	return root_dir, single_file
+end
+
 return M
