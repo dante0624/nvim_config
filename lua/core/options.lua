@@ -1,6 +1,3 @@
--- Turn on line numbers
-vim.opt.number = true
-
 -- Don't automatically make the next line a comment if the current line is
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
 	pattern = "*",
@@ -28,10 +25,11 @@ vim.opt.sw = 4
 -- When a line is wrapped, we continue indent the wrapping to match
 vim.opt.breakindent = true
 
--- Show a line at 80 characters
-vim.opt.colorcolumn = "80"
-
 -- All lowercase searches are case insensitive
 -- But searches with any uppercase characters are case sensitive
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+
+-- The rest of the options (like line numbers and color column) are in:
+-- require("core.myModules.hudKeymaps").default_display_preferences() ->
+-- require("core.myModules.headsUpDisplay")

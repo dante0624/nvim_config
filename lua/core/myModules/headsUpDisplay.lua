@@ -1,5 +1,3 @@
-local map = require("utils.map").map
-
 -- Sets an option to all buffers, then returns to the original_buffer
 -- Happens immediately, appearing that the original buffer was never left
 local function set_all(option)
@@ -133,12 +131,22 @@ end
 
 function M.strict.show()
 	vim.g.ignore_strict_diagnostics = false
+	local lint_ok, _ = pcall(require, "lint")
+    if not lint_ok then
+        return
+    end
+
 	require("linting.lintCommon").update_strictness()
 	vim.cmd("do User call_lint")
 end
 
 function M.strict.hide()
 	vim.g.ignore_strict_diagnostics = true
+	local lint_ok, _ = pcall(require, "lint")
+    if not lint_ok then
+        return
+    end
+
 	require("linting.lintCommon").update_strictness()
 	vim.cmd("do User call_lint")
 end
@@ -175,60 +183,5 @@ for display_name, display in pairs(M) do
 		end
 	end
 end
-
--- Prefix with d for HeadsUpDisplay
-map("", "<Leader>dh", M.header.toggle)
-map("", "<Leader>df", M.footer.toggle)
-map("", "<Leader>dl", M.line_numbers.toggle)
-map("", "<Leader>dr", M.relative_line_numbers.toggle)
-map("", "<Leader>dc", M.color_column.toggle)
-map("", "<Leader>dg", M.git_signs.toggle)
-map("", "<Leader>dd", M.diagnostics.toggle)
-map("", "<Leader>ds", M.strict.toggle)
-
--- These can be used to set "favorite" HUD settings
--- Especially useful when set to a keymap
-local function onlyShow(tbl)
-	-- First hide everything
-	for _, display in pairs(M) do
-		display.hide()
-	end
-
-	for _, mode_name in ipairs(tbl) do
-		M[mode_name].show()
-	end
-end
-local function onlyHide(tbl)
-	-- First show everything
-	for _, mode in pairs(M) do
-		mode.show()
-	end
-
-	for _, mode_name in ipairs(tbl) do
-		M[mode_name].hide()
-	end
-end
-
--- Show no displays
-map("", "<Leader>dq", function()
-	onlyShow({})
-end)
-
--- Show all displays
-map("", "<Leader>do", function()
-	onlyHide({ "relative_line_numbers" })
-end)
-
--- My own verion of "zen mode".
--- I think its important to still show diagnostics
-map("", "<Leader>dz", function()
-	onlyShow({ "diagnostics" })
-end)
-
--- Get rid of the header because "The Primagen" (p) suggests not using it
--- Use this when trying to immediately jump to buffers with <Control> {a-g}
-map("", "<Leader>dp", function()
-	onlyHide({ "header", "relative_line_numbers" })
-end)
 
 return M

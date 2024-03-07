@@ -1,5 +1,8 @@
--- If vim was called with any arguments, then do nothing
+local default_display = require("core.myModules.hudKeymaps").default_display
+
+-- If vim was called with any arguments, set the default hud and then return
 if vim.v.argv[3] ~= nil then
+    default_display()
 	return
 end
 
@@ -50,6 +53,7 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
 	callback = function()
 		-- If there is no session to restore, then return early
 		if vim.fn.filereadable(full_session_path) == 0 then
+            default_display()
 			return
 		end
 
