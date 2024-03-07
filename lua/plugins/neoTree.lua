@@ -1,3 +1,4 @@
+local clean_empty = require("utils.buffers").clean_empty
 local lazy_map = require("utils.map").lazy_map
 
 -- Helper functions for defining my own custom commands in the tree
@@ -34,6 +35,8 @@ local function common_open_silently(state, source)
 	else
 		vim.cmd("badd " .. node.path)
 	end
+
+    clean_empty()
 end
 
 -- Open a tree node and go, should work for any source
@@ -45,6 +48,7 @@ local function common_open_and_go(state, source)
 
 	if node.type == "file" then
 		vim.cmd("Neotree action=close")
+        clean_empty()
 	end
 end
 

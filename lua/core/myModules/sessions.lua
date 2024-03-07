@@ -68,7 +68,7 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
 		for _, buf in ipairs(vim.fn.getbufinfo()) do
 			-- Lua uses % to escape characters with string.find
 			if buf.name:find("neo%-tree filesystem") ~= nil then
-				vim.cmd("bd " .. buf.bufnr)
+				vim.cmd("bd! " .. buf.bufnr)
 			end
 		end
 
