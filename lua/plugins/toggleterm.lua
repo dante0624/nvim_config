@@ -13,12 +13,12 @@ function _G.set_term_keymaps()
 	end
 
 	-- For some reason <C-\><C-n> goes from terminal mode to normal mode
-	-- The intention here is to exit the terminal with <j & k>, q
-	-- term_map("t", "jk", [[<C-\><C-n>]])
-	-- term_map("t", "kj", [[<C-\><C-n>]])
     term_map("t", "<Esc>", [[<C-\><C-n>]])
+
+	-- All of the following can be used to exit ToggleTerm when in normal mode
 	term_map({ "n", "v" }, "<Esc>", "<CMD>ToggleTerm<CR>")
 	term_map({ "n", "v" }, "q", "<CMD>ToggleTerm<CR>")
+	term_map({ "n", "v" }, ";", "<CMD>ToggleTerm<CR>")
 end
 
 return {

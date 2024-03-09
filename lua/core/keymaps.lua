@@ -23,7 +23,7 @@ map("", "p", '"0p')
 map("", "P", '"0gP') -- Moves the cursor after pasting with shift
 
 -- Make x, only while in visual mode, cut text into register 0
-map("v", "x", '"0x')
+map("x", "x", '"0x')
 
 -- Use control to copy, cut, and paste from clipboard
 map("", "<C-p>", '"+p')
@@ -36,8 +36,8 @@ map("i", "<C-p>", '<Esc>"0pa')
 map("i", "<C-v>", '<Esc>"+pa')
 
 -- Intuitive tab indentation, only in visual mode
-map("v", "<TAB>", ">gv")
-map("v", "<S-TAB>", "<gv")
+map("x", "<TAB>", ">gv")
+map("x", "<S-TAB>", "<gv")
 
 -- Removes the highlighting from the screen that comes with searching via "/"
 map("n", "<Leader>n", "<Cmd>noh<CR>")

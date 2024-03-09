@@ -96,12 +96,10 @@ return {
 			end
 			local my_telescope_keymaps = {
 				i = {
-					["<C-c>"] = actions.close,
-
 					["<C-v>"] = stop_insert(
 						custom_actions.multi_selection_open_vertical
 					),
-					["<C-x>"] = stop_insert(
+					["<C-h>"] = stop_insert(
 						custom_actions.multi_selection_open_horizontal
 					),
 					["<CR>"] = stop_insert(custom_actions.multi_selection_open),
@@ -113,28 +111,14 @@ return {
 
 					["<C-j>"] = actions.move_selection_next,
 					["<C-k>"] = actions.move_selection_previous,
-
-					["<C-n>"] = actions.cycle_history_next,
-					["<C-p>"] = actions.cycle_history_prev,
-
-					["<C-u>"] = actions.preview_scrolling_up,
-					["<C-d>"] = actions.preview_scrolling_down,
-
-					["<C-l>"] = actions.open_qflist,
-					["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
-					--[[ ["<M-q>"] = actions.send_selected_to_qflist +
-						actions.open_qflist, ]]
-
-					-- ["<C-l>"] = actions.complete_tag,
-
-					["<C-/>"] = actions.which_key,
 				},
 
 				n = {
 					["q"] = actions.close,
+					[";"] = actions.close,
 
 					["v"] = custom_actions.multi_selection_open_vertical,
-					["x"] = custom_actions.multi_selection_open_horizontal,
+					["h"] = custom_actions.multi_selection_open_horizontal,
 					["<CR>"] = custom_actions.multi_selection_open,
 
 					["<Tab>"] = actions.toggle_selection
@@ -157,9 +141,7 @@ return {
 					["d"] = actions.preview_scrolling_down,
 
 					["l"] = actions.open_qflist,
-					["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
-					--[[ ["<M-q>"] = actions.send_selected_to_qflist +
-						actions.open_qflist, ]]
+					["f"] = actions.send_to_qflist + actions.open_qflist,
 
 					["?"] = actions.which_key,
 				},

@@ -1,3 +1,5 @@
+local map = require("utils.map").map
+
 return {
 	{
 		"hrsh7th/nvim-cmp",
@@ -20,6 +22,24 @@ return {
 
 			-- This line actually gives me snippets
 			require("luasnip/loaders/from_vscode").lazy_load()
+
+			map({ "i", "s", }, "<C-h>", function()
+				if luasnip.jumpable() then
+					luasnip.jump(-1)
+				else
+					local current_cursor_col = vim.fn.getcurpos()[3]
+					vim.fn.cursor(0, current_cursor_col - 1)
+				end
+			end)
+			map({ "i", "s", }, "<C-l>", function()
+				if luasnip.jumpable() then
+					luasnip.jump(1)
+				else
+					local current_cursor_col = vim.fn.getcurpos()[3]
+					vim.fn.cursor(0, current_cursor_col + 1)
+				end
+
+			end)
 
 			-- The icons we will use for code completion
 			-- find more here: https://www.nerdfonts.com/cheat-sheet
@@ -50,58 +70,29 @@ return {
 				Operator = "",
 				TypeParameter = "󰊄",
 			}
-
-			local completion_mappings = {
-				["<C-k>"] = cmp.mapping.select_prev_item(),
-				["<C-j>"] = cmp.mapping.select_next_item(),
-				["<C-b>"] = cmp.mapping(
-					cmp.mapping.scroll_docs(-1),
-					{ "i", "c" }
-				),
-				["<C-f>"] = cmp.mapping(
-					cmp.mapping.scroll_docs(1),
-					{ "i", "c" }
-				),
-				["<C-a>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
-				["<C-l>"] = cmp.mapping({
-					i = cmp.mapping.abort(),
-					c = cmp.mapping.close(),
-				}),
-
-				-- Need to select option with tab before hitting enter
-				["<CR>"] = cmp.mapping.confirm({ select = false }),
-
-				-- Idea is to make Tab do many things based on context
-				-- It is known as "superTab"
-				["<Tab>"] = cmp.mapping(function(fallback)
-					if cmp.visible() then
-						cmp.select_next_item()
-					elseif luasnip.expandable() then
-						luasnip.expand()
-					elseif luasnip.expand_or_jumpable() then
-						luasnip.expand_or_jump()
-					else
-						fallback()
-					end
-				end, { "i", "s" }),
-
-				["<S-Tab>"] = cmp.mapping(function(fallback)
-					if cmp.visible() then
-						cmp.select_prev_item()
-					elseif luasnip.jumpable(-1) then
-						luasnip.jump(-1)
-					else
-						fallback()
-					end
-				end, { "i", "s" }),
-			}
 			cmp.setup({
 				snippet = {
 					expand = function(args)
 						luasnip.lsp_expand(args.body)
 					end,
 				},
-				mapping = completion_mappings,
+				mapping = {
+					["<C-j>"] = cmp.mapping.select_next_item(),
+					["<C-k>"] = cmp.mapping.select_prev_item(),
+					['<C-b>'] = cmp.mapping.scroll_docs(-4),
+					['<C-f>'] = cmp.mapping.scroll_docs(4),
+
+					["<C-a>"] = cmp.mapping(function()
+						if cmp.visible() then
+							cmp.abort()
+						else
+							cmp.complete()
+						end
+					end, { "i", "s" }),
+
+					-- Need to select option with tab before hitting enter
+					["<CR>"] = cmp.mapping.confirm({ select = false }),
+				},
 				formatting = {
 					fields = { "kind", "abbr", "menu" },
 					format = function(entry, vim_item)
