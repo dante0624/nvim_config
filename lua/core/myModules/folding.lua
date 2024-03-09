@@ -43,7 +43,6 @@ local function fold_keymap(mode, lhs, rhs, opts)
 	end, options)
 end
 
-fold_keymap("", "zz", "za")
 fold_keymap("", "ze", "]z")
 fold_keymap("", "zb", "[z")
 

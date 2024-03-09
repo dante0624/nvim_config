@@ -75,3 +75,7 @@ map("", "<leader>i", "<C-a>")
 
 -- Control-X similarly was originally for decrimenting a number
 map("", "<leader>I", "<C-x>")
+
+-- Common to remap gd to LSP "Go to Definition
+-- But the original gd is still useful. So map gn to this
+map("", "gn", "gd")
