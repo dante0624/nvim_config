@@ -8,8 +8,11 @@ require("lsp.languageCommon").start_or_attach(
 )
 require("linting.lintCommon").setup_linters({ "ruff" })
 
--- Buffer scoped variable that I made up for folding
-vim.b.fold_text_bottom = false
+-- Check if the first line of a fold ends with ":"
+-- If it does, then don't include the last line in the fold text
+vim.b.fold_last_line = function(fold_start_number, _)
+	return vim.fn.getline(fold_start_number):sub(-1, -1) ~= ":"
+end
 
 -- Run command
 vim.b.run_command = 'python "' .. vim.fn.expand("%:p") .. '"'

@@ -112,12 +112,15 @@ function _G.MyFoldText()
 		fold_message = fold_message:gsub("lines", "line")
 	end
 
-	--[[ Two scenerios for not including the last line:
-		If line_count is zero then first_line==last_line.
-			But we only want to show this line once
-		Some filetypes look better like this (python)
-			These buffers can manually set fold_text_bottom to false]]
-	if line_count == 0 or vim.b.fold_text_bottom == false then
+	-- Edge case, where a language parser decides that a single line is a fold
+	if line_count == 0 or
+
+		-- Specific languages can define this method
+		-- For example, python will check if the first line ends with ":"
+		-- If it does, then don't include the last line in the fold
+		vim.b.fold_last_line and
+		vim.b.fold_last_line(vim.v.foldstart, vim.v.foldend) == false
+	then
 		last_line = ""
 	end
 
