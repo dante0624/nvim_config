@@ -1,9 +1,43 @@
+local buf_versions = require('vim.lsp.util').buf_versions
+local get_full_text = require('utils.buffers').get_full_text
+
 -- Sets an option to all buffers, then returns to the original_buffer
 -- Happens immediately, appearing that the original buffer was never left
 local function set_all(option)
 	local original_buffer = vim.fn.bufnr()
 	vim.cmd("silent! bufdo set " .. option)
 	vim.cmd("buffer " .. original_buffer)
+end
+
+-- Makes all active LSP servers recompute all diagnostics for all buffers
+-- LSP Specification 3.17 defines a simpler way of doing this:
+-- https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_pullDiagnostics
+-- However not all servers are caught up to 3.17, so use this hack instead
+-- local function lsp_pull_diagnostics()
+-- 	for _, client in ipairs(vim.lsp.get_active_clients()) do
+-- 		for bufnr, _ in pairs(client.attached_buffers) do
+-- 			client.notify('textDocument/diagnostic', {
+-- 				textDocument = {
+-- 					uri = vim.uri_from_bufnr(bufnr),
+-- 				},
+-- 			})
+-- 		end
+-- 	end
+-- end
+local function lsp_pull_diagnostics()
+	for _, client in ipairs(vim.lsp.get_active_clients()) do
+		for bufnr, _ in pairs(client.attached_buffers) do
+			client.notify('textDocument/didChange', {
+				textDocument = {
+					uri = vim.uri_from_bufnr(bufnr),
+					version = buf_versions[bufnr],
+				},
+				contentChanges = {
+					text = get_full_text(bufnr)
+				},
+			})
+		end
+	end
 end
 
 local M = {}
@@ -131,6 +165,9 @@ end
 
 function M.strict.show()
 	vim.g.ignore_strict_diagnostics = false
+
+	lsp_pull_diagnostics()
+
 	local lint_ok, _ = pcall(require, "lint")
     if not lint_ok then
         return
@@ -142,6 +179,9 @@ end
 
 function M.strict.hide()
 	vim.g.ignore_strict_diagnostics = true
+
+	lsp_pull_diagnostics()
+
 	local lint_ok, _ = pcall(require, "lint")
     if not lint_ok then
         return

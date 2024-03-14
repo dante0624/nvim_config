@@ -1,5 +1,27 @@
 local M = {}
 
+function M.get_full_text(bufnr)
+	local format_line_ending = {
+	  ['unix'] = '\n',
+	  ['dos'] = '\r\n',
+	  ['mac'] = '\r',
+	}
+
+	local line_ending = format_line_ending[
+		vim.api.nvim_buf_get_option(bufnr, 'fileformat')
+	] or '\n'
+
+	local text = table.concat(
+		vim.api.nvim_buf_get_lines(bufnr, 0, -1, true),
+		line_ending
+	)
+
+	if vim.api.nvim_buf_get_option(bufnr, 'eol') then
+		text = text .. line_ending
+	end
+	return text
+end
+
 function M.clean_empty()
 	for n=1,vim.fn.bufnr('$') do -- All buffers including hidden ones. ':ls!'
 

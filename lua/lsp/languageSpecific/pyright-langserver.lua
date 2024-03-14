@@ -13,4 +13,13 @@ return {
 		},
 	},
 	single_file_support = true,
+	ignore_diagnostics = {
+		strict = {
+		},
+		lenient = {
+			"reportUnknownParameterType",
+			"reportMissingParameterType",
+			"reportUnknownArgumentType",
+		},
+	},
 }

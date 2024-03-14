@@ -1,6 +1,8 @@
+local array_to_set = require("utils.tables").array_to_set
+
 -- Helper Function
 -- Returns only the body of the table, without the opening and closing {}
-local function tbl_lines_body(tbl, indent, ignored)
+local function tbl_lines_body(tbl, indent, ignored_keys_set)
 	local stringified_lines = {}
 
 	-- Alphabetize the keys
@@ -13,18 +15,23 @@ local function tbl_lines_body(tbl, indent, ignored)
 	for _, key in ipairs(alphabetized_keys) do
 		local value = tbl[key]
 		local key_formatted = string.rep("\t", indent) .. key .. " = "
-		if ignored[key] ~= nil then
-			-- Ignore this key, because it is in the ignored table
+		if ignored_keys_set[key] ~= nil then
+			-- Ignore this key
+			-- Would call 'Continue' if lua had support for that
+
+		-- Recursive Case
 		elseif type(value) == "table" then
 			table.insert(stringified_lines, key_formatted .. "{")
 
-			local sub_tbl = tbl_lines_body(value, indent + 1, ignored)
+			local sub_tbl = tbl_lines_body(value, indent + 1, ignored_keys_set)
 
 			for _, v in ipairs(sub_tbl) do
 				table.insert(stringified_lines, v)
 			end
 
 			table.insert(stringified_lines, string.rep("\t", indent) .. "}")
+
+		-- Base Case
 		else
 			table.insert(stringified_lines, key_formatted .. tostring(value))
 		end
@@ -38,15 +45,12 @@ This strigified version has tabs for indenting.
 
 Returns that strigified version as a new table,
 where each entry is a single line of the big strigified version.]]
-local function tbl_to_lines(tbl, ignored_keys)
+local function tbl_to_lines(tbl, ignored_keys_array)
 	-- Make an associative table, this way we can instantly index later
-	local ignored = {}
-	for _, key in ipairs(ignored_keys) do
-		ignored[key] = key
-	end
+	local ignored_keys_set = array_to_set(ignored_keys_array)
 
 	local return_tbl = { "{" }
-	local lines = tbl_lines_body(tbl, 1, ignored)
+	local lines = tbl_lines_body(tbl, 1, ignored_keys_set)
 	for _, line in ipairs(lines) do
 		table.insert(return_tbl, line)
 	end
@@ -205,15 +209,15 @@ end
 --[[ Given a table, send it to an output buffer to be visualized.
 Give that buffer a unique name (emphasis on unique!)
 and specify a list of keys (as strings) to ignore from the table]]
-return function(tbl, name, ignored_keys)
+return function(tbl, name, ignored_keys_array)
 	if name == nil then
 		name = "((showTable output))"
 	end
-	if ignored_keys == nil then
-		ignored_keys = {}
+	if ignored_keys_array == nil then
+		ignored_keys_array = {}
 	end
 
 	local buffer_number = create_buffer(name)
-	log(tbl_to_lines(tbl, ignored_keys), buffer_number)
+	log(tbl_to_lines(tbl, ignored_keys_array), buffer_number)
 	focus_buffer(buffer_number)
 end

@@ -1,4 +1,6 @@
 local showTable = require("utils.showTable")
+local array_to_set = require("utils.tables").array_to_set
+
 local M = {}
 
 -- When LSP is attached to a buffer, this sets the keymaps for that buffer
@@ -171,6 +173,22 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		root_dir = nil
 	end
 
+	-- Ignore different diagnostic in strict vs lenient mode
+	local ignore_diagnostics = settings.ignore_diagnostics or {}
+	local strict_ignore = ignore_diagnostics.strict
+	if strict_ignore then
+		strict_ignore = array_to_set(strict_ignore)
+	else
+		strict_ignore = {}
+	end
+
+	local lenient_ignore = ignore_diagnostics.lenient
+	if lenient_ignore then
+		lenient_ignore = array_to_set(lenient_ignore)
+	else
+		lenient_ignore = {}
+	end
+
 	return vim.lsp.start({
 		name = config_name,
 		cmd = settings.cmd,
@@ -179,6 +197,29 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		init_options = init_options,
 		on_attach = on_attach,
 		capabilities = require("cmp_nvim_lsp").default_capabilities(),
+		handlers = {
+			["textDocument/publishDiagnostics"] = function(_, result, a, b)
+				local ignored_codes
+
+				if vim.g.ignore_strict_diagnostics == true then
+					ignored_codes = lenient_ignore
+				else
+					ignored_codes = strict_ignore
+				end
+
+				local filtered_diagnostics = {}
+
+				for _, diagnostic in ipairs(result.diagnostics) do
+					if not ignored_codes[diagnostic.code] then
+						table.insert(filtered_diagnostics, diagnostic)
+					end
+				end
+
+				result.diagnostics = filtered_diagnostics
+
+				vim.lsp.diagnostic.on_publish_diagnostics(_, result, a, b)
+			end,
+		},
 	})
 end
 
