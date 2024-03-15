@@ -115,6 +115,83 @@ function M.setup()
 	end
 end
 
+--[[ First key of this table is the client_id
+Next are 3 possible keys:
+	lentient_filter
+		Maps to a set of ignore_diagnostics in "lenient_mode"
+	strict_filter
+		Maps to a set of ignore_diagnostics in "strict mode"
+	bufnrs
+		Maps to a sub table, where each key is a bufnr
+		Each of these bufnrs maps to all (unfiltered) diagnostics
+		for that client and bufnr specifically ]]
+local diagnostics_tracker = {}
+
+-- Used to set up this tracker based on specific lsp settings
+-- These are found as languageSpecific settings
+local function set_up_tracker(client_id, settings)
+	-- Ignore different diagnostic in strict vs lenient mode
+	local ignore_diagnostics = settings.ignore_diagnostics or {}
+	local strict_ignore = ignore_diagnostics.strict
+	if strict_ignore then
+		strict_ignore = array_to_set(strict_ignore)
+	else
+		strict_ignore = {}
+	end
+
+	local lenient_ignore = ignore_diagnostics.lenient
+	if lenient_ignore then
+		lenient_ignore = array_to_set(lenient_ignore)
+	else
+		lenient_ignore = {}
+	end
+
+	-- Bufnrs will be added as diagnostics are published
+	diagnostics_tracker[client_id] = {
+		lenient_filter = lenient_ignore,
+		strict_filter = strict_ignore,
+		bufnrs = {},
+	}
+end
+
+-- This will pull data from the tracker, apply the filter, and then
+-- publish the filtered diagnostics as if they came from the LSP server
+local function publish_tracker_diagnostics(client_id, bufnr)
+	local client_tracker = diagnostics_tracker[client_id]
+
+	local ignored_codes
+	if vim.g.ignore_strict_diagnostics == true then
+		ignored_codes = client_tracker.lenient_filter
+	else
+		ignored_codes = client_tracker.strict_filter
+	end
+
+	local filtered_diagnostics = {}
+	for _, diagnostic in ipairs(client_tracker.bufnrs[bufnr]) do
+		if not ignored_codes[diagnostic.code] then
+			table.insert(filtered_diagnostics, diagnostic)
+		end
+	end
+
+	local result = {
+		uri = vim.uri_from_bufnr(bufnr),
+		diagnostics = filtered_diagnostics,
+	}
+
+	local ctx = { client_id = client_id }
+
+	vim.lsp.diagnostic.on_publish_diagnostics(nil, result, ctx, nil)
+end
+
+-- Loop over all clients and buffers publishing all filtered diagnostics
+function M.refresh_diagnostics()
+	for client_id, _ in pairs(diagnostics_tracker) do
+		for bufnr, _ in pairs(diagnostics_tracker[client_id].bufnrs) do
+			publish_tracker_diagnostics(client_id, bufnr)
+		end
+	end
+end
+
 -- Attaches to an existing client if the name and root directory match
 -- If no match is found, then it creates and attaches to a new client
 -- Returns the client_id in either case
@@ -173,23 +250,7 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		root_dir = nil
 	end
 
-	-- Ignore different diagnostic in strict vs lenient mode
-	local ignore_diagnostics = settings.ignore_diagnostics or {}
-	local strict_ignore = ignore_diagnostics.strict
-	if strict_ignore then
-		strict_ignore = array_to_set(strict_ignore)
-	else
-		strict_ignore = {}
-	end
-
-	local lenient_ignore = ignore_diagnostics.lenient
-	if lenient_ignore then
-		lenient_ignore = array_to_set(lenient_ignore)
-	else
-		lenient_ignore = {}
-	end
-
-	return vim.lsp.start({
+	local client_id = vim.lsp.start({
 		name = config_name,
 		cmd = settings.cmd,
 		root_dir = root_dir,
@@ -198,29 +259,21 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		on_attach = on_attach,
 		capabilities = require("cmp_nvim_lsp").default_capabilities(),
 		handlers = {
-			["textDocument/publishDiagnostics"] = function(_, result, a, b)
-				local ignored_codes
+			["textDocument/publishDiagnostics"] = function(_, result, ctx, _)
+  				local client_id = ctx.client_id
+				local bufnr = vim.uri_to_bufnr(result.uri)
+				local diagnostics = result.diagnostics
 
-				if vim.g.ignore_strict_diagnostics == true then
-					ignored_codes = lenient_ignore
-				else
-					ignored_codes = strict_ignore
-				end
+				diagnostics_tracker[client_id].bufnrs[bufnr] = diagnostics
 
-				local filtered_diagnostics = {}
-
-				for _, diagnostic in ipairs(result.diagnostics) do
-					if not ignored_codes[diagnostic.code] then
-						table.insert(filtered_diagnostics, diagnostic)
-					end
-				end
-
-				result.diagnostics = filtered_diagnostics
-
-				vim.lsp.diagnostic.on_publish_diagnostics(_, result, a, b)
+				publish_tracker_diagnostics(client_id, bufnr)
 			end,
 		},
 	})
+
+	set_up_tracker(client_id, settings)
+
+	return client_id
 end
 
 return M
