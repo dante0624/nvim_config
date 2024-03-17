@@ -17,9 +17,17 @@ return {
 		strict = {
 		},
 		lenient = {
+			"reportPropertyTypeMismatch",
+			"reportMissingTypeStubs",
+			"reportTypeCommentUsage",
 			"reportUnknownParameterType",
-			"reportMissingParameterType",
 			"reportUnknownArgumentType",
+			"reportUnknownLambdaType",
+			"reportUnknownVariableType",
+			"reportUnknownMemberType",
+			"reportMissingParameterType",
+			"reportMissingTypeArgument",
+			"reportUnnecessaryTypeIgnoreComment",
 		},
 	},
 }
