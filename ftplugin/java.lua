@@ -2,7 +2,7 @@ local os = require("utils.os")
 local paths = require("utils.paths")
 
 -- Gives me the same keymaps as other lsps
-local lsp_on_attach = require("lsp.languageCommon").on_attach_keymaps
+local lsp_on_attach = require("lsp.serverCommon").on_attach_keymaps
 
 -- Find the root directory, returns nil if not found
 local root_dir, single_file = paths.find_project_root({

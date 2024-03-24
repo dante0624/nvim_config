@@ -1,4 +1,4 @@
-local refresh_diagnostics = require('lsp.languageCommon').refresh_diagnostics
+local refresh_diagnostics = require('lsp.serverCommon').refresh_diagnostics
 
 -- Sets an option to all buffers, then returns to the original_buffer
 -- Happens immediately, appearing that the original buffer was never left

@@ -15,8 +15,8 @@ for name, type in vim.fs.dir(root_dir) do
 	end
 end
 
-require("lsp.languageCommon").start_or_attach(
-	"lua-language-server",
+require("lsp.serverCommon").start_or_attach(
+	"luaServer",
 	root_dir,
 	single_file
 )

@@ -6,7 +6,7 @@ require("core")
 require("lazyLauncher")
 
 -- Sets up things which are common to all LSPs, Linters
-require("lsp.languageCommon").setup()
+require("lsp.serverCommon").setup()
 require("linting.lintCommon").setup()
 require("formatting.formatCommon").setup()
 

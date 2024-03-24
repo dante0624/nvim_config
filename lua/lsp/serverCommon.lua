@@ -16,7 +16,7 @@ function M.on_attach_keymaps(_, bufnr)
 	end
 
 	-- The beautiful keymaps
-    -- "a" for 'Attached' or 'Action'
+	-- "a" for 'Attached' or 'Action'
 	lsp_map("n", "gd", vim.lsp.buf.definition)
 	lsp_map("n", "gD", vim.lsp.buf.type_definition)
 	lsp_map("n", "gr", vim.lsp.buf.references)
@@ -216,7 +216,7 @@ function M.start_or_attach(config_name, root_dir, single_file)
 	local pre_attach_settings = {}
 	local on_attach = M.on_attach_keymaps
 
-	local settings = require("lsp.languageSpecific." .. config_name)
+	local settings = require("lsp.serverSpecific." .. config_name)
 
 	assert(settings.cmd, "LSP configuration needs a cmd attribute")
 
@@ -260,7 +260,7 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		capabilities = require("cmp_nvim_lsp").default_capabilities(),
 		handlers = {
 			["textDocument/publishDiagnostics"] = function(_, result, ctx, _)
-  				local client_id = ctx.client_id
+				local client_id = ctx.client_id
 				local bufnr = vim.uri_to_bufnr(result.uri)
 				local diagnostics = result.diagnostics
 
