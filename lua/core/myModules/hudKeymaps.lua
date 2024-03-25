@@ -53,14 +53,13 @@ map("", "<Leader>dz", function()
 	onlyShow({ "diagnostics" })
 end)
 
--- Get rid of the header because "The Primagen" (p) suggests not using it
--- Use this when trying to immediately jump to buffers with <Control> {a-g}
+-- Publication Mode: Strict Diagnostics and the Color Column
 map("", "<Leader>dp", function()
-	onlyHide({ "header", "relative_line_numbers" })
+	onlyHide({ "relative_line_numbers" })
 end)
 
 function M.default_display()
-    onlyHide({ "relative_line_numbers", "strict" })
+	onlyHide({ "relative_line_numbers", "strict", "color_column" })
 end
 
 map("", "<Leader>do", M.default_display)
