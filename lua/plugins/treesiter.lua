@@ -31,6 +31,7 @@ return {
 					"html",
 					"css",
 					"javascript",
+                    "typescript",
 
 					-- If I don't have this, WSL bugs out on every comment
 					"comment",

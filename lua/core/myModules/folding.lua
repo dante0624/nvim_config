@@ -34,7 +34,7 @@ local function fold_keymap(mode, lhs, rhs, opts)
 	end
 	vim.keymap.set(mode, lhs, function()
 		local method = vim.o.foldmethod
-		vim.opt.foldmethod = method
+		vim.cmd("setlocal foldmethod="..method)
 
 		-- The exclamation point means to not use remappings
 		-- No exclamation point would be infinite recursion,
@@ -73,6 +73,7 @@ local expr_patterns = {
 	"*.html",
 	"*.css",
 	"*.js",
+    "*.ts",
 }
 
 -- Autocommands go off in the order they are specified
@@ -80,19 +81,19 @@ local expr_patterns = {
 vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
 	pattern = "*",
 	group = fold_method,
-	command = "set foldmethod=manual",
+	command = "setlocal foldmethod=manual",
 })
 
 vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
 	pattern = syntax_patterns,
 	group = fold_method,
-	command = "set foldmethod=syntax",
+	command = "setlocal foldmethod=syntax",
 })
 
 vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
 	pattern = expr_patterns,
 	group = fold_method,
-	command = "set foldmethod=expr",
+	command = "setlocal foldmethod=expr",
 })
 
 -- These options come from Treesitter's README on how to set up folding
@@ -139,7 +140,7 @@ vim.opt.fillchars:append({ fold = " " })
 
 -- Automatically remembers folds after closing and reopening
 local remember = vim.api.nvim_create_augroup("remember", { clear = true })
-local all_patterns = vim.tbl_extend("force", syntax_patterns, expr_patterns)
+local all_patterns = vim.fn.extend(syntax_patterns, expr_patterns)
 
 vim.api.nvim_create_autocmd({ "BufWinLeave", "BufWritePost" }, {
 	pattern = all_patterns,
@@ -152,7 +153,7 @@ vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
 	group = remember,
 	callback = function()
 		vim.cmd([[
-			normal! zR
+			normal zR
 			noautocmd silent! loadview
 		]])
 	end,
