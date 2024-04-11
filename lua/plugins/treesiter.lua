@@ -27,7 +27,6 @@ return {
 					"lua",
 					"python",
 					"java",
-					"kotlin",
 					"html",
 					"css",
 					"javascript",

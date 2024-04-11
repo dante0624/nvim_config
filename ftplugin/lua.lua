@@ -1,5 +1,8 @@
 local find_project_root = require("utils.paths").find_project_root
 local root_dir, single_file = find_project_root()
+local folding = require("core.myModules.folding")
+
+folding.setup_treesitter_folding()
 
 --[[ Lua is strange, it likes to start its root directory at a lua/ dir
 However, the init.lua file lives outside of this lua/ dir

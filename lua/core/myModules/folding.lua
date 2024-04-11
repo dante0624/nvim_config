@@ -54,48 +54,6 @@ fold_keymap("", "zC", "zC")
 fold_keymap("", "zR", "zR")
 fold_keymap("", "zM", "zM")
 
--- Set the folding filetype based on filetype
-local fold_method = vim.api.nvim_create_augroup("fold_method", { clear = true })
-
--- These filetypes do not have good tressiter parsers,
--- but they have good builtin syntax parsers
-local syntax_patterns = {
-	"*.json",
-}
-
--- Manually ensure that this matches Treesitter's 'ensure_installed'
--- Found under the the plugin configuration
-local expr_patterns = {
-	"*.lua",
-	"*.py",
-	"*.java",
-	"*.kt",
-	"*.html",
-	"*.css",
-	"*.js",
-    "*.ts",
-}
-
--- Autocommands go off in the order they are specified
--- So we default to manual, but can specify treesitter_expr or syntax
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-	pattern = "*",
-	group = fold_method,
-	command = "setlocal foldmethod=manual",
-})
-
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-	pattern = syntax_patterns,
-	group = fold_method,
-	command = "setlocal foldmethod=syntax",
-})
-
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-	pattern = expr_patterns,
-	group = fold_method,
-	command = "setlocal foldmethod=expr",
-})
-
 -- These options come from Treesitter's README on how to set up folding
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldenable = false
@@ -140,21 +98,37 @@ vim.opt.fillchars:append({ fold = " " })
 
 -- Automatically remembers folds after closing and reopening
 local remember = vim.api.nvim_create_augroup("remember", { clear = true })
-local all_patterns = vim.fn.extend(syntax_patterns, expr_patterns)
+local function remember_folding_autocmds()
+	vim.api.nvim_create_autocmd({ "BufWinLeave", "BufWritePost" }, {
+		buffer = 0,
+		group = remember,
+		command = "noautocmd silent! mkview",
+	})
 
-vim.api.nvim_create_autocmd({ "BufWinLeave", "BufWritePost" }, {
-	pattern = all_patterns,
-	group = remember,
-	command = "noautocmd silent! mkview",
-})
+	vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
+		buffer = 0,
+		group = remember,
+		callback = function()
+			vim.cmd([[
+				normal zR
+				noautocmd silent! loadview
+			]])
+		end,
+	})
+end
 
-vim.api.nvim_create_autocmd({ "BufWinEnter" }, {
-	pattern = "*",
-	group = remember,
-	callback = function()
-		vim.cmd([[
-			normal zR
-			noautocmd silent! loadview
-		]])
-	end,
-})
+local M = {}
+
+function M.setup_syntax_folding()
+	vim.cmd("setlocal foldmethod=syntax")
+
+	remember_folding_autocmds()
+end
+
+function M.setup_treesitter_folding()
+	vim.cmd("setlocal foldmethod=expr")
+
+	remember_folding_autocmds()
+end
+
+return M

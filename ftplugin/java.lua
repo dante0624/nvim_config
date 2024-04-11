@@ -1,5 +1,8 @@
 local os = require("utils.os")
 local paths = require("utils.paths")
+local folding = require("core.myModules.folding")
+
+folding.setup_treesitter_folding()
 
 -- Gives me the same keymaps as other lsps
 local lsp_on_attach = require("lsp.serverCommon").on_attach_keymaps
