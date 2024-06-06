@@ -79,8 +79,10 @@ return {
 				mapping = {
 					["<C-j>"] = cmp.mapping.select_next_item(),
 					["<C-k>"] = cmp.mapping.select_prev_item(),
-					['<C-b>'] = cmp.mapping.scroll_docs(-4),
-					['<C-f>'] = cmp.mapping.scroll_docs(4),
+
+                    -- Meant to mimic the commandline <C-r> for backward search and <C-s> for forward search
+					['<C-r>'] = cmp.mapping.scroll_docs(-4),
+					['<C-s>'] = cmp.mapping.scroll_docs(4),
 
 					["<C-a>"] = cmp.mapping(function()
 						if cmp.visible() then
