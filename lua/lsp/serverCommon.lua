@@ -250,6 +250,12 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		root_dir = nil
 	end
 
+	local capabilities = vim.tbl_deep_extend(
+		'keep',
+		require("cmp_nvim_lsp").default_capabilities(),
+		vim.lsp.protocol.make_client_capabilities()
+	)
+
 	local client_id = vim.lsp.start({
 		name = config_name,
 		cmd = settings.cmd,
@@ -257,7 +263,7 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		settings = pre_attach_settings,
 		init_options = init_options,
 		on_attach = on_attach,
-		capabilities = require("cmp_nvim_lsp").default_capabilities(),
+		capabilities = capabilities,
 		handlers = {
 			["textDocument/publishDiagnostics"] = function(_, result, ctx, _)
 				local client_id = ctx.client_id

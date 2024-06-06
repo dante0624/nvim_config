@@ -13,5 +13,20 @@ return {
 			logVerbosity = "off",
 		},
 	},
+	post_attach_settings = {
+		settings = {
+			implicitProjectConfiguration = {
+				checkJs = true,
+				strictNullChecks = false,
+			},
+			diagnostics = {
+				ignoredCodes = {
+					-- 2339,
+					-- 2531,
+					-- 7044,
+				},
+			},
+		},
+	},
 	single_file_support = true,
 }
