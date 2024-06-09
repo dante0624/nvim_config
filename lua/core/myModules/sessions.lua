@@ -9,22 +9,88 @@ end
 local hud = require("core.myModules.headsUpDisplay")
 local paths = require("utils.paths")
 
--- Session loads and restores should only depend on the initial cwd
-local initial_directory = vim.fn.getcwd()
-
-local session_file_name = paths.serialize_path(initial_directory) .. ".vim"
-local full_session_path = paths.Sessions .. session_file_name
-
--- Add in needed escape characters
-local source_file = vim.fn.fnameescape(full_session_path)
-
 -- Make sure the the desired directory exists
 vim.fn.mkdir(paths.Sessions, "p")
 
--- Globals are needed for extra things:
--- Tabline orderings
--- The state of the HUD
+-- Session loads and restores should only depend on the initial cwd
+local initial_directory = vim.fn.getcwd()
+
+local session_path = paths.Sessions .. paths.serialize_path(initial_directory)
+    .. "_session.vim"
+local hud_path = paths.Sessions .. paths.serialize_path(initial_directory)
+    .. "_hud.lua"
+
+-- Globals are needed for tabline orderings
 vim.opt.sessionoptions:append("globals")
+
+
+local function save_hud()
+    local hud_file = io.open(hud_path, "w")
+    if hud_file ~= nil then
+        for display_name, display in pairs(hud) do
+            hud_file:write(display_name .. "=" ..
+                tostring(display.isShown()) .. "\n")
+        end
+        hud_file:flush()
+        hud_file:close()
+    end
+end
+
+local function save_session()
+    -- Save barbar order of buffers
+    vim.api.nvim_exec_autocmds("User", { pattern = "SessionSavePre" })
+
+    -- Actually save the session file
+    vim.cmd("mks! " .. vim.fn.fnameescape(session_path))
+end
+
+local function restore_hud()
+    if vim.fn.filereadable(hud_path) == 0 then
+        default_display()
+        return
+    end
+
+    local hud_file = io.open(hud_path, "r")
+    if hud_file ~= nil then
+        for line in hud_file:lines() do
+            local equal_index = string.find(line, "=")
+            local display_name = line:sub(0, equal_index - 1)
+            local display_shown = line:sub(equal_index+1)
+
+            if display_shown == "true" then
+                hud[display_name].show()
+            end
+            if display_shown == "false" then
+                hud[display_name].hide()
+            end
+        end
+
+        hud_file:close()
+    end
+end
+
+local function restore_session()
+    if vim.fn.filereadable(session_path) == 0 then
+        return
+    end
+
+    -- Actually restore the session file
+    vim.cmd("silent! source " .. vim.fn.fnameescape(session_path))
+
+    -- Sometimes neo-tree will leave behind a buffer of itself,
+    -- delete this if accidentally restored
+    for _, buf in ipairs(vim.fn.getbufinfo()) do
+        -- Lua uses % to escape characters with string.find
+        if buf.name:find("neo%-tree filesystem") ~= nil then
+            vim.cmd("bd! " .. buf.bufnr)
+        end
+    end
+
+    -- Sometimes restoring the file messes with the cwd,
+    -- set it back to what it should be
+    vim.fn.chdir(initial_directory)
+end
+
 
 local session_group = vim.api.nvim_create_augroup("sessions", { clear = true })
 vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
@@ -32,17 +98,8 @@ vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
 	group = session_group,
 
 	callback = function()
-		-- Save barbar order of buffers
-		vim.api.nvim_exec_autocmds("User", { pattern = "SessionSavePre" })
-
-		-- Save the HUD state
-		for _, display in pairs(hud) do
-			display.save()
-		end
-
-		-- Actually save the session file
-		-- Put all pre_save logic before this
-		vim.cmd("mks! " .. source_file)
+        save_hud()
+        save_session()
 	end,
 })
 
@@ -51,35 +108,12 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, {
 	group = session_group,
 
 	callback = function()
-		-- If there is no session to restore, then return early
-		if vim.fn.filereadable(full_session_path) == 0 then
-            default_display()
-			return
-		end
-
-		-- Actually restore the session file
-		-- Put all post_restore logic after this
-		vim.cmd("silent! source " .. source_file)
-
-		-- Sometimes restoring the file messes with the cwd,
-		-- set it back to what it should be
-		local starting_buffer = vim.fn.bufnr()
-		vim.cmd("silent! bufdo cd" .. initial_directory)
-		vim.cmd("buffer " .. starting_buffer)
-
-		-- Sometimes neo-tree will leave behind a buffer of itself,
-		-- delete this if accidentally restored
-		for _, buf in ipairs(vim.fn.getbufinfo()) do
-			-- Lua uses % to escape characters with string.find
-			if buf.name:find("neo%-tree filesystem") ~= nil then
-				vim.cmd("bd! " .. buf.bufnr)
-			end
-		end
-
-		-- Restore the HUD state
-		for _, display in pairs(hud) do
-			display.restore()
-		end
+        restore_hud()
+        restore_session()
 	end,
+
+    -- Need this because the barbar plugin waits for the SessionLoadPost event
+    -- to restore the buffer order
 	nested = true,
 })
+

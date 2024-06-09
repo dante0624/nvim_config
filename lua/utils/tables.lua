@@ -12,4 +12,22 @@ function M.array_to_set(array)
 	return set
 end
 
+--[[  Args:
+    tbl is an array table
+    function is a func(any) which returns a boolean
+filter_array() returns an array table:
+    The returned_tbl is a subset of tbl, such that each value in 
+    returned_tbl returns true when func(value) is called.
+    The returned_tbl is a shallow copy of tbl!
+    tbl[key] and returned_tbl[key] are the same objects ]]-- 
+function M.filter_array(tbl, func)
+    local filtered_tbl = {}
+    for _, value in ipairs(tbl) do
+        if func(value) then
+           table.insert(filtered_tbl, value)
+        end
+    end
+    return filtered_tbl
+end
+
 return M

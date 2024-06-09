@@ -1,13 +1,5 @@
 local refresh_diagnostics = require('lsp.serverCommon').refresh_diagnostics
 
--- Sets an option to all buffers, then returns to the original_buffer
--- Happens immediately, appearing that the original buffer was never left
-local function set_all(option)
-	local original_buffer = vim.fn.bufnr()
-	vim.cmd("silent! bufdo set " .. option)
-	vim.cmd("buffer " .. original_buffer)
-end
-
 local M = {}
 
 --[[ Table oriented way of going about this
@@ -21,6 +13,11 @@ Each table is an interface which needs to implement:
 		Causes the display to be shown, even if it is already shown
 	hide()
 		Causes the display to be hidden, even if it is already hidden
+
+    repeat_buffers
+        True or false. Indicates if a show() / hide() function
+        must be repeated in all open buffers to work.
+        For example, vim.opt.number = true must be repeated
 
 	show() and hide() should use pcalls to check dependency plugins.
 		if the pcall fails, the functions should no-op ]]
@@ -36,6 +33,7 @@ end
 function M.header.hide()
 	vim.opt.showtabline = 0
 end
+M.header.repeat_buffers = false
 
 M.footer = {}
 function M.footer.isShown()
@@ -49,6 +47,7 @@ end
 function M.footer.hide()
 	vim.opt.laststatus = 0
 end
+M.footer.repeat_buffers = false
 
 M.line_numbers = {}
 function M.line_numbers.isShown()
@@ -56,12 +55,13 @@ function M.line_numbers.isShown()
 end
 
 function M.line_numbers.show()
-	set_all("number")
+    vim.opt.number = true
 end
 
 function M.line_numbers.hide()
-	set_all("nonumber")
+	vim.opt.number = false
 end
+M.line_numbers.repeat_buffers = true
 
 M.relative_line_numbers = {}
 function M.relative_line_numbers.isShown()
@@ -69,12 +69,13 @@ function M.relative_line_numbers.isShown()
 end
 
 function M.relative_line_numbers.show()
-	set_all("relativenumber")
+	vim.opt.relativenumber = true
 end
 
 function M.relative_line_numbers.hide()
-	set_all("norelativenumber")
+    vim.opt.relativenumber = false
 end
+M.relative_line_numbers.repeat_buffers = true
 
 M.color_column = {}
 function M.color_column.isShown()
@@ -82,12 +83,13 @@ function M.color_column.isShown()
 end
 
 function M.color_column.show()
-	set_all("colorcolumn=80")
+    vim.opt.colorcolumn = "80"
 end
 
 function M.color_column.hide()
-	set_all('colorcolumn=""')
+    vim.opt.colorcolumn = "0"
 end
+M.color_column.repeat_buffers = true
 
 M.git_signs = {}
 function M.git_signs.isShown()
@@ -112,6 +114,7 @@ function M.git_signs.hide()
 		vim.cmd("silent! Gitsigns toggle_signs")
 	end
 end
+M.git_signs.repeat_buffers = false
 
 M.diagnostics = {}
 function M.diagnostics.isShown()
@@ -125,6 +128,7 @@ end
 function M.diagnostics.hide()
 	vim.diagnostic.disable()
 end
+M.diagnostics.repeat_buffers = false
 
 M.strict = {}
 function M.strict.isShown()
@@ -158,38 +162,6 @@ function M.strict.hide()
 	require("linting.lintCommon").update_strictness()
 	vim.cmd("do User call_lint")
 end
-
--- Give each display option certain new methods automatically
-for display_name, display in pairs(M) do
-	-- Give the ability to toggle
-	function display.toggle()
-		local shown = display.isShown()
-		if shown == true then
-			print("Hiding: " .. display_name)
-			display.hide()
-		elseif shown == false then
-			print("Showing: " .. display_name)
-			display.show()
-		else
-			print("Failed toggle call on: " .. display_name)
-		end
-	end
-
-	-- Give the ability to save
-	function display.save()
-		vim.g["HUD_" .. display_name] = tostring(display.isShown())
-	end
-
-	-- Give the ability to restore
-	function display.restore()
-		local saved_option = vim.g["HUD_" .. display_name]
-		if saved_option == "true" then
-			display.show()
-		end
-		if saved_option == "false" then
-			display.hide()
-		end
-	end
-end
+M.strict.repeat_buffers = false
 
 return M
