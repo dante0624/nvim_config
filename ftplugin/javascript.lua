@@ -13,3 +13,8 @@ require("linting.lintCommon").setup_linters({ "eslint_d" })
 
 -- %:p expands out to be the complete path to the current buffer
 vim.b.run_command = 'node "' .. vim.fn.expand("%:p") .. '"'
+
+-- Use 2 spaces instead of tabs (prettier preferences)
+vim.bo[0].tabstop = 2
+vim.bo[0].shiftwidth = 2
+vim.bo[0].expandtab = true

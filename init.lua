@@ -11,33 +11,46 @@ require("linting.lintCommon").setup()
 require("formatting.formatCommon").setup()
 
 -- TODO:
+--[[ Neovim 0.10.0 Changes / Plan
+Make use of OSC 52 copy and paste
+
+Use new vim.lsp.diagnostic.on_diagnostic() (pull diagnostics)
+    Make my LSP strict mode much cleaner
+    Need to make sure that the server itself also supports pull diagnostics
+    If it doesn't, then simply ensure that server's preferences
+        ignore the same diagnostics in and out of strict mode
+    If it turns out that a newer version of some lsp supports pull diagnostics,
+        upgrade all lsps in one big commit. Upgrade the mason repo.
+
+After LSP diagnostics, make a PR for nvim lint to support stdin=false
+    Then refactor this file's handling of strict mode to also be cleaner
+    Issue: https://github.com/mfussenegger/nvim-lint/issues/235
+]]
+
 --[[ Python Plan
+    Migrate to Based Pyright
+        This will automatically give semantic highlighting
+        In the future, it will hopefully support willRenameFiles LSP method
+
 	Get conform and use ruff as a formatter
-		-- Keybinds should be <leader>ro and <leader>ra
-		-- Reformat and refactor 
-			-- Conform should apply both ruff reformats (format and fix)
-			-- Refactoring should only applies to nvim/rope
-			-- If other languages have non-lsp refactoring, also use <leader>ra
-        -- Make <leader>af use conform if it is setup, but fallback on LSP
-            -- Use <leader>p to format and save (p for "publish")
-            -- Use <leader>P to format and save all
+        Make <leader>af use conform if it is setup, but fallback on LSP
+            Use <leader>p to format and save (p for "publish")
+            Use <leader>P to format and save all
 
 	Try out nvim/rope plugin
-		-- If it works well, attempt filenames
+		If it works well, attempt filenames ]]
 
 --[[ Refactoring Filenames plan
 	Make it a custom command for neo-tree called refactor
 		Unbind r for rename file
 		Rebind it to r for refactor
 	
-	Have several refactoring method
+	Have a refactoring method
 		An LSP function that calls either willRenameFiles or didRenameFiles
-		An external plugin, etc
 		Needs to list if it should be applied before or after renaming
 		Also list if the method supports directory refactoring or not
 	
 	Find the nearest LSP whose root is back far enough for the refactor
-		Have a file which maps LSPs to the refactoring method
 
 	Note about LSP refactoring method
 		Copy how folke did it with Lazy again
@@ -48,9 +61,12 @@ require("formatting.formatCommon").setup()
 		Apply refactor source before (if it specifies that)
 		Rename the file
 		Apply refactor source after (if it specifies that)
+
+    Based Pyright Issue: https://github.com/DetachHead/basedpyright/issues/327
 ]]
 
---[[ Get a plugin for viewing marks
+--[[ Random Wants:
+Get a plugin for viewing marks
 	Then toggle the marks on the HUD with <leader>hm
 
 Get https://github.com/iamcco/markdown-preview.nvim

@@ -1,3 +1,8 @@
+-- Many of these options get overwritten by
+-- editorconfig.lua (a lua file built in to neovim)
+-- Useful to read the file, but I don't like it overwriting my values
+vim.g.editorconfig = false
+
 -- Don't automatically make the next line a comment if the current line is
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
 	pattern = "*",
@@ -19,8 +24,11 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 })
 
 -- Contols how many spaces a tab (indent) turns into
-vim.opt.ts = 4
-vim.opt.sw = 4
+-- These 3 are all buffer local options
+-- They can be overwritten within an ftplugin file
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = false
 
 -- When a line is wrapped, we continue indent the wrapping to match
 vim.opt.breakindent = true

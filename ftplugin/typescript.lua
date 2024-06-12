@@ -13,3 +13,7 @@ require("lsp.serverCommon").start_or_attach(
 -- %:p expands out to be the complete path to the current buffer
 vim.b.run_command = 'npx tsx "' .. vim.fn.expand("%:p") .. '"'
 
+-- Use 2 spaces instead of tabs (prettier preferences)
+vim.bo[0].tabstop = 2
+vim.bo[0].shiftwidth = 2
+vim.bo[0].expandtab = true
