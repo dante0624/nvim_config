@@ -12,6 +12,7 @@ require("formatting.formatCommon").setup()
 
 -- TODO:
 --[[ Neovim 0.10.0 Changes / Plan
+NO CHANGES UNTIL SEPTEMBER 15th!!!
 Make use of OSC 52 copy and paste
 
 Use new vim.lsp.diagnostic.on_diagnostic() (pull diagnostics)

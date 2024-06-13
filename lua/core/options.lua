@@ -3,6 +3,8 @@
 -- Useful to read the file, but I don't like it overwriting my values
 vim.g.editorconfig = false
 
+vim.opt.background = "dark"
+
 -- Don't automatically make the next line a comment if the current line is
 vim.api.nvim_create_autocmd({ "BufEnter" }, {
 	pattern = "*",
