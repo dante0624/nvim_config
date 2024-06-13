@@ -9,6 +9,12 @@ return {
 			"lewis6991/gitsigns.nvim",
 		},
 		lazy = false, -- Don't lazy load, for my session management
+
+		-- Without this, barbar will call setup() a second time
+		init = function()
+			vim.g.barbar_auto_setup =false
+		end,
+
 		config = function()
 			require("barbar").setup({
 				animation = false,

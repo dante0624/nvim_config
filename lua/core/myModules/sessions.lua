@@ -1,8 +1,16 @@
 local default_display = require("core.myModules.hudKeymaps").default_display
 
+local session_group = vim.api.nvim_create_augroup("sessions", { clear = true })
+
 -- If vim was called with any arguments, set the default hud and then return
 if vim.v.argv[3] ~= nil then
-    default_display()
+	vim.api.nvim_create_autocmd({ "VimEnter" }, {
+		pattern = "*",
+		group = session_group,
+
+		callback = default_display
+	})
+
 	return
 end
 
@@ -92,7 +100,6 @@ local function restore_session()
 end
 
 
-local session_group = vim.api.nvim_create_augroup("sessions", { clear = true })
 vim.api.nvim_create_autocmd({ "VimLeavePre" }, {
 	pattern = "*",
 	group = session_group,
