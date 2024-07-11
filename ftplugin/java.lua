@@ -110,3 +110,9 @@ else
 end
 
 vim.b.run_command = run_command
+
+
+-- Use 4 spaces instead of tabs (Java Checkstyle linter prefers spaces)
+vim.bo[0].tabstop = 4
+vim.bo[0].shiftwidth = 4
+vim.bo[0].expandtab = true
