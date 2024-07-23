@@ -1,4 +1,19 @@
 local mason_bin = require("utils.paths").Mason_Bin
+local array_to_set = require("utils.tables").array_to_set
+
+local ignored_code = array_to_set({
+	"reportPropertyTypeMismatch",
+	"reportMissingTypeStubs",
+	"reportTypeCommentUsage",
+	"reportUnknownParameterType",
+	"reportUnknownArgumentType",
+	"reportUnknownLambdaType",
+	"reportUnknownVariableType",
+	"reportUnknownMemberType",
+	"reportMissingParameterType",
+	"reportMissingTypeArgument",
+	"reportUnnecessaryTypeIgnoreComment",
+})
 
 return {
 	cmd = {
@@ -35,20 +50,9 @@ return {
 	It can be resolved by creating any file which marks it as a root]]
 	single_file_support = true,
 
-	ignore_diagnostics = {
-		strict = {},
-		lenient = {
-			"reportPropertyTypeMismatch",
-			"reportMissingTypeStubs",
-			"reportTypeCommentUsage",
-			"reportUnknownParameterType",
-			"reportUnknownArgumentType",
-			"reportUnknownLambdaType",
-			"reportUnknownVariableType",
-			"reportUnknownMemberType",
-			"reportMissingParameterType",
-			"reportMissingTypeArgument",
-			"reportUnnecessaryTypeIgnoreComment",
-		},
+	diagnostic_filters = {
+		normal = function(diagnostic)
+			return not ignored_code[diagnostic.code]
+		end,
 	},
 }

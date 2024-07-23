@@ -11,21 +11,17 @@ require("linting.lintCommon").setup()
 require("formatting.formatCommon").setup()
 
 -- TODO:
---[[ Neovim 0.10.0 Changes / Plan
+--[[
 NO CHANGES UNTIL SEPTEMBER 15th!!!
+
 Make use of OSC 52 copy and paste
-
-Use new vim.lsp.diagnostic.on_diagnostic() (pull diagnostics)
-    Make my LSP strict mode much cleaner
-    Need to make sure that the server itself also supports pull diagnostics
-    If it doesn't, then simply ensure that server's preferences
-        ignore the same diagnostics in and out of strict mode
-    If it turns out that a newer version of some lsp supports pull diagnostics,
-        upgrade all lsps in one big commit. Upgrade the mason repo.
-
-After LSP diagnostics, make a PR for nvim lint to support stdin=false
-    Then refactor this file's handling of strict mode to also be cleaner
-    Issue: https://github.com/mfussenegger/nvim-lint/issues/235
+Modify linting to hava single file, with ignore and strict as table fields
+	Rather than 2 file
+Make LSP hover look pretty again (its not handling the markdown nicely right now)
+Debug why telescope is sometimes delayed
+Allow me to rename variables and files in a pop-out buffer.
+	I want normal, insert, and visual mode to work in this pop-out buffer
+	Enter makes the selection
 ]]
 
 --[[ Python Plan
@@ -67,12 +63,6 @@ After LSP diagnostics, make a PR for nvim lint to support stdin=false
 ]]
 
 --[[ Random Wants:
-Get a plugin for viewing marks
-	Then toggle the marks on the HUD with <leader>hm
-
-Get https://github.com/iamcco/markdown-preview.nvim
-	Also get the VSCode Markdown lsp
-
 Get a basic spellchecker with a dictionary of valid words
 
 Look into DAP, Linters, and Formatters

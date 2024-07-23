@@ -1,5 +1,4 @@
 local showTable = require("utils.showTable")
-local array_to_set = require("utils.tables").array_to_set
 
 local M = {}
 
@@ -117,10 +116,12 @@ end
 
 --[[ First key of this table is the client_id
 Next are 3 possible keys:
-	lentient_filter
-		Maps to a set of ignore_diagnostics in "lenient_mode"
+	normal_filter
+		function(diagnostic) -> boolean
+		Return true if that diagnostic should be shown in "normal mode"
 	strict_filter
-		Maps to a set of ignore_diagnostics in "strict mode"
+		function(diagnostic) -> boolean
+		Return true if that diagnostic should be shown in "strict mode"
 	bufnrs
 		Maps to a sub table, where each key is a bufnr
 		Each of these bufnrs maps to all (unfiltered) diagnostics
@@ -130,26 +131,17 @@ local diagnostics_tracker = {}
 -- Used to set up this tracker based on specific lsp settings
 -- These are found as languageSpecific settings
 local function set_up_tracker(client_id, settings)
-	-- Ignore different diagnostic in strict vs lenient mode
-	local ignore_diagnostics = settings.ignore_diagnostics or {}
-	local strict_ignore = ignore_diagnostics.strict
-	if strict_ignore then
-		strict_ignore = array_to_set(strict_ignore)
-	else
-		strict_ignore = {}
-	end
+	local non_filter = function(_) return true end
 
-	local lenient_ignore = ignore_diagnostics.lenient
-	if lenient_ignore then
-		lenient_ignore = array_to_set(lenient_ignore)
-	else
-		lenient_ignore = {}
-	end
+	-- Ignore different diagnostic in strict vs  mode
+	local diagnostic_filters = settings.diagnostic_filters or {}
+	local normal_filter = diagnostic_filters.normal or non_filter
+	local strict_filter = diagnostic_filters.strict or non_filter
 
 	-- Bufnrs will be added as diagnostics are published
 	diagnostics_tracker[client_id] = {
-		lenient_filter = lenient_ignore,
-		strict_filter = strict_ignore,
+		normal_filter = normal_filter,
+		strict_filter = strict_filter,
 		bufnrs = {},
 	}
 end
@@ -159,16 +151,16 @@ end
 local function publish_tracker_diagnostics(client_id, bufnr)
 	local client_tracker = diagnostics_tracker[client_id]
 
-	local ignored_codes
+	local filter
 	if vim.g.ignore_strict_diagnostics == true then
-		ignored_codes = client_tracker.lenient_filter
+		filter = client_tracker.normal_filter
 	else
-		ignored_codes = client_tracker.strict_filter
+		filter = client_tracker.strict_filter
 	end
 
 	local filtered_diagnostics = {}
 	for _, diagnostic in ipairs(client_tracker.bufnrs[bufnr]) do
-		if not ignored_codes[diagnostic.code] then
+		if filter(diagnostic) then
 			table.insert(filtered_diagnostics, diagnostic)
 		end
 	end
