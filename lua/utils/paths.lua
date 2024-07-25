@@ -42,7 +42,10 @@ function M.find_project_root(root_files)
 	end
 	-- Check for a root directory and set single_file_mode accordingly
 	local root_dir =
-		vim.fs.dirname(vim.fs.find(root_files, { upward = true })[1])
+		vim.fs.dirname(vim.fs.find(root_files, {
+			upward = true,
+			path = vim.fn.expand("%:p"),
+		})[1])
 
 	local single_file = root_dir == nil
 	if single_file then
