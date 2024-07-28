@@ -110,7 +110,7 @@ function M.setup()
 			}
 		end
 
-		showTable(vim.lsp.get_active_clients(), "((Lsp Info))", ignored_keys)
+		showTable(vim.lsp.get_clients(), "((Lsp Info))", ignored_keys)
 	end
 end
 
@@ -194,7 +194,8 @@ function M.start_or_attach(config_name, root_dir, single_file)
 
 	-- Trying to attach to active clients
 	-- If sucessful, attach and then return early
-	for client_id, client_opts in pairs(vim.lsp.get_active_clients()) do
+	for _, client_opts in ipairs(vim.lsp.get_clients()) do
+		local client_id = client_opts.id
 		local client_name = client_opts.config.name
 		local client_root = client_opts.config.root_dir
 		if client_name == config_name and client_root == root_dir then
