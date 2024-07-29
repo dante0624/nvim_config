@@ -34,6 +34,10 @@ return {
 
 					-- If I don't have this, WSL bugs out on every comment
 					"comment",
+
+					-- Needed for viewing hover information
+					"markdown",
+					"markdown_inline",
 				},
 			})
 		end,
