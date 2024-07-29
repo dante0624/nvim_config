@@ -5,7 +5,7 @@ return {
 		"hrsh7th/nvim-cmp",
 
 		-- Use this commit until a newer tag drops
-		commit = "5dce1b778b85c717f6614e3f4da45e9f19f54435",
+		commit = "d818fd0624205b34e14888358037fb6f5dc51234",
 		event = "InsertEnter",
 		dependencies = {
 			"L3MON4D3/LuaSnip",
