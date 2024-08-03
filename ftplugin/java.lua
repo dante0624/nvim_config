@@ -25,6 +25,9 @@ end
 local custom_static_non_final = "StaticNonFinal"
 vim.cmd.highlight(custom_static_non_final, "guifg=#f7768e")
 
+local custom_non_static_non_final = "NonStaticNonFinal"
+vim.cmd.highlight(custom_non_static_non_final, "guifg=#1abc9c")
+
 vim.api.nvim_create_autocmd('LspTokenUpdate', {
 	buffer = 0,
 	callback = function(args)
@@ -32,19 +35,26 @@ vim.api.nvim_create_autocmd('LspTokenUpdate', {
 
 		if token.type == "namespace" and token.modifiers.importDeclaration then
 			set_highlight(token, args, "@variable")
+			return
 		end
 
 		if token.type ~= "property" then
 			return
 		end
 
-		-- Readonly means "final" in java
-		if token.modifiers.readonly then
-			set_highlight(token, args, "Constant")
+		local final = token.modifiers.readonly
+		local static = token.modifiers.static
+
+		if static then
+			if final then
+				set_highlight(token, args, "Constant")
+			else
+				set_highlight(token, args, custom_static_non_final)
+			end
 
 		else
-			if token.modifiers.static then
-				set_highlight(token, args, custom_static_non_final)
+			if final then
+				set_highlight(token, args, custom_non_static_non_final)
 			else
 				set_highlight(token, args, "@property")
 			end
