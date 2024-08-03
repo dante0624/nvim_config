@@ -22,6 +22,43 @@ end
 -- Essentially do a regex search on a directory to find this jar file
 local launcher_file = vim.fn.globpath(jdtls_dir .. "plugins", "*launcher_*")
 
+local normal_definition_handler = vim.lsp.handlers['textDocument/definition']
+
+-- Logic needed to handle go-to-definition and decompiling a class file
+local function open_classfile(uri, client_id)
+	local bufnr = vim.api.nvim_get_current_buf()
+	vim.bo[bufnr].modifiable = true
+	vim.bo[bufnr].swapfile = false
+	vim.bo[bufnr].buftype = 'nofile'
+
+	local client = vim.lsp.get_client_by_id(client_id)
+
+	local content
+	local function handler(_, result)
+		content = result
+		local normalized = string.gsub(result, '\r\n', '\n')
+		local source_lines = vim.split(normalized, "\n", { plain = true })
+		vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, source_lines)
+		vim.bo[bufnr].modifiable = false
+	end
+
+	local params = {
+		uri = uri
+	}
+	client.request("java/classFileContents", params, handler, bufnr)
+	-- Need to block. Otherwise logic could run that sets the cursor
+	-- to a position that's still missing.
+	local timeout_ms = 5000
+	vim.wait(timeout_ms, function() return content ~= nil end)
+
+	-- Before running ftplugin/java, must store client_id in a local var
+	vim.fn.setbufvar(bufnr, "java_decomp_client_id", client_id)
+
+	-- Triggers ftplugin/java
+	vim.bo[bufnr].filetype = 'java'
+end
+
+
 return {
 	cmd = {
 		"java", -- or '/path/to/java17_or_newer/bin/java'
@@ -38,6 +75,9 @@ return {
 		"java.base/java.util=ALL-UNNAMED",
 		"--add-opens",
 		"java.base/java.lang=ALL-UNNAMED",
+
+		-- Add lombok support
+		-- "-javaagent:" ..  "path/to/lombok.jar",
 
 		-- This will depend on the version of jdtls installed
 		"-jar",
@@ -94,4 +134,22 @@ return {
 			},
 		},
 	},
+
+	handlers = {
+		['textDocument/definition'] = function(err, result, ctx, config)
+			for _, definition in ipairs(result) do
+				if vim.startswith(definition.uri, "jdt://") then
+					vim.api.nvim_create_autocmd("BufReadCmd", {
+						pattern = definition.uri,
+						callback = function()
+							open_classfile(definition.uri, ctx.client_id)
+						end,
+						once = true,
+					})
+				end
+			end
+
+			normal_definition_handler(err, result, ctx, config)
+		end,
+	}
 }

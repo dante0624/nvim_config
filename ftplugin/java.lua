@@ -10,6 +10,11 @@ local folding = require("core.myModules.folding")
 
 folding.setup_treesitter_folding()
 
+-- Use 4 spaces instead of tabs (Java Checkstyle linter prefers spaces)
+vim.bo[0].tabstop = 4
+vim.bo[0].shiftwidth = 4
+vim.bo[0].expandtab = true
+
 -- Helper function for highlighting semantic_tokens
 local function set_highlight(token, args, highlight_group)
 	vim.lsp.semantic_tokens.highlight_token(
@@ -47,6 +52,21 @@ vim.api.nvim_create_autocmd('LspTokenUpdate', {
 	end,
 })
 
+local bufnr = vim.api.nvim_get_current_buf()
+  local bufname = vim.api.nvim_buf_get_name(bufnr)
+
+  -- Won't be able to get the correct root path for decompiled java classes
+  -- So need to connect to an existing client
+  -- Connect it to the client which made the textDocument/definition request
+  if vim.startswith(bufname, 'jdt://') then
+	local client_id = vim.fn.getbufvar(bufnr, "java_decomp_client_id")
+	vim.lsp.buf_attach_client(bufnr, client_id)
+
+	-- Return early from this. Everything else is for source java files
+	return
+  end
+
+
 require("lsp.serverCommon").start_or_attach(
 	"javaServer",
 	root_dir,
@@ -69,7 +89,3 @@ end
 
 vim.b.run_command = run_command
 
--- Use 4 spaces instead of tabs (Java Checkstyle linter prefers spaces)
-vim.bo[0].tabstop = 4
-vim.bo[0].shiftwidth = 4
-vim.bo[0].expandtab = true
