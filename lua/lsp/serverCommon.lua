@@ -249,6 +249,21 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		vim.lsp.protocol.make_client_capabilities()
 	)
 
+	local handlers = {
+		["textDocument/publishDiagnostics"] = function(_, result, ctx, _)
+			local client_id = ctx.client_id
+			local bufnr = vim.uri_to_bufnr(result.uri)
+			local diagnostics = result.diagnostics
+
+			diagnostics_tracker[client_id].bufnrs[bufnr] = diagnostics
+
+			publish_tracker_diagnostics(client_id, bufnr)
+		end,
+	}
+
+	local custom_handlers = settings.handlers or {}
+	handlers = vim.tbl_extend("keep", handlers, custom_handlers)
+
 	local client_id = vim.lsp.start({
 		name = config_name,
 		cmd = settings.cmd,
@@ -257,17 +272,7 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		init_options = init_options,
 		on_attach = on_attach,
 		capabilities = capabilities,
-		handlers = {
-			["textDocument/publishDiagnostics"] = function(_, result, ctx, _)
-				local client_id = ctx.client_id
-				local bufnr = vim.uri_to_bufnr(result.uri)
-				local diagnostics = result.diagnostics
-
-				diagnostics_tracker[client_id].bufnrs[bufnr] = diagnostics
-
-				publish_tracker_diagnostics(client_id, bufnr)
-			end,
-		},
+		handlers = handlers,
 	})
 
 	set_up_tracker(client_id, settings)
