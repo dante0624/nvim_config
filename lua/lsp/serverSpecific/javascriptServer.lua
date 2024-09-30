@@ -1,5 +1,21 @@
 local paths = require("utils.paths")
 
+local ignored_message_substrings = {
+	"'browser' is not defined.",
+	"Cannot find name 'browser'.",
+	"implicitly has an 'any' type, but a better type may be inferred from usage.",
+}
+
+local filter_func = function(diagnostic)
+	for _, substring in ipairs(ignored_message_substrings) do
+		if string.find(diagnostic.message, substring) then
+			return false
+		end
+	end
+
+	return true
+end
+
 return {
 	cmd = {
 		paths.Mason_Bin .. "typescript-language-server",
@@ -19,14 +35,11 @@ return {
 				checkJs = true,
 				strictNullChecks = false,
 			},
-			diagnostics = {
-				ignoredCodes = {
-					-- 2339,
-					-- 2531,
-					-- 7044,
-				},
-			},
 		},
 	},
 	single_file_support = true,
+	diagnostic_filters = {
+		normal = filter_func,
+		strict = filter_func,
+	},
 }
