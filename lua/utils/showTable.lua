@@ -1,4 +1,5 @@
 local array_to_set = require("utils.tables").array_to_set
+local create_buffer = require("utils.buffers").create_buffer
 
 -- Helper Function
 -- Returns only the body of the table, without the opening and closing {}
@@ -158,20 +159,6 @@ local function highlight_buffer(buffer_number)
 	end
 end
 
--- If the name is already in use, then its existing buffer number
--- Otherwise, create a new buffer and return the new buffer number
-local function create_buffer(name)
-	local existing_buffer_number = vim.fn.bufnr(name)
-
-	if existing_buffer_number == -1 then
-		local new_buffer_number = vim.api.nvim_create_buf(false, true)
-		vim.api.nvim_buf_set_name(new_buffer_number, name)
-		return new_buffer_number
-	end
-
-	return existing_buffer_number
-end
-
 local function log(data, buffer_number)
 	if data then
 		-- Clear the buffer's contents incase it has been used
@@ -194,9 +181,6 @@ local function focus_buffer(buffer_number)
 	local buffer_window =
 		vim.api.nvim_call_function("bufwinid", { buffer_number })
 	vim.api.nvim_win_set_cursor(buffer_window, { 1, 0 })
-
-	-- Make the buffer listed when we focus it
-	vim.bo[buffer_number].buflisted = true
 
 	-- Set the folding type to be correct
 	vim.cmd([[

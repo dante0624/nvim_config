@@ -1,5 +1,6 @@
 local paths = require("utils.paths")
 local os = require("utils.os")
+local create_buffer = require("utils.buffers").create_buffer
 
 -- Sadly, I needed to copy - paste this from java.lua
 local root_dir, _ = paths.find_project_root({
@@ -25,8 +26,23 @@ local launcher_file = vim.fn.globpath(jdtls_dir .. "plugins", "*launcher_*")
 local normal_definition_handler = vim.lsp.handlers['textDocument/definition']
 
 -- Logic needed to handle go-to-definition and decompiling a class file
-local function open_classfile(uri, client_id)
-	local bufnr = vim.api.nvim_get_current_buf()
+-- definition argument is a table with the following format:
+-- {
+-- 	range = {
+-- 		end = {
+-- 			character = int
+-- 			line = int
+-- 		}
+-- 		start = {
+-- 			character = int
+-- 			line = int
+-- 		}
+-- 	}
+-- 	uri = string
+-- }
+local function open_classfile(definition, client_id)
+	local bufnr = create_buffer(definition.uri)
+
 	vim.bo[bufnr].modifiable = true
 	vim.bo[bufnr].swapfile = false
 	vim.bo[bufnr].buftype = 'nofile'
@@ -43,13 +59,20 @@ local function open_classfile(uri, client_id)
 	end
 
 	local params = {
-		uri = uri
+		uri = definition.uri
 	}
 	client.request("java/classFileContents", params, handler, bufnr)
 	-- Need to block. Otherwise logic could run that sets the cursor
 	-- to a position that's still missing.
 	local timeout_ms = 5000
 	vim.wait(timeout_ms, function() return content ~= nil end)
+
+	-- Focus on buffer and set cursor to desired position
+	vim.cmd("buffer " .. bufnr)
+	local buffer_window =
+		vim.api.nvim_call_function("bufwinid", { bufnr })
+	local position = definition.range.start
+	vim.api.nvim_win_set_cursor(buffer_window, { position.line + 1, position.character })
 
 	-- Before running ftplugin/java, must store client_id in a local var
 	vim.fn.setbufvar(bufnr, "java_decomp_client_id", client_id)
@@ -139,17 +162,11 @@ return {
 		['textDocument/definition'] = function(err, result, ctx, config)
 			for _, definition in ipairs(result) do
 				if vim.startswith(definition.uri, "jdt://") then
-					vim.api.nvim_create_autocmd("BufReadCmd", {
-						pattern = definition.uri,
-						callback = function()
-							open_classfile(definition.uri, ctx.client_id)
-						end,
-						once = true,
-					})
+					open_classfile(definition, ctx.client_id)
+				else
+					normal_definition_handler(err, result, ctx, config)
 				end
 			end
-
-			normal_definition_handler(err, result, ctx, config)
 		end,
 	}
 }
