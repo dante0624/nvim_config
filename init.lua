@@ -11,55 +11,39 @@ require("linting.lintCommon").setup()
 require("formatting.formatCommon").setup()
 
 -- TODO:
---[[
-NO CHANGES UNTIL SEPTEMBER 15th!!!
+--[[ Small things that are bugging me:
+Revert usage of OSC 52 copy and paste.
+	Look into x-clip for SSH.
 
-Make use of OSC 52 copy and paste
-Modify linting to hava single file, with ignore and strict as table fields
-	Rather than 2 file
-Make LSP hover look pretty again (its not handling the markdown nicely right now)
-Debug why telescope is sometimes delayed
+Add LSP Startup messages for all LSPs
+	Only needed for Java but nice for everything.
+
+Make the HUD work for all windows.
+	Currently it works for all tabs, but not all windows.
+
+Modify linting to hava single file.
+	Ignore and strict as table fields, rather than 2 file.
+
+Make LSP hover look pretty.
+	Its not handling the markdown nicely right now.
+
 Allow me to rename variables and files in a pop-out buffer.
-	I want normal, insert, and visual mode to work in this pop-out buffer
-	Enter makes the selection
+	I want Visual, Insert, and Normal mode to work here.
 ]]
 
---[[ Python Plan
-    Migrate to Based Pyright
-        This will automatically give semantic highlighting
-        In the future, it will hopefully support willRenameFiles LSP method
 
-	Get conform and use ruff as a formatter
-        Make <leader>af use conform if it is setup, but fallback on LSP
-            Use <leader>p to format and save (p for "publish")
-            Use <leader>P to format and save all
+--[[ Java LSP Issues:
+Some issue with a file lock
+	Logs can be found under ~/.local/share/nvim/Java_Workspaces/<Specific-Workspace>/.metadata/.log
+		It talks about waiting for a lock
 
-	Try out nvim/rope plugin
-		If it works well, attempt filenames ]]
+	File table lock is at ~/.local/share/nvim/mason/packages/jdtls/config_<OS>/org.eclipse.osgi/.manager/.fileTableLock
+		For some reason, deleting this file (even though it is empty) fixes the problem
 
---[[ Refactoring Filenames plan
-	Make it a custom command for neo-tree called refactor
-		Unbind r for rename file
-		Rebind it to r for refactor
-	
-	Have a refactoring method
-		An LSP function that calls either willRenameFiles or didRenameFiles
-		Needs to list if it should be applied before or after renaming
-		Also list if the method supports directory refactoring or not
-	
-	Find the nearest LSP whose root is back far enough for the refactor
+	This bug happens "late". After the LSP already starts up, and the buffers say that are attached to the LSP.
 
-	Note about LSP refactoring method
-		Copy how folke did it with Lazy again
-		Double check the URI to see if it is a directory or not
-	
-	How the custom neotree command works
-		Find the refactoring method based on LSP
-		Apply refactor source before (if it specifies that)
-		Rename the file
-		Apply refactor source after (if it specifies that)
 
-    Based Pyright Issue: https://github.com/DetachHead/basedpyright/issues/327
+Changing dependencies or git branches SOMETIMES (need to reproduce reliably), causes the LSP to fail on startup.
 ]]
 
 --[[ Random Wants:
