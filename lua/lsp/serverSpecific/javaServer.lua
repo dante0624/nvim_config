@@ -100,7 +100,7 @@ return {
 		"java.base/java.lang=ALL-UNNAMED",
 
 		-- Add lombok support
-		-- "-javaagent:" ..  "path/to/lombok.jar",
+		"-javaagent:" .. jdtls_dir .. "lombok.jar",
 
 		-- This will depend on the version of jdtls installed
 		"-jar",
