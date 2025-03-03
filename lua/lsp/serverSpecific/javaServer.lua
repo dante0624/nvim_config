@@ -1,5 +1,6 @@
 local paths = require("utils.paths")
 local os = require("utils.os")
+local architecture = require("utils.architecture")
 local create_buffer = require("utils.buffers").create_buffer
 
 -- Sadly, I needed to copy - paste this from java.lua
@@ -8,16 +9,24 @@ local root_dir, _ = paths.find_project_root({
 	"mvnw",
 	"gradlew"
 })
+
 local inferred_workspace = paths.Java_Workspaces
 	.. paths.serialize_path(root_dir)
 local jdtls_dir = paths.Mason_Path .. "packages/jdtls/"
 local os_config
-if os.is_linux_os or os.is_wsl then
+if os.is_linux_os then
 	os_config = "config_linux"
 elseif os.is_macos then
 	os_config = "config_mac"
+elseif os.is_wsl then
+	os_config = "config_ss_linux"
 elseif os.is_windows then
 	os_config = "config_win"
+end
+
+-- For some reason, the distribution of jdtls through mason does not come with config_win_arm
+if architecture.is_arm and not os.is_windows then
+	os_config = os_config .. "_arm"
 end
 
 -- Essentially do a regex search on a directory to find this jar file

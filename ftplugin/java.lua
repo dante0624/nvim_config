@@ -6,6 +6,7 @@ local root_dir, single_file = find_project_root({
 	"mvnw",
 	"gradlew"
 })
+
 local folding = require("core.myModules.folding")
 
 folding.setup_treesitter_folding()
