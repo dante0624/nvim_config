@@ -130,8 +130,26 @@ return {
 	-- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
 	pre_attach_settings = {
 		java = {
+			-- Don't try to build the project automatically
+			-- Let me decide when to run the build commands
 			autobuild = {
 				enabled = false,
+			},
+
+			-- If true, will run run gradle buildship on startup (auto-generates .classpath file based on gradle config)
+			-- Set to false if you don't want .classpath files being overwritten
+			-- Set to true if making a simple gradle project, and this auto-generation is helpful
+			import = {
+				gradle = {
+					enabled = true,
+				},
+			},
+
+			-- Formatting options
+			-- By default will insert tabs by whenever the "create method" code action is used
+			-- Instead use spaces, since Java Checkstyle linter prefers spaces
+			format = {
+				insertSpaces = true,
 			},
 		},
 	},
