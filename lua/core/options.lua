@@ -40,20 +40,6 @@ vim.opt.breakindent = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
--- Use OSC52 for copy and paste
--- Came from :help clipboard
-vim.g.clipboard = {
-	name = 'OSC 52',
-	copy = {
-		['+'] = require('vim.ui.clipboard.osc52').copy('+'),
-		['*'] = require('vim.ui.clipboard.osc52').copy('*'),
-	},
-	paste = {
-		['+'] = require('vim.ui.clipboard.osc52').paste('+'),
-		['*'] = require('vim.ui.clipboard.osc52').paste('*'),
-	},
-}
-
 -- The rest of the options (like line numbers and color column) are in:
 -- require("core.myModules.hudKeymaps").default_display_preferences() ->
 -- require("core.myModules.headsUpDisplay")
