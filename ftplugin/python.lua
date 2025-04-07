@@ -9,7 +9,6 @@ require("lsp.serverCommon").start_or_attach(
 	root_dir,
 	single_file
 )
-require("linting.lintCommon").setup_linters({ "ruff" })
 
 -- Check if the first line of a fold ends with ":"
 -- If it does, then don't include the last line in the fold text

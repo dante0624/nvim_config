@@ -63,10 +63,8 @@ return {
 				"prettierd", -- HTML, CSS, JS, TS, JSON, and Markdown
 				"stylua", -- Lua
 
-				-- Linters and Formatters
+				-- Things that are both Linters and Formatters
 				"stylelint", -- CSS
-				"eslint_d", -- JS
-				"ruff", -- Python
 			},
 		},
 	},
