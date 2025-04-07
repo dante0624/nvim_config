@@ -24,6 +24,15 @@ return {
 		python = {
 			analysis = {
 				typeCheckingMode = "strict",
+				diagnosticSeverityOverrides = {
+					-- These get duplicated for some reason when using typeCheckingMode = "strict"  
+					-- They show up once as warnings (which I want them to be) then again as errors
+					-- Setting these to false has a nice affect of making them show up once as warnings
+					reportUnusedImport = false,
+					reportUnusedClass = false,
+					reportUnusedFunction = false,
+					reportUnusedVariable = false,
+				},
 			},
 		},
 	},
