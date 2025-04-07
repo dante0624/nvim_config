@@ -1,3 +1,5 @@
+local is_ssh_x11 = require("utils.ssh").is_ssh_x11
+
 -- Many of these options get overwritten by
 -- editorconfig.lua (a lua file built in to neovim)
 -- Useful to read the file, but I don't like it overwriting my values
@@ -39,6 +41,23 @@ vim.opt.breakindent = true
 -- But searches with any uppercase characters are case sensitive
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+
+-- If ssh with X11 forwarding, force + and * clipboards to use Xclip
+-- Otherwise, use neovim's default clipboard
+if is_ssh_x11 then
+	vim.g.clipboard = {
+		name = 'XClip',
+		copy = {
+			['+'] = 'xclip -in -selection clipboard',
+			['*'] = 'xclip -in -selection clipboard',
+		},
+		paste = {
+			['+'] = 'xclip -out -selection clipboard',
+			['*'] = 'xclip -out -selection clipboard',
+		},
+	}
+end
+
 
 -- The rest of the options (like line numbers and color column) are in:
 -- require("core.myModules.hudKeymaps").default_display_preferences() ->
