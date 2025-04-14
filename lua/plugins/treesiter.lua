@@ -3,7 +3,7 @@ local os = require("utils.os")
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
-		tag = "v0.9.1",
+		tag = "v0.9.3",
 		build = ":TSUpdate",
 		event = { "BufReadPost", "BufNewFile" },
 		config = function()
@@ -26,7 +26,8 @@ return {
 				ensure_installed = {
 					"lua",
 					"python",
-					"java",
+					-- Remove because it is so slow, re-add when it isn't horribly slow
+					-- "java",
 					"html",
 					"css",
 					"javascript",

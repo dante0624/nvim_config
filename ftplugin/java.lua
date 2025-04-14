@@ -9,7 +9,7 @@ local root_dir, single_file = find_project_root({
 
 local folding = require("core.myModules.folding")
 
-folding.setup_treesitter_folding()
+folding.setup_syntax_folding()
 
 -- Use 4 spaces instead of tabs (Java Checkstyle linter prefers spaces)
 vim.bo[0].tabstop = 4
