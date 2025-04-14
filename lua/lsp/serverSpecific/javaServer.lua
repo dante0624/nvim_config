@@ -32,8 +32,6 @@ end
 -- Essentially do a regex search on a directory to find this jar file
 local launcher_file = vim.fn.globpath(jdtls_dir .. "plugins", "*launcher_*")
 
-local normal_definition_handler = vim.lsp.handlers['textDocument/definition']
-
 -- Logic needed to handle go-to-definition and decompiling a class file
 -- definition argument is a table with the following format:
 -- {
@@ -70,7 +68,7 @@ local function open_classfile(definition, client_id)
 	local params = {
 		uri = definition.uri
 	}
-	client.request("java/classFileContents", params, handler, bufnr)
+	client:request("java/classFileContents", params, handler, bufnr)
 	-- Need to block. Otherwise logic could run that sets the cursor
 	-- to a position that's still missing.
 	local timeout_ms = 5000
@@ -88,6 +86,20 @@ local function open_classfile(definition, client_id)
 
 	-- Triggers ftplugin/java
 	vim.bo[bufnr].filetype = 'java'
+end
+
+local custom_go_to_definition = function()
+	vim.lsp.buf_request_all(0, 'textDocument/definition', vim.lsp.util.make_position_params(0, "utf-8"), function(results)
+		for client_id, client_result in ipairs(results) do
+			for _, definition in ipairs(client_result.result) do
+				if vim.startswith(definition.uri, "jdt://") then
+					open_classfile(definition, client_id)
+				else
+					vim.lsp.buf.definition()
+				end
+			end
+		end
+	end)
 end
 
 
@@ -184,16 +196,7 @@ return {
 			},
 		},
 	},
-
-	handlers = {
-		['textDocument/definition'] = function(err, result, ctx, config)
-			for _, definition in ipairs(result) do
-				if vim.startswith(definition.uri, "jdt://") then
-					open_classfile(definition, ctx.client_id)
-				else
-					normal_definition_handler(err, result, ctx, config)
-				end
-			end
-		end,
-	}
+	keymap_overrides = function(_, bufnr)
+		vim.keymap.set("n", "gd", custom_go_to_definition, { buffer = bufnr })
+	end,
 }

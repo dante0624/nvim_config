@@ -30,39 +30,23 @@ end
 -- Sets up Diganostic signs, diagnostic config, and lsp handlers
 -- Also defines a lua function that can help with debugging clients
 function M.setup()
-	local signs = {
-		{ name = "DiagnosticSignError", text = "" },
-		{ name = "DiagnosticSignWarn", text = "" },
-		{ name = "DiagnosticSignInfo", text = "" },
-		{ name = "DiagnosticSignHint", text = "󰌵" },
-	}
-
-	for _, sign in ipairs(signs) do
-		vim.fn.sign_define(
-			sign.name,
-			{ texthl = sign.name, text = sign.text, numhl = "" }
-		)
-	end
-
 	vim.diagnostic.config({
-		-- disable virtual text
-		virtual_text = false,
 		severity_sort = true,
 		float = {
-			-- focusable = false,
-			style = "minimal",
 			border = "rounded",
-			source = "always",
+			source = true,
 			header = "",
 			prefix = "",
 		},
+		signs = {
+			text = {
+				[vim.diagnostic.severity.ERROR] = "",
+				[vim.diagnostic.severity.WARN] = "",
+				[vim.diagnostic.severity.INFO] = "",
+				[vim.diagnostic.severity.HINT] = "󰌵",
+			},
+		},
 	})
-
-	vim.lsp.handlers["textDocument/hover"] =
-		vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
-
-	vim.lsp.handlers["textDocument/signatureHelp"] =
-		vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 
 	-- Go up or down (k and j) the list of diagnostics
 	vim.keymap.set("n", "<leader>ak", function()
@@ -207,9 +191,17 @@ function M.start_or_attach(config_name, root_dir, single_file)
 	-- All of these can be overwritten by language specific settings
 	local init_options = {}
 	local pre_attach_settings = {}
-	local on_attach = M.on_attach_keymaps
+	local on_attach_keymaps = M.on_attach_keymaps
 
 	local settings = require("lsp.serverSpecific." .. config_name)
+
+	if settings.keymap_overrides ~= nil then
+		on_attach_keymaps = function(_, bufnr)
+			M.on_attach_keymaps(_, bufnr)
+			settings.keymap_overrides(_, bufnr)
+		end
+	end
+
 
 	assert(settings.cmd, "LSP configuration needs a cmd attribute")
 
@@ -219,9 +211,11 @@ function M.start_or_attach(config_name, root_dir, single_file)
 	if settings.pre_attach_settings ~= nil then
 		pre_attach_settings = settings.pre_attach_settings
 	end
+
+	local on_attach = on_attach_keymaps
 	if settings.post_attach_settings ~= nil then
 		on_attach = function(_, bufnr)
-			M.on_attach_keymaps(_, bufnr)
+			on_attach_keymaps(_, bufnr)
 			vim.lsp.buf_notify(
 				bufnr,
 				"workspace/didChangeConfiguration",
@@ -261,7 +255,7 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		end,
 	}
 
-	local custom_handlers = settings.handlers or {}
+	local custom_handlers = settings.server_to_client_handlers or {}
 	handlers = vim.tbl_extend("keep", handlers, custom_handlers)
 
 	local client_id = vim.lsp.start({
@@ -272,6 +266,9 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		init_options = init_options,
 		on_attach = on_attach,
 		capabilities = capabilities,
+		-- Can only override server-to-client requests like textDocument/publishDiagnostics
+		-- Cannot override client-to-server requests like textDocument/definition
+		-- This is documented here: https://neovim.io/doc/user/lsp.html#vim.lsp.handlers
 		handlers = handlers,
 	})
 

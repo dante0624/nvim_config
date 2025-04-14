@@ -42,6 +42,9 @@ vim.opt.breakindent = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
+-- Needed for hover windows from LSP. Breaking change from Neovim 0.11
+vim.o.winborder = "rounded"
+
 -- If ssh with X11 forwarding, force + and * clipboards to use Xclip
 -- Otherwise, use neovim's default clipboard
 if is_ssh_x11 then
