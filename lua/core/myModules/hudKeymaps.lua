@@ -123,9 +123,9 @@ map("", "<Leader>dq", function()
 end)
 
 -- My own verion of "zen mode".
--- I think its important to still show diagnostics
+-- For making changes to larger codebase that can be overwhelming
 map("", "<Leader>dz", function()
-	onlyShow({ "diagnostics" })
+	onlyShow({ "diagnostics", "git_signs", "footer" })
 end)
 
 -- Publication Mode: Strict Diagnostics and the Color Column
