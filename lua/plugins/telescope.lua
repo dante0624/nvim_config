@@ -184,7 +184,7 @@ return {
 	},
 	{
 		"nvim-lua/plenary.nvim",
-		tag = "v0.1.2",
+		commit = "37604d95d8a212478063c40df4b7c48313453d52",
 		lazy = true,
 	},
 	{

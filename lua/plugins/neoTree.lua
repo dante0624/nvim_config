@@ -55,7 +55,7 @@ end
 return {
 	{
 		"nvim-neo-tree/neo-tree.nvim",
-		tag = "3.7",
+		tag = "3.31.1",
 		dependencies = {
 			"nvim-tree/nvim-web-devicons",
 			"MunifTanjim/nui.nvim",
@@ -268,7 +268,9 @@ return {
 	},
 	{
 		"MunifTanjim/nui.nvim",
-		tag = "0.2.0",
+		-- Commit id b1b3dcd6ed8f355c78bad3d395ff645be5f8b6ae removed vim.tbl_islist
+		-- Waiting for a new tag to drop that removes this
+		commit = "8d3bce9764e627b62b07424e0df77f680d47ffdb",
 		lazy = true,
 	},
 }

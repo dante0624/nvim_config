@@ -21,7 +21,7 @@
 return {
 	{
 		"williamboman/mason.nvim",
-		tag = "v1.8.0",
+		tag = "v1.11.0",
 		lazy = false,
 		opts = {
 			install_root_dir = require("utils.paths").Mason_Path,
@@ -44,7 +44,7 @@ return {
 		dependencies = {
 			"williamboman/mason.nvim",
 		},
-		commit = "8b70e7f1e0a4119c1234c3bde4a01c241cabcc74",
+		commit = "1255518cb067e038a4755f5cb3e980f79b6ab89c",
 		lazy = false,
 		opts = {
 			ensure_installed = {

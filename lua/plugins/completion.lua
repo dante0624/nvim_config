@@ -5,7 +5,7 @@ return {
 		"hrsh7th/nvim-cmp",
 
 		-- Use this commit until a newer tag drops
-		commit = "d818fd0624205b34e14888358037fb6f5dc51234",
+		commit = "b5311ab3ed9c846b585c0c15b7559be131ec4be9",
 		event = "InsertEnter",
 		dependencies = {
 			"L3MON4D3/LuaSnip",
@@ -137,6 +137,8 @@ return {
 		lazy = true,
 	},
 
+	-- Looks like the author of these, especially cmp-nvim-lua, is working
+	-- on removing deprecated function usage right now. Just need to wait.
 	{
 		"hrsh7th/cmp-buffer",
 		commit = "3022dbc9166796b644a841a02de8dd1cc1d311fa",

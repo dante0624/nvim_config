@@ -28,7 +28,7 @@ The plan for how to make this work:
 return {
 	{
 		"stevearc/conform.nvim",
-		tag = "v5.1.0",
+		tag = "v9.0.0",
 		lazy = true,
 	},
 }
