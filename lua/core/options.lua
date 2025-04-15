@@ -42,8 +42,11 @@ vim.opt.breakindent = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
--- Needed for hover windows from LSP. Breaking change from Neovim 0.11
-vim.o.winborder = "rounded"
+-- Would prefer to use this instead of configuring the keymap for vim.lsp.buf.hover
+-- However, it currently breaks telescope and neo-tree
+-- https://github.com/nvim-telescope/telescope.nvim/issues/3436
+-- https://github.com/nvim-neo-tree/neo-tree.nvim/issues/1743
+-- vim.o.winborder = "rounded"
 
 -- If ssh with X11 forwarding, force + and * clipboards to use Xclip
 -- Otherwise, use neovim's default clipboard
