@@ -33,10 +33,6 @@ return {
 					toggle_help = "?",
 				},
 			},
-			-- This version locks all LSPs, Linters, Formatters, and DAPs
-			registries = {
-				"github:mason-org/mason-registry@2024-02-28-wavy-ziege",
-			},
 		},
 	},
 	{
