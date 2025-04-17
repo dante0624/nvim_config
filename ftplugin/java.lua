@@ -84,18 +84,39 @@ require("lsp.serverCommon").start_or_attach(
 	single_file
 )
 
+local full_file_path = vim.fn.expand("%:p")
+local class_name = vim.fn.expand("%:p:t:r")
 local run_command
+
 if single_file then
-	local full_fname = vim.fn.expand("%:p")
-	local build_cmd = 'javac "' .. full_fname .. '"'
-	local class_name = vim.fn.expand("%:p:t:r")
+	local build_cmd = 'javac "' .. full_file_path .. '"'
 	run_command = build_cmd
 		.. ' && java -cp "'
 		.. root_dir
 		.. '" '
 		.. class_name
 else
-	run_command = "gradle build"
+	-- Will include the full package and the class name. For example:
+	-- com.fasterxml.jackson.databind.ObjectMapper
+	local full_class_path = ""
+	local start_of_java_package = false
+	for dir_name in string.gmatch(full_file_path, '([^//]+)') do
+		if start_of_java_package and not vim.endswith(dir_name, ".java") then
+			full_class_path = full_class_path .. dir_name .. "."
+		end
+		if dir_name == "java" then
+			start_of_java_package = true
+		end
+	end
+	full_class_path = full_class_path .. class_name
+
+	local run_unit_test_cmd = 'gradle test --tests "' .. full_class_path .. '" --rerun-tasks'
+	local path_to_gradle_root = root_dir
+	local path_to_html_ut_results = path_to_gradle_root .. "build/reports/tests/test/index.html"
+
+	run_command = '( cd "' .. path_to_gradle_root .. '" ; ' ..
+		run_unit_test_cmd .. " ; " ..
+		'echo "Unit Test Results are available at: ' .. path_to_html_ut_results .. '" )'
 end
 
 vim.b.run_command = run_command

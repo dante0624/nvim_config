@@ -105,8 +105,7 @@ end
 
 return {
 	cmd = {
-		"java", -- or '/path/to/java17_or_newer/bin/java'
-		-- java17 or newer needs to be on the path
+		"java", -- or '/path/to/java21 (only version I've had success with)
 
 		"-Declipse.application=org.eclipse.jdt.ls.core.id1",
 		"-Dosgi.bundles.defaultStartLevel=4",
