@@ -42,6 +42,12 @@ vim.opt.breakindent = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
+-- Neovim 0.11.0 now defaults this option to the string:
+-- internal,filler,closeoff,linematch:40
+-- linematch:40 breaks gitsigns plugin. Specifically git_signs.preview_hunk()
+-- https://github.com/lewis6991/gitsigns.nvim/issues/1278
+vim.opt.diffopt = "internal,filler,closeoff"
+
 -- Would prefer to use this instead of configuring the keymap for vim.lsp.buf.hover
 -- However, it currently breaks telescope and neo-tree
 -- https://github.com/nvim-telescope/telescope.nvim/issues/3436
