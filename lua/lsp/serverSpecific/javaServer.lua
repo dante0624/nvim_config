@@ -150,6 +150,8 @@ return {
 			-- If true, will run run gradle buildship on startup (auto-generates .classpath file based on gradle config)
 			-- Set to false if you don't want .classpath files being overwritten
 			-- Set to true if making a simple gradle project, and this auto-generation is helpful
+			-- A really great alternative is to force jdtls to import as an eclipse project before gradle:
+			-- https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/257#issuecomment-350598939
 			import = {
 				gradle = {
 					enabled = true,
