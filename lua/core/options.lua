@@ -70,6 +70,9 @@ if is_ssh_x11 then
 	}
 end
 
+-- Default is "folds,cursor,curdir"
+-- Remove curdir, this way view files do not cause updating the working directory at all
+vim.opt.viewoptions = "folds,cursor"
 
 -- The rest of the options (like line numbers and color column) are in:
 -- require("core.myModules.hudKeymaps").default_display_preferences() ->
