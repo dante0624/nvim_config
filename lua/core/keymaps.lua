@@ -15,8 +15,8 @@ map(all_modes, "<C-l>", "<Right>")
 -- My remapings for moving far vertically and horizontally
 map("", "H", "^")
 map("", "L", "$")
-map("", "K", "020kzz")
-map("", "J", "020jzz")
+map("", "K", "<C-u>zz0")
+map("", "J", "<C-d>zz0")
 
 -- Only paste what we "yank", not the deleted text
 map("", "p", '"0p')
