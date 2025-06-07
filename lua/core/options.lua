@@ -72,7 +72,13 @@ end
 
 -- Default is "folds,cursor,curdir"
 -- Remove curdir, this way view files do not update the working directory
+-- https://neovim.io/doc/user/options.html#'viewoptions'
 vim.opt.viewoptions = "folds,cursor"
+
+-- Default is "blank,buffers,curdir,folds,help,tabpages,winsize,terminal"
+-- Remove many things, and add globals
+-- https://neovim.io/doc/user/options.html#'sessionoptions'
+vim.opt.sessionoptions = "buffers,folds,globals"
 
 -- I always want my statusline to be global
 -- laststatus = 0 lies, it shows the statusline with horizontally split windows

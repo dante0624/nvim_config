@@ -28,10 +28,6 @@ local session_path = paths.Sessions .. paths.serialize_path(initial_directory)
 local hud_path = paths.Sessions .. paths.serialize_path(initial_directory)
     .. "_hud.lua"
 
--- Globals are needed for tabline orderings
-vim.opt.sessionoptions:append("globals")
-
-
 local function save_hud()
     local hud_file = io.open(hud_path, "w")
     if hud_file ~= nil then
@@ -84,19 +80,6 @@ local function restore_session()
 
     -- Actually restore the session file
     vim.cmd("silent! source " .. vim.fn.fnameescape(session_path))
-
-    -- Sometimes neo-tree will leave behind a buffer of itself,
-    -- delete this if accidentally restored
-    for _, buf in ipairs(vim.fn.getbufinfo()) do
-        -- Lua uses % to escape characters with string.find
-        if buf.name:find("neo%-tree filesystem") ~= nil then
-            vim.cmd("bd! " .. buf.bufnr)
-        end
-    end
-
-    -- Sometimes restoring the file messes with the cwd,
-    -- set it back to what it should be
-    vim.fn.chdir(initial_directory)
 end
 
 
