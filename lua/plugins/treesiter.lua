@@ -26,8 +26,7 @@ return {
 				ensure_installed = {
 					"lua",
 					"python",
-					-- Remove because it is so slow, re-add when it isn't horribly slow
-					-- "java",
+					"java",
 					"html",
 					"css",
 					"javascript",
