@@ -1,7 +1,6 @@
 local paths = require("utils.paths")
 local os = require("utils.os")
 local architecture = require("utils.architecture")
-local create_buffer = require("utils.buffers").create_buffer
 
 -- Sadly, I needed to copy - paste this from java.lua
 local root_dir, _ = paths.find_project_root({
@@ -31,77 +30,6 @@ end
 
 -- Essentially do a regex search on a directory to find this jar file
 local launcher_file = vim.fn.globpath(jdtls_dir .. "plugins", "*launcher_*")
-
--- Logic needed to handle go-to-definition and decompiling a class file
--- definition argument is a table with the following format:
--- {
--- 	range = {
--- 		end = {
--- 			character = int
--- 			line = int
--- 		}
--- 		start = {
--- 			character = int
--- 			line = int
--- 		}
--- 	}
--- 	uri = string
--- }
-local function open_classfile(definition, client_id)
-	local bufnr = create_buffer(definition.uri)
-
-	vim.bo[bufnr].modifiable = true
-	vim.bo[bufnr].swapfile = false
-	vim.bo[bufnr].buftype = 'nofile'
-
-	local client = vim.lsp.get_client_by_id(client_id)
-
-	local content
-	local function handler(_, result)
-		content = result
-		local normalized = string.gsub(result, '\r\n', '\n')
-		local source_lines = vim.split(normalized, "\n", { plain = true })
-		vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, source_lines)
-		vim.bo[bufnr].modifiable = false
-	end
-
-	local params = {
-		uri = definition.uri
-	}
-	client:request("java/classFileContents", params, handler, bufnr)
-	-- Need to block. Otherwise logic could run that sets the cursor
-	-- to a position that's still missing.
-	local timeout_ms = 5000
-	vim.wait(timeout_ms, function() return content ~= nil end)
-
-	-- Focus on buffer and set cursor to desired position
-	vim.cmd("buffer " .. bufnr)
-	local buffer_window =
-		vim.api.nvim_call_function("bufwinid", { bufnr })
-	local position = definition.range.start
-	vim.api.nvim_win_set_cursor(buffer_window, { position.line + 1, position.character })
-
-	-- Before running ftplugin/java, must store client_id in a local var
-	vim.fn.setbufvar(bufnr, "java_decomp_client_id", client_id)
-
-	-- Triggers ftplugin/java
-	vim.bo[bufnr].filetype = 'java'
-end
-
-local custom_go_to_definition = function()
-	vim.lsp.buf_request_all(0, 'textDocument/definition', vim.lsp.util.make_position_params(0, "utf-8"), function(results)
-		for client_id, client_result in ipairs(results) do
-			for _, definition in ipairs(client_result.result) do
-				if vim.startswith(definition.uri, "jdt://") then
-					open_classfile(definition, client_id)
-				else
-					vim.lsp.buf.definition()
-				end
-			end
-		end
-	end)
-end
-
 
 return {
 	cmd = {
@@ -197,7 +125,4 @@ return {
 			},
 		},
 	},
-	keymap_overrides = function(_, bufnr)
-		vim.keymap.set("n", "gd", custom_go_to_definition, { buffer = bufnr })
-	end,
 }

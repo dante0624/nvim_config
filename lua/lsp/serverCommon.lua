@@ -193,17 +193,9 @@ function M.start_or_attach(config_name, root_dir, single_file)
 	-- All of these can be overwritten by language specific settings
 	local init_options = {}
 	local pre_attach_settings = {}
-	local on_attach_keymaps = M.on_attach_keymaps
+	local on_attach = M.on_attach_keymaps
 
 	local settings = require("lsp.serverSpecific." .. config_name)
-
-	if settings.keymap_overrides ~= nil then
-		on_attach_keymaps = function(_, bufnr)
-			M.on_attach_keymaps(_, bufnr)
-			settings.keymap_overrides(_, bufnr)
-		end
-	end
-
 
 	assert(settings.cmd, "LSP configuration needs a cmd attribute")
 
@@ -213,11 +205,9 @@ function M.start_or_attach(config_name, root_dir, single_file)
 	if settings.pre_attach_settings ~= nil then
 		pre_attach_settings = settings.pre_attach_settings
 	end
-
-	local on_attach = on_attach_keymaps
 	if settings.post_attach_settings ~= nil then
 		on_attach = function(_, bufnr)
-			on_attach_keymaps(_, bufnr)
+			M.on_attach_keymaps(_, bufnr)
 			vim.lsp.buf_notify(
 				bufnr,
 				"workspace/didChangeConfiguration",
