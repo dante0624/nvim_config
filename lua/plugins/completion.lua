@@ -12,7 +12,6 @@ return {
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-nvim-lua",
 			"saadparwaiz1/cmp_luasnip",
 			"rafamadriz/friendly-snippets",
 		},
@@ -101,7 +100,6 @@ return {
 						vim_item.kind =
 							string.format("%s", kind_icons[vim_item.kind])
 						vim_item.menu = ({
-							nvim_lua = "[Nvim Lua]",
 							nvim_lsp = "[LSP]",
 							luasnip = "[Snippet]",
 							buffer = "[Buffer]",
@@ -111,7 +109,6 @@ return {
 					end,
 				},
 				sources = {
-					{ name = "nvim_lua" },
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
 					{ name = "buffer" },
@@ -152,11 +149,6 @@ return {
 	{
 		"hrsh7th/cmp-nvim-lsp",
 		commit = "78924d1d677b29b3d1fe429864185341724ee5a2",
-		lazy = true,
-	},
-	{
-		"hrsh7th/cmp-nvim-lua",
-		commit = "f12408bdb54c39c23e67cab726264c10db33ada8",
 		lazy = true,
 	},
 	{
