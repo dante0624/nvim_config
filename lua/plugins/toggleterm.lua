@@ -1,7 +1,7 @@
 local lazy_map = require("utils.map").lazy_map
 
 -- Short for "shell open"
-local open_mapping = "<leader>so"
+local open_mapping = "<leader>xo"
 
 function _G.set_term_keymaps()
 	local function term_map(mode, lhs, rhs, opts)
@@ -28,9 +28,9 @@ return {
 		keys = lazy_map({
 			{ open_mapping, "<CMD>ToggleTerm<CR>" },
 
-			-- Short for "shell run"
+			-- Short for "execute run command"
 			{
-				"<Leader>sr",
+				"<Leader>xr",
 				function()
 					local toggleterm = require("toggleterm")
 					local run_command = vim.b.run_command
@@ -46,8 +46,8 @@ return {
 				end,
 			},
 
-			-- Short for "shell previous" (command)
-			{ "<Leader>sp", "<CMD>ToggleTerm<CR><Up><CR>" },
+			-- Short for "execute previous command"
+			{ "<Leader>xp", "<CMD>ToggleTerm<CR><Up><CR>" },
 		}),
 		config = function()
 			require("utils.shell").set_shell()
