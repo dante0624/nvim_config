@@ -71,8 +71,14 @@ if is_ssh_x11 then
 end
 
 -- Default is "folds,cursor,curdir"
--- Remove curdir, this way view files do not cause updating the working directory at all
+-- Remove curdir, this way view files do not update the working directory
 vim.opt.viewoptions = "folds,cursor"
+
+-- I always want my statusline to be global
+-- laststatus = 0 lies, it shows the statusline with horizontally split windows
+-- https://github.com/neovim/neovim/issues/5626#issuecomment-186720136
+-- I want to toggle it off globally with laststatus = 4, but that doesn't exist
+vim.opt.laststatus = 3
 
 -- The rest of the options (like line numbers and color column) are in:
 -- require("core.myModules.hudKeymaps").default_display_preferences() ->

@@ -32,12 +32,12 @@ local function toggle(display_name)
 end
 
 -- Prefix with d for HeadsUpDisplay
-map("", "<Leader>dh", function() toggle("header") end)
-map("", "<Leader>df", function() toggle("footer") end)
+map("", "<Leader>dt", function() toggle("tabs") end)
 map("", "<Leader>dl", function() toggle("line_numbers") end)
 map("", "<Leader>dr", function() toggle("relative_line_numbers") end)
 map("", "<Leader>dc", function() toggle("color_column") end)
 map("", "<Leader>dg", function() toggle("git_signs") end)
+map("", "<Leader>db", function() toggle("buffer_sign_column") end)
 map("", "<Leader>dd", function() toggle("diagnostics") end)
 map("", "<Leader>ds", function() toggle("strict") end)
 
@@ -114,27 +114,31 @@ end
 
 -- Shows all displays
 map("", "<Leader>da", function()
+	print("Heads Up Display - Show All")
 	onlyHide({})
 end)
 
 -- Show no displays
 map("", "<Leader>dq", function()
+	print("Heads Up Display - Hide All")
 	onlyShow({})
 end)
 
 -- My own verion of "zen mode".
 -- For making changes to larger codebase that can be overwhelming
 map("", "<Leader>dz", function()
+	print("Heads Up Display - Zen Mode")
 	onlyShow({ "diagnostics", "git_signs", "footer" })
 end)
 
 -- Publication Mode: Strict Diagnostics and the Color Column
 map("", "<Leader>dp", function()
-	onlyHide({ "relative_line_numbers" })
+	onlyHide({ "relative_line_numbers", "buffer_sign_column" })
 end)
 
 function M.default_display()
-	onlyHide({ "relative_line_numbers", "strict", "color_column" })
+	print("Heads Up Display - Default Hud")
+	onlyHide({ "relative_line_numbers", "strict", "color_column", "buffer_sign_column" })
 end
 
 map("", "<Leader>do", M.default_display)

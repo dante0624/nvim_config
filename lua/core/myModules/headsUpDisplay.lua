@@ -21,33 +21,19 @@ Each table is an interface which needs to implement:
 
 	show() and hide() should use pcalls to check dependency plugins.
 		if the pcall fails, the functions should no-op ]]
-M.header = {}
-function M.header.isShown()
+M.tabs = {}
+function M.tabs.isShown()
 	return vim.o.showtabline ~= 0
 end
 
-function M.header.show()
+function M.tabs.show()
 	vim.opt.showtabline = 2
 end
 
-function M.header.hide()
+function M.tabs.hide()
 	vim.opt.showtabline = 0
 end
-M.header.repeat_buffers = false
-
-M.footer = {}
-function M.footer.isShown()
-	return vim.o.laststatus ~= 0
-end
-
-function M.footer.show()
-	vim.opt.laststatus = 2
-end
-
-function M.footer.hide()
-	vim.opt.laststatus = 0
-end
-M.footer.repeat_buffers = false
+M.tabs.repeat_buffers = false
 
 M.line_numbers = {}
 function M.line_numbers.isShown()
@@ -115,6 +101,19 @@ function M.git_signs.hide()
 	end
 end
 M.git_signs.repeat_buffers = false
+
+-- Use this as a buffer for my neck, in case line numbers and git_signs are disabled
+M.buffer_sign_column = {}
+function M.buffer_sign_column.isShown()
+	return vim.o.signcolumn == "yes"
+end
+function M.buffer_sign_column.show()
+	vim.opt.signcolumn = "yes"
+end
+function M.buffer_sign_column.hide()
+	vim.opt.signcolumn = "auto"
+end
+M.buffer_sign_column.repeat_buffers = true
 
 M.diagnostics = {}
 function M.diagnostics.isShown()
