@@ -31,15 +31,15 @@ local function toggle(display_name)
     end
 end
 
--- Prefix with d for HeadsUpDisplay
-map("", "<Leader>dt", function() toggle("tabs") end)
-map("", "<Leader>dl", function() toggle("line_numbers") end)
-map("", "<Leader>dr", function() toggle("relative_line_numbers") end)
-map("", "<Leader>dc", function() toggle("color_column") end)
-map("", "<Leader>dg", function() toggle("git_signs") end)
-map("", "<Leader>db", function() toggle("buffer_sign_column") end)
-map("", "<Leader>dd", function() toggle("diagnostics") end)
-map("", "<Leader>ds", function() toggle("strict") end)
+-- Prefix with v, for how we "view" the screen
+map("", "<Leader>vt", function() toggle("tabs") end)
+map("", "<Leader>vl", function() toggle("line_numbers") end)
+map("", "<Leader>vr", function() toggle("relative_line_numbers") end)
+map("", "<Leader>vc", function() toggle("color_column") end)
+map("", "<Leader>vg", function() toggle("git_signs") end)
+map("", "<Leader>vb", function() toggle("buffer_sign_column") end)
+map("", "<Leader>vd", function() toggle("diagnostics") end)
+map("", "<Leader>vs", function() toggle("strict") end)
 
 -- These can be used to set "favorite" HUD settings
 local function show_hide_batch(show_names, hide_names)
@@ -113,26 +113,26 @@ local function onlyHide(hide_names)
 end
 
 -- Shows all displays
-map("", "<Leader>da", function()
+map("", "<Leader>va", function()
 	print("Heads Up Display - Show All")
 	onlyHide({})
 end)
 
 -- Show no displays
-map("", "<Leader>dq", function()
+map("", "<Leader>vq", function()
 	print("Heads Up Display - Hide All")
 	onlyShow({})
 end)
 
 -- My own verion of "zen mode".
 -- For making changes to larger codebase that can be overwhelming
-map("", "<Leader>dz", function()
+map("", "<Leader>vz", function()
 	print("Heads Up Display - Zen Mode")
-	onlyShow({ "diagnostics", "git_signs", "footer" })
+	onlyShow({ "diagnostics", "git_signs", "buffer_sign_column" })
 end)
 
 -- Publication Mode: Strict Diagnostics and the Color Column
-map("", "<Leader>dp", function()
+map("", "<Leader>vp", function()
 	onlyHide({ "relative_line_numbers", "buffer_sign_column" })
 end)
 
@@ -141,6 +141,6 @@ function M.default_display()
 	onlyHide({ "relative_line_numbers", "strict", "color_column", "buffer_sign_column" })
 end
 
-map("", "<Leader>do", M.default_display)
+map("", "<Leader>vd", M.default_display)
 
 return M
