@@ -141,6 +141,6 @@ function M.default_display()
 	onlyHide({ "relative_line_numbers", "strict", "color_column", "buffer_sign_column" })
 end
 
-map("", "<Leader>vd", M.default_display)
+map("", "<Leader>vo", M.default_display)
 
 return M
