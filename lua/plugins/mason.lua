@@ -52,6 +52,9 @@ return {
 				"pyright", -- Python
 				"jdtls", -- Java
 
+				-- Debuggers (DAPs)
+				"java-debug-adapter",
+
 				-- Linters
 				"htmlhint", -- HTML
 

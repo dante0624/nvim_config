@@ -1,16 +1,12 @@
 local paths = require("utils.paths")
 local os = require("utils.os")
 local architecture = require("utils.architecture")
+local java_utils = require("utils.javaUtils")
 
--- Sadly, I needed to copy - paste this from java.lua
-local root_dir, _ = paths.find_project_root({
-	".git",
-	"mvnw",
-	"gradlew"
-})
+local jdtls_root_dir, _ = java_utils.get_jdtls_root_dir()
 
 local inferred_workspace = paths.Java_Workspaces
-	.. paths.serialize_path(root_dir)
+	.. paths.serialize_path(jdtls_root_dir)
 local jdtls_dir = paths.Mason_Path .. "packages/jdtls/"
 local os_config
 if os.is_linux_os then
@@ -96,13 +92,12 @@ return {
 	},
 
 	-- Language server `initializationOptions`
-	-- 'bundles' can specify paths to jar files for eclipse.jdt.ls plugins
-	-- See https://github.com/mfussenegger/nvim-jdtls#java-debug-installation
-	-- This could later be used for debuggers
 	init_options = {
+		-- https://github.com/microsoft/java-debug does not have a "public static void main()" method
+		-- This means that it cannot easily be invoked as a standalone debugger from the commandline
+		-- Instead, it is designed to get bundled with jdtls, and jdtls starts the process
 		bundles = {
-			-- "path/to/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar",
-			-- "/path/to/microsoft/vscode-java-test/server/*.jar",
+			paths.Mason_Path .. "share/java-debug-adapter/com.microsoft.java.debug.plugin.jar",
 		},
 
 		-- Gives extra code action capabilities

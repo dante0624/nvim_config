@@ -1,4 +1,6 @@
-local find_project_root = require("utils.paths").find_project_root
+local map = require("utils.map").map
+local dap_utils = require("utils.dapUtils")
+local java_utils = require("utils.javaUtils")
 
 -- Begin this file with some low-hanging fruit
 -- Setup auto-commands and buffer-local preferences
@@ -60,12 +62,7 @@ vim.api.nvim_create_autocmd('LspTokenUpdate', {
 
 -- Now, worry about starting-up or attaching to a JDTLS instance
 -- Also worry about de-compiling class files
-local server_config_name = "javaServer"
-local root_dir, single_file = find_project_root({
-	".git",
-	"mvnw",
-	"gradlew"
-})
+local jdtls_root_dir, single_file = java_utils.get_jdtls_root_dir()
 local bufnr = vim.api.nvim_get_current_buf()
 local bufname = vim.api.nvim_buf_get_name(bufnr)
 
@@ -77,8 +74,8 @@ local is_normal_class_file = vim.endswith(bufname, ".class") and
 
 local function jdtls_start_or_attach()
 	return require("lsp.serverCommon").start_or_attach(
-		server_config_name,
-		root_dir,
+		java_utils.server_config_name,
+		jdtls_root_dir,
 		single_file
 	)
 end
@@ -122,45 +119,21 @@ local function decompile(jdtls_client)
 end
 
 if (is_jdt_uri_class_file or is_normal_class_file) then
-	local active_jdtls_clients = vim.lsp.get_clients({
-		name = server_config_name
-	})
-
-	if (#active_jdtls_clients == 0) then
+	local active_jdtls_client = java_utils.get_chosen_lsp_client()
+	if (active_jdtls_client == nil) then
 		if (is_jdt_uri_class_file)  then
 			print("Error: trying to open a jdt:// URI but no jdtls clients")
 			return
 		end
-
 
 		-- Opening a .class file before any .java file is valid
 		-- Will start new jdtls client, attach, and use to decompile
 		local client_id = jdtls_start_or_attach()
 		local new_jdtls_client = vim.lsp.get_client_by_id(client_id)
 		decompile(new_jdtls_client)
-
-	-- 99% of use jdt:// buffers should take this branch
-	elseif (#active_jdtls_clients == 1) then
-		local only_jdtls_client = active_jdtls_clients[1]
-		decompile(only_jdtls_client)
-		vim.lsp.buf_attach_client(bufnr, only_jdtls_client.id)
-
 	else
-		local prompt = "Multiple jdtls clients found.\n"
-		prompt = prompt .. "Presenting their root directories:\n"
-		for i, client in ipairs(active_jdtls_clients) do
-			prompt = prompt .. i .. ": Root Dir: " .. client.root_dir .. "\n"
-		end
-		prompt = prompt .. "Enter value for desired client: "
-
-
-		local chosen_jdtls_client
-		vim.ui.input({ prompt = prompt }, function(chosen_index)
-			chosen_jdtls_client = active_jdtls_clients[tonumber(chosen_index)]
-		end)
-		vim.wait(60000, function() return chosen_jdtls_client ~= nil end)
-		decompile(chosen_jdtls_client)
-		vim.lsp.buf_attach_client(bufnr, chosen_jdtls_client.id)
+		decompile(active_jdtls_client)
+		vim.lsp.buf_attach_client(bufnr, active_jdtls_client.id)
 	end
 
 -- Handle normal .java files
@@ -177,7 +150,7 @@ if single_file then
 	local build_cmd = 'javac "' .. full_file_path .. '"'
 	run_command = build_cmd
 		.. ' && java -cp "'
-		.. root_dir
+		.. jdtls_root_dir
 		.. '" '
 		.. class_name
 else
@@ -196,7 +169,7 @@ else
 	full_class_path = full_class_path .. class_name
 
 	local run_unit_test_cmd = 'gradle test --tests "' .. full_class_path .. '" --rerun-tasks'
-	local path_to_gradle_root = root_dir
+	local path_to_gradle_root = jdtls_root_dir
 	local path_to_html_ut_results = path_to_gradle_root .. "build/reports/tests/test/index.html"
 
 	run_command = '( cd "' .. path_to_gradle_root .. '" ; ' ..
@@ -204,5 +177,58 @@ else
 		'echo "Unit Test Results are available at: ' .. path_to_html_ut_results .. '" )'
 end
 
+-- TODO: Re-write me to allow for a function rather than a static string
+-- This will allow for testing a single UT
 vim.b.run_command = run_command
+
+local function custom_run()
+	local dap = require("dap")
+	if dap.session() ~= nil then
+		dap.continue()
+	else
+		java_utils.start_debug()
+	end
+end
+
+
+
+-- TODO: Move most of these to a common place
+-- Just make custom_run be a local_mapping
+map("", "<leader>dr", custom_run)
+map("", "<leader>dt", dap_utils.terminate_and_cleanup)
+
+map("", "<leader>db", function() require("dap").toggle_breakpoint() end)
+map("", "<leader>dg", function()
+	require("dap").list_breakpoints()
+	vim.cmd("copen")
+end)
+map("", "<leader>dn", function() require("dap").clear_breakpoints() end)
+
+map("", "<leader>dj", function() require("dap").step_over() end)
+map("", "<leader>dk", function() require("dap").step_back() end)
+map("", "<leader>dh", function() require("dap").step_out() end)
+map("", "<leader>dl", function() require("dap").step_into() end)
+
+map("", "<leader>df", function() require("dap").focus_frame() end)
+map("", "<leader>da", function() require("dap").run_to_cursor() end)
+
+-- v for "variables in scope"
+map("", "<leader>dv", function()
+	dap_utils.open_or_create_widget("sidebar", "scopes", "40 vsplit")
+end)
+-- s for "stacktrace"
+map("", "<leader>ds", function()
+	dap_utils.open_or_create_widget("sidebar", "frames", "15 split")
+end)
+-- m for "multi-threading"
+map("", "<leader>dm", function()
+	dap_utils.open_or_create_widget("sidebar", "threads", "15 split")
+end)
+
+-- TODO: Figure out why this isn't working
+-- c for "console (interactive)"
+map("", "<leader>dc", function()
+	local _, win_id = require("dap").repl.open()
+	vim.api.nvim_set_current_win(win_id)
+end)
 
