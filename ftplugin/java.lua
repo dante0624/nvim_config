@@ -118,10 +118,11 @@ local function decompile(jdtls_client)
 	vim.bo[bufnr].modifiable = false
 end
 
-if (is_jdt_uri_class_file or is_normal_class_file) then
-	local active_jdtls_client = java_utils.get_chosen_lsp_client()
-	if (active_jdtls_client == nil) then
-		if (is_jdt_uri_class_file)  then
+local client
+if is_jdt_uri_class_file or is_normal_class_file then
+	client = java_utils.get_chosen_lsp_client()
+	if client == nil then
+		if is_jdt_uri_class_file  then
 			print("Error: trying to open a jdt:// URI but no jdtls clients")
 			return
 		end
@@ -129,74 +130,88 @@ if (is_jdt_uri_class_file or is_normal_class_file) then
 		-- Opening a .class file before any .java file is valid
 		-- Will start new jdtls client, attach, and use to decompile
 		local client_id = jdtls_start_or_attach()
-		local new_jdtls_client = vim.lsp.get_client_by_id(client_id)
-		decompile(new_jdtls_client)
+
+		client = vim.lsp.get_client_by_id(client_id)
+		decompile(client)
 	else
-		decompile(active_jdtls_client)
-		vim.lsp.buf_attach_client(bufnr, active_jdtls_client.id)
+		decompile(client)
+		vim.lsp.buf_attach_client(bufnr, client.id)
 	end
 
 -- Handle normal .java files
 else
-	jdtls_start_or_attach()
+	local client_id = jdtls_start_or_attach()
+	client = vim.lsp.get_client_by_id(client_id)
+end
+
+-- Everything from this point on, assumes that a jdtls client is attached
+if client == nil then
+	return
 end
 
 
 local full_file_path = vim.fn.expand("%:p")
-local class_name = vim.fn.expand("%:p:t:r")
-local run_command
+local java_class_name = vim.fn.expand("%:p:t:r")
 
-if single_file then
-	local build_cmd = 'javac "' .. full_file_path .. '"'
-	run_command = build_cmd
-		.. ' && java -cp "'
-		.. jdtls_root_dir
-		.. '" '
-		.. class_name
-else
-	-- Will include the full package and the class name. For example:
-	-- com.fasterxml.jackson.databind.ObjectMapper
-	local full_class_path = ""
-	local start_of_java_package = false
-	for dir_name in string.gmatch(full_file_path, '([^//]+)') do
-		if start_of_java_package and not vim.endswith(dir_name, ".java") then
-			full_class_path = full_class_path .. dir_name .. "."
+-- Setup the run_command for running either a single file or unit test
+vim.b.run_command = function()
+	if single_file then
+		local build_cmd = 'javac "' .. full_file_path .. '"'
+		local exec_cmd = 'java -cp "' .. jdtls_root_dir .. '" ' .. java_class_name
+
+		if is_jdt_uri_class_file then
+			return 'echo "Cannot run jdt:// files"'
+		elseif is_normal_class_file then
+			return exec_cmd
+		else
+			return build_cmd .. " && " .. exec_cmd
 		end
-		if dir_name == "java" then
-			start_of_java_package = true
-		end
+
+	else
+		local project_root_dir, _ = java_utils.get_project_root_dir()
+		local cd_cmd = 'cd "' .. project_root_dir .. '"'
+
+		local run_ut_cmd = "gradle --rerun-tasks test --tests " .. java_utils.get_full_method_path()
+
+		local path_to_html_ut_results = project_root_dir .. "build/reports/tests/test/index.html"
+		local echo_html_cmd = 'echo "Unit Test Results are available at: ' .. path_to_html_ut_results .. '"'
+
+		return "( " .. cd_cmd .. " && " .. run_ut_cmd .. " && " .. echo_html_cmd .. " )"
 	end
-	full_class_path = full_class_path .. class_name
-
-	local run_unit_test_cmd = 'gradle test --tests "' .. full_class_path .. '" --rerun-tasks'
-	local path_to_gradle_root = jdtls_root_dir
-	local path_to_html_ut_results = path_to_gradle_root .. "build/reports/tests/test/index.html"
-
-	run_command = '( cd "' .. path_to_gradle_root .. '" ; ' ..
-		run_unit_test_cmd .. " ; " ..
-		'echo "Unit Test Results are available at: ' .. path_to_html_ut_results .. '" )'
 end
 
--- TODO: Re-write me to allow for a function rather than a static string
--- This will allow for testing a single UT
-vim.b.run_command = run_command
-
-local function custom_run()
+local function custom_debug_run()
 	local dap = require("dap")
 	if dap.session() ~= nil then
 		dap.continue()
-	else
-		java_utils.start_debug()
+		return
 	end
+
+	java_utils.start_debug(client)
 end
 
 
 
 -- TODO: Move most of these to a common place
--- Just make custom_run be a local_mapping
-map("", "<leader>dr", custom_run)
-map("", "<leader>dt", dap_utils.terminate_and_cleanup)
+-- Just the first two might need to be language-specific
+-- Do this once there is a second language I want to debug
+map("", "<leader>dr", custom_debug_run)
+-- x for execution (where the debugee is being executed)
+map("", "<leader>dx", function()
+	local terminal_plugin = require("toggleterm.terminal")
+	local found_debugee_terminal = terminal_plugin.find(function(term)
+		return term.display_name == java_utils.terminal_display_name
+	end)
+	if found_debugee_terminal == nil then
+		print("Could not find terminal with display name", java_utils.terminal_display_name)
+		return
+	end
+	found_debugee_terminal:open()
+end)
 
+map("", "<leader>dt", function()
+	dap_utils.terminate_and_cleanup()
+end)
 map("", "<leader>db", function() require("dap").toggle_breakpoint() end)
 map("", "<leader>dg", function()
 	require("dap").list_breakpoints()
@@ -224,8 +239,6 @@ end)
 map("", "<leader>dm", function()
 	dap_utils.open_or_create_widget("sidebar", "threads", "15 split")
 end)
-
--- TODO: Figure out why this isn't working
 -- c for "console (interactive)"
 map("", "<leader>dc", function()
 	local _, win_id = require("dap").repl.open()

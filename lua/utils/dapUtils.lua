@@ -3,12 +3,19 @@ local M = {}
 function M.terminate_and_cleanup()
 	local dap = require("dap")
 
+
 	local current_session = dap.session()
 	if current_session == nil then
 		-- Ensures that calling this function is idempotent
 		return
 	end
 	local all_sessions = dap.sessions()
+
+	if current_session.widgets ~= nil then
+		for _, view in pairs(current_session.widgets) do
+			view.close()
+		end
+	end
 
 	dap.terminate({ on_done = function()
 		assert(
@@ -39,7 +46,7 @@ wincmd (optional) only applies if using sidebar. Some sensible strings are:
 	"30 vsplit" (the default set by dap plugin)
 	"15 split"
 ]]
-function M.open_or_create_widget(widget_builder_key, widget_key, wincmd)
+function M.open_or_create_widget(widget_builder_str, widget_str, wincmd)
 	local dap = require("dap")
 	local widgets = require('dap.ui.widgets')
 
@@ -55,21 +62,20 @@ function M.open_or_create_widget(widget_builder_key, widget_key, wincmd)
 	if session.widgets == nil then
 		session.widgets = {}
 	end
-	if session.widgets[widget_builder_key] == nil then
-		session.widgets[widget_builder_key] = {}
-	end
+
+	local combined_widget_key = widget_builder_str .. "_" .. widget_str
 
 	local view
-	if session.widgets[widget_builder_key][widget_key] == nil then
-		local builder_func = widgets[widget_builder_key]
-		if widget_builder_key == "sidebar" then
-			view = builder_func(widgets[widget_key], nil, wincmd)
+	if session.widgets[combined_widget_key] == nil then
+		local builder_func = widgets[widget_builder_str]
+		if widget_builder_str == "sidebar" then
+			view = builder_func(widgets[widget_str], nil, wincmd)
 		else
-			view = builder_func(widgets[widget_key])
+			view = builder_func(widgets[widget_str])
 		end
-		session.widgets[widget_builder_key][widget_key] = view
+		session.widgets[combined_widget_key] = view
 	else
-		view = session.widgets[widget_builder_key][widget_key]
+		view = session.widgets[combined_widget_key]
 	end
 
 	local _, win_id = view.open()

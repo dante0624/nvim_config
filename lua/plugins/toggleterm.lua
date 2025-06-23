@@ -38,6 +38,12 @@ return {
 						return
 					end
 
+					-- Allow buffers to define a function
+					-- It must be invoked to return the real run_command as a string
+					if type(run_command) == "function" then
+						run_command = run_command()
+					end
+
 					if require("utils.shell").is_powershell then
 						run_command = run_command:gsub(" && ", " ; ")
 					end
