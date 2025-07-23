@@ -138,28 +138,12 @@ function M.strict.show()
 	vim.g.ignore_strict_diagnostics = false
 
 	refresh_diagnostics()
-
-	local lint_ok, _ = pcall(require, "lint")
-    if not lint_ok then
-        return
-    end
-
-	require("linting.lintCommon").update_strictness()
-	vim.cmd("do User call_lint")
 end
 
 function M.strict.hide()
 	vim.g.ignore_strict_diagnostics = true
 
 	refresh_diagnostics()
-
-	local lint_ok, _ = pcall(require, "lint")
-    if not lint_ok then
-        return
-    end
-
-	require("linting.lintCommon").update_strictness()
-	vim.cmd("do User call_lint")
 end
 M.strict.repeat_buffers = false
 

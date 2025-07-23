@@ -9,14 +9,6 @@ M.Sessions = M.Logs_Path .. "sessions/"
 M.Java_Workspaces = M.Data_Path .. "Java_Workspaces/"
 M.Mason_Path = M.Data_Path .. "mason/"
 M.Mason_Bin = M.Mason_Path .. "bin/"
-M.Resources_Path = M.Config_Path .. "resources/"
-
--- Deals with linters configs
-M.Lint_Fallback = M.Resources_Path .. "lintFallack/"
-M.Lint_Ignore = M.Resources_Path .. "lintIgnore/"
-
--- Deals with formatter configs
-M.Format_Fallback = M.Resources_Path .. "formatFallback/"
 
 -- Got this basic idea from persistence.nvim plugin
 function M.serialize_path(path)

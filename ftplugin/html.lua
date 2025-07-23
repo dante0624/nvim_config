@@ -9,4 +9,3 @@ require("lsp.serverCommon").start_or_attach(
 	root_dir,
 	single_file
 )
-require("linting.lintCommon").setup_linters({ "htmlhint" })

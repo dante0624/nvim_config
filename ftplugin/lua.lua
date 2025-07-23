@@ -23,4 +23,3 @@ require("lsp.serverCommon").start_or_attach(
 	root_dir,
 	single_file
 )
-require("formatting.formatCommon").setup_formatters({ "stylua" }, false)

@@ -5,16 +5,11 @@ require("core")
 -- Launches lazy.nvim, which then sets up and manages all plugins
 require("lazyLauncher")
 
--- Sets up things which are common to all LSPs, Linters
+-- Sets up things which are common to all LSPs
 require("lsp.serverCommon").setup()
-require("linting.lintCommon").setup()
-require("formatting.formatCommon").setup()
 
 -- TODO:
 --[[ Immediate planned steps:
-Remove linting and formatting support.
-	I've realized that this should be build-time tasks, not part of IDE.
-
 Get a basic spellchecker with a dictionary of valid words.
 
 Get Avante + MCP support and a free LLM.

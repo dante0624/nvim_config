@@ -33,17 +33,7 @@ return {
 				"jdtls", -- Java
 
 				-- Debuggers (DAPs)
-				"java-debug-adapter",
-
-				-- Linters
-				"htmlhint", -- HTML
-
-				-- Formatters
-				"prettierd", -- HTML, CSS, JS, TS, JSON, and Markdown
-				"stylua", -- Lua
-
-				-- Things that are both Linters and Formatters
-				"stylelint", -- CSS
+				"java-debug-adapter", -- Java
 			},
 		},
 	},
