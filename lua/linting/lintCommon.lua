@@ -1,19 +1,3 @@
---[[ TODO:
-Make default linters look for config first, then fallback if none found
-	Implement this if I'm on a team that puts the configs in the repos
-
-	The settings on the filesystem should add new table entries:
-		"config_names" (all the names that the config files can have)
-		"arg_num" (the index of arg where we should put this)
-	When we load it from the filesystem for the first time we should:
-		Search upwards for the files
-		If we find one, then put it where the "arg_num" specifies
-		Otherwise leave that arg alone (should be the fallback by default)
-		Then place this new settings table in M.lint_settings.default
-	Extra:
-		Update all nameIgnore settings to use this new "arg_num" entry
-]]
-
 local linter_settings_prefix = require("linting.misc").linter_settings_prefix
 
 local M = {}

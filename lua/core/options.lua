@@ -60,7 +60,6 @@ vim.opt.diffopt = "internal,filler,closeoff"
 -- If over SSH without tmux, use OSC52 sequence
 -- Everything described above is the default behavior in (:h clipboard)
 -- If over SSH with tmux, use this custom code
--- TODO: Put up a PR to make this code part of neovim core default behavior.
 local function paste_ocsf_tmux()
 	local contents = nil
 	local id = vim.api.nvim_create_autocmd('TermResponse', {

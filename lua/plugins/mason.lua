@@ -1,23 +1,3 @@
---[[ TODO:Create my own wrapper around Mason and Treesitter called Carpenter
-	Implement this if I use a remote server, and don't want to install all
-		Lsps, Linters, Formatters, etc for every single language
-	
-	This should allow me to install everything I need on a per-language basis
-	Also should have a built in check function to see if something is installed
-	and an uninstall function
-
-	Call this check function in several places:
-		Treesitter folding:
-			If the parser doesn't exist, use "syntax" rather than "expr"
-		LSP:
-			If the LSP doens't exist, skip it in start_or_attach
-		Linter:
-			If the linter doesn't exist, skip it in setup_linters
-		More to come likely
-	
-	Implement Carpenter by deconstructing how mason-tool-installer works
-		Then remove this plugin
-		Then make mason lazy loaded ]]
 return {
 	{
 		"williamboman/mason.nvim",
