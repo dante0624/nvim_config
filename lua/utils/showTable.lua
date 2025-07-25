@@ -1,8 +1,12 @@
 local array_to_set = require("utils.tables").array_to_set
 local create_buffer = require("utils.buffers").create_buffer
 
--- Helper Function
--- Returns only the body of the table, without the opening and closing {}
+--- Returns only the body of the table, without the opening and closing {}.
+--- Uses recursion to handle sub tables.
+--- @param tbl table the table to stringify
+--- @param indent any the current recursive "depth"
+--- @param ignored_keys_set table miscellaneous keys, all values are `true`
+--- @return string[] stringified_lines each stringified line in order.
 local function tbl_lines_body(tbl, indent, ignored_keys_set)
 	local stringified_lines = {}
 
@@ -41,11 +45,11 @@ local function tbl_lines_body(tbl, indent, ignored_keys_set)
 	return stringified_lines
 end
 
---[[ Turns a lua table (may be nested) to a big strigified version.
-This strigified version has tabs for indenting.
-
-Returns that strigified version as a new table,
-where each entry is a single line of the big strigified version.]]
+--- Turns a lua table (may be nested) to a big strigified version.
+--- Uses recursion to handle sub tables.
+--- @param tbl table the table to stringify
+--- @param ignored_keys_array string[] miscellaneous keys to ignore
+--- @return string[] stringified_lines each stringified line in order.
 local function tbl_to_lines(tbl, ignored_keys_array)
 	-- Make an associative table, this way we can instantly index later
 	local ignored_keys_set = array_to_set(ignored_keys_array)
@@ -80,23 +84,36 @@ vim.cmd([[
 	endfunction
 ]])
 
---[[ Defines how we highlight a buffer
-Return all string parsing information for a single line
-Returns a numberic table, where each value has the structure:
-	{"Highlight group", "starting column index", "ending column index"}
-The indicies are based on 0 indexing, and the end is not included ]]
-local function parse_line(line)
+--- @class HighlightInfo
+--- @field higroup string highlight group to use for highlighting
+--- @field line_num integer 0-indexed line number
+--- @field col_start integer 0-indexed column number (inclusive)
+--- @field col_end integer 0-indexed column number (exclusive)
+
+--- Parse a single line into its highlight groups
+--- @param line string stringified line of a buffer
+--- @param line_num integer 0-indexed line number
+--- @return HighlightInfo[] line_groups all highlight info for this line
+local function parse_highlights_from_line(line, line_num)
 	-- Edge case of just the first line
 	if line == "{" then
-		return { { "@constructor", 0, 1 } }
+		return { {
+			higroup = "@constructor",
+			line_num = line_num,
+			col_start = 0,
+			col_end = 1,
+		} }
 	end
 
 	-- Edge case of closing bracket
 	local close_bracket_index = string.find(line, "}")
 	if close_bracket_index ~= nil then
-		return {
-			{ "@constructor", close_bracket_index - 1, close_bracket_index },
-		}
+		return { {
+			higroup = "@constructor",
+			line_num = line_num,
+			col_start = close_bracket_index - 1,
+			col_end = close_bracket_index,
+		} }
 	end
 
 	-- All other lines should have '=' in them and be indented at least once
@@ -105,39 +122,57 @@ local function parse_line(line)
 		return {}
 	end
 
-	local line_groups = {
-		{ "@operator", equal_index - 1, equal_index },
-	}
+	local line_groups = { {
+		higroup = "@operator",
+		line_num = line_num,
+		col_start = equal_index - 1,
+		col_end = equal_index,
+	} }
 
 	-- Get the text before the '='
 	local _, last_tab_index = string.find(line, "\t*")
-	table.insert(line_groups, { "@property", last_tab_index, equal_index - 2 })
+	table.insert(line_groups, {
+		higroup = "@property",
+		line_num = line_num,
+		col_start = last_tab_index,
+		col_end = equal_index - 2,
+	})
 
 	local line_len = #line
 	-- Case 1, the value after the '=' is a table
 	if line:sub(line_len, line_len) == "{" then
-		table.insert(line_groups, { "@constructor", line_len - 1, line_len })
+		table.insert(line_groups, {
+			higroup = "@constructor",
+			line_num = line_num,
+			col_start = line_len - 1,
+			col_end = line_len
+		})
 
 	-- Case 2, the value after the '=' is a fixed value
 	else
-		table.insert(line_groups, { "Constant", equal_index + 1, line_len })
+		table.insert(line_groups, {
+			higroup = "Constant",
+			line_num = line_num,
+			col_start = equal_index + 1,
+			col_end = line_len
+		})
 	end
 
 	return line_groups
 end
 
--- Gets all parsing information for the buffer
--- See parse_line for how each parser is formatted
-local function get_parsing(buffer_number)
+--- Parse entire buffer into its highlight groups
+--- @param buffer_number integer Buffer id, or 0 for current buffer
+--- @return HighlightInfo[] parsed_groups all highlight info for this buffer
+local function get_highlight_parsing(buffer_number)
 	local all_lines = vim.api.nvim_buf_get_lines(buffer_number, 0, -1, false)
 	local parsed_groups = {}
 
 	for line_num, line in ipairs(all_lines) do
-		local line_groups = parse_line(line)
-		for _, line_group in ipairs(line_groups) do
-			-- Add line number to line_group, and convert to 0-index
-			table.insert(line_group, line_num - 1)
+		-- Convert line_num from 1-based indexing to 0-based indexing
+		local line_groups = parse_highlights_from_line(line, line_num - 1)
 
+		for _, line_group in ipairs(line_groups) do
 			-- Add to the big table of all groups
 			table.insert(parsed_groups, line_group)
 		end
@@ -147,14 +182,15 @@ local function get_parsing(buffer_number)
 end
 
 local function highlight_buffer(buffer_number)
-	for _, parsing in ipairs(get_parsing(buffer_number)) do
-		vim.api.nvim_buf_add_highlight(
+	local anonymous_namespace_id = vim.api.nvim_create_namespace("")
+
+	for _, highlight_info in ipairs(get_highlight_parsing(buffer_number)) do
+		vim.hl.range(
 			buffer_number,
-			-1,
-			parsing[1],
-			parsing[4],
-			parsing[2],
-			parsing[3]
+			anonymous_namespace_id,
+			highlight_info.higroup,
+			{ highlight_info.line_num, highlight_info.col_start },
+			{ highlight_info.line_num, highlight_info.col_end }
 		)
 	end
 end

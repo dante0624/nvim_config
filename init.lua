@@ -36,7 +36,5 @@ Remove auto-install of things. De-bloat.
 	Remove auto-install of Language Servers and Dubuggers.
 	Remove auto-install of Treesitter Parsers.
 	Its easy to install these as-needed. Just put in the README.md file.
-
-Loop through files, fixing deprecation warnings.
 ]]
 

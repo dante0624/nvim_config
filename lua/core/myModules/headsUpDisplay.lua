@@ -117,7 +117,7 @@ M.buffer_sign_column.repeat_buffers = true
 
 M.diagnostics = {}
 function M.diagnostics.isShown()
-	return not vim.diagnostic.is_disabled()
+	return vim.diagnostic.is_enabled()
 end
 
 function M.diagnostics.show()
@@ -125,7 +125,7 @@ function M.diagnostics.show()
 end
 
 function M.diagnostics.hide()
-	vim.diagnostic.disable()
+	vim.diagnostic.enable(false)
 end
 M.diagnostics.repeat_buffers = false
 

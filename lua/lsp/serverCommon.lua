@@ -52,10 +52,18 @@ function M.setup()
 
 	-- Go up or down (k and j) the list of diagnostics
 	vim.keymap.set("n", "<leader>sk", function()
-		vim.diagnostic.goto_prev({ border = "rounded" })
+		vim.diagnostic.jump({
+			count = -1,
+			float = true,
+			wrap = true,
+		})
 	end)
 	vim.keymap.set("n", "<leader>sj", function()
-		vim.diagnostic.goto_next({ border = "rounded" })
+		vim.diagnostic.jump({
+			count = 1,
+			float = true,
+			wrap = true,
+		})
 	end)
 	vim.keymap.set("n", "<leader>so", vim.diagnostic.open_float)
 
