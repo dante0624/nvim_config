@@ -22,12 +22,14 @@ function M.serialize_path(path)
 	return path:gsub(file_separator, "%%")
 end
 
--- Starts at the current file's directory, searches upwards for matching files
--- For example, if root_files is {".git"}, then find where the repo starts
-
--- If the root_files are not found, fall back on the current file's directory
--- When this happens, we are said to be reading a "single_file"
--- Returns root_dir, single_file
+--- Starts at the current file's directory, searches upwards for matching files
+---
+--- For example, if root_files is {".git"}, then find where the repo starts
+--- If the root_files are not found, fall back on the current file's directory
+--- When this happens, we are said to be reading a "single_file"
+--- @param root_files string[]? starting point
+--- @return string root_dir the found root, or the current file's directory
+--- @return boolean single_file true if the root_dir is not part of a project.
 function M.find_project_root(root_files)
 	if root_files == nil then
 		root_files = { ".git" }

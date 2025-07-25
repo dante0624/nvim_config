@@ -166,7 +166,7 @@ local function publish_tracker_diagnostics(client_id, bufnr)
 
 	local ctx = { client_id = client_id }
 
-	vim.lsp.diagnostic.on_publish_diagnostics(nil, result, ctx, nil)
+	vim.lsp.diagnostic.on_publish_diagnostics(nil, result, ctx)
 end
 
 -- Loop over all clients and buffers publishing all filtered diagnostics
@@ -178,14 +178,35 @@ function M.refresh_diagnostics()
 	end
 end
 
--- Attaches to an existing client if the name and root directory match
--- If no match is found, then it creates and attaches to a new client
--- Returns the client_id in either case
-function M.start_or_attach(config_name, root_dir, single_file)
-	if single_file == nil then
-		single_file = false
+--- Language servers require each project to have a `root` in order to
+--- provide features that require cross-file indexing.
+
+---	Some servers support not passing a root directory as a proxy for single
+---	file mode under which cross-file features may be degraded. 
+---
+---	This information came from the lspconfig doc at:
+---	https://github.com/neovim/nvim-lspconfig/blob/b1a11b042d015df5b8f7f33aa026e501b639c649/doc/lspconfig.txt#L430
+--- @param supports_single_file_mode boolean true if the server supports this feature.
+--- @param root_dir string the root directory of the project, or the directory of a single file.
+--- @param single_file boolean true if the root_dir is not part of a project.
+--- @return string? language_server_root_arg
+local function resolve_lsp_root_arg(supports_single_file_mode, root_dir, single_file)
+	if supports_single_file_mode and single_file then
+		return nil
 	end
 
+	return root_dir
+end
+
+--- Attaches to an existing client if the name and root directory match.
+---
+--- If no match is found, then it creates and attaches to a new client.
+--- First, finds the configuration for this new client in a separate file.
+--- @param config_name string config file name to use for new clients.
+--- @param root_dir string the root directory of the project, or the directory of a single file.
+--- @param single_file boolean true if the root_dir is not part of a project.
+--- @return integer client_id the client_id of the attached or new client.
+function M.start_or_attach(config_name, root_dir, single_file)
 	-- Trying to attach to active clients
 	-- If sucessful, attach and then return early
 	for _, client_opts in ipairs(vim.lsp.get_clients()) do
@@ -224,18 +245,7 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		end
 	end
 
-	--[[ Language servers require each project to have a `root` in order to
-	provide features that require cross-file indexing.
-
-	Some servers support not passing a root directory as a proxy for single
-	file mode under which cross-file features may be degraded. 
-
-	This information came from the lspconfig doc at:
-	https://github.com/neovim/nvim-lspconfig/blob/b1a11b042d015df5b8f7f33aa026e501b639c649/doc/lspconfig.txt#L430
-	]]
-	if settings.single_file_support and single_file then
-		root_dir = nil
-	end
+	local new_client_root_dir = resolve_lsp_root_arg(settings.single_file_support, root_dir, single_file)
 
 	local capabilities = vim.tbl_deep_extend(
 		'keep',
@@ -261,7 +271,7 @@ function M.start_or_attach(config_name, root_dir, single_file)
 	local client_id = vim.lsp.start({
 		name = config_name,
 		cmd = settings.cmd,
-		root_dir = root_dir,
+		root_dir = new_client_root_dir,
 		settings = pre_attach_settings,
 		init_options = init_options,
 		on_attach = on_attach,
@@ -271,7 +281,7 @@ function M.start_or_attach(config_name, root_dir, single_file)
 		-- This is documented here: https://neovim.io/doc/user/lsp.html#vim.lsp.handlers
 		handlers = handlers,
 	})
-
+	assert(client_id, "Could not start LSP")
 	set_up_tracker(client_id, settings)
 
 	return client_id
