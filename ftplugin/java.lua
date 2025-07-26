@@ -97,7 +97,7 @@ local function decompile(jdtls_client)
 
 	if (is_jdt_uri_class_file) then
 		local params = { uri = bufname }
-		-- Custom extention of the Language Server Protocol
+		-- Custom extension of the Language Server Protocol
 		-- https://github.com/eclipse-jdtls/eclipse.jdt.ls/wiki/Language-Server-Protocol-Extensions
 		jdtls_client:request("java/classFileContents", params, handler, bufnr)
 	elseif (is_normal_class_file) then

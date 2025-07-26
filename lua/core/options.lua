@@ -27,7 +27,7 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 	end,
 })
 
--- Contols how many spaces a tab (indent) turns into
+-- Controls how many spaces a tab (indent) turns into
 -- These 3 are all buffer local options
 -- They can be overwritten within an ftplugin file
 vim.opt.tabstop = 4
@@ -60,7 +60,7 @@ vim.opt.diffopt = "internal,filler,closeoff"
 -- If over SSH without tmux, use OSC52 sequence
 -- Everything described above is the default behavior in (:h clipboard)
 -- If over SSH with tmux, use this custom code
-local function paste_ocsf_tmux()
+local function paste_osc52_tmux()
 	local contents = nil
 	local id = vim.api.nvim_create_autocmd('TermResponse', {
 		callback = function(args)
@@ -121,8 +121,8 @@ if outer_terminal.is_ssh then
 				['*'] = 'tmux load-buffer -w -',
 			},
 			paste = {
-				['+'] = paste_ocsf_tmux,
-				['*'] = paste_ocsf_tmux,
+				['+'] = paste_osc52_tmux,
+				['*'] = paste_osc52_tmux,
 			},
 		}
 	else

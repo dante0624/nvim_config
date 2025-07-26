@@ -45,7 +45,7 @@ local function tbl_lines_body(tbl, indent, ignored_keys_set)
 	return stringified_lines
 end
 
---- Turns a lua table (may be nested) to a big strigified version.
+--- Turns a lua table (may be nested) to a big stringified version.
 --- Uses recursion to handle sub tables.
 --- @param tbl table the table to stringify
 --- @param ignored_keys_array string[] miscellaneous keys to ignore
@@ -62,7 +62,7 @@ local function tbl_to_lines(tbl, ignored_keys_array)
 	table.insert(return_tbl, "}")
 
 	-- Remove all newline characters that might exist
-	-- We separate lines by having seperate entries in this table
+	-- We separate lines by having separate entries in this table
 	for k, v in ipairs(return_tbl) do
 		return_tbl[k] = v:gsub("\n", "")
 	end
@@ -73,14 +73,14 @@ end
 -- Define how we fold a buffer
 vim.cmd([[
 	function! LspInfoFold()
-		let thisline = getline(v:lnum)
-		if thisline =~ "{$"
-			return ">" .. (count(thisline, "\t") + 1)
+		let this_line = getline(v:lnum)
+		if this_line =~ "{$"
+			return ">" .. (count(this_line, "\t") + 1)
 		endif
-		if thisline =~ "}$"
-			return "<" .. (count(thisline, "\t") + 1)
+		if this_line =~ "}$"
+			return "<" .. (count(this_line, "\t") + 1)
 		endif
-		return count(thisline, "\t")
+		return count(this_line, "\t")
 	endfunction
 ]])
 
@@ -197,7 +197,7 @@ end
 
 local function log(data, buffer_number)
 	if data then
-		-- Clear the buffer's contents incase it has been used
+		-- Clear the buffer's contents in case it has been used
 		vim.api.nvim_buf_set_lines(buffer_number, 0, -1, true, {})
 
 		-- Write to the buffer

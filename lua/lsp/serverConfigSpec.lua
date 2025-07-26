@@ -25,7 +25,7 @@
 ---	Some servers support not passing a root directory as a proxy for single
 ---	file mode under which cross-file features may be degraded. 
 ---
----	This information came from the lspconfig doc at:
+---	This information came from the LSP Config doc at:
 ---	https://github.com/neovim/nvim-lspconfig/blob/b1a11b042d015df5b8f7f33aa026e501b639c649/doc/lspconfig.txt#L430
 ---
 --- Default, false.

@@ -268,7 +268,7 @@ return {
 	},
 	{
 		"MunifTanjim/nui.nvim",
-		-- Commit id b1b3dcd6ed8f355c78bad3d395ff645be5f8b6ae removed vim.tbl_islist
+		-- Commit id b1b3dcd6ed8f355c78bad3d395ff645be5f8b6ae removed vim.tbl_islist()
 		-- Waiting for a new tag to drop that removes this
 		commit = "8d3bce9764e627b62b07424e0df77f680d47ffdb",
 		lazy = true,

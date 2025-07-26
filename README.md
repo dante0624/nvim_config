@@ -29,7 +29,7 @@ This can be installed with:
 Need to have c compiler `cc` be installed and on the path. This should come by default.
 
 ### Linux and WSL
-Need to have c compiler `cc` be installed and on the path. This can be installed by any linux disto's package manager.
+Need to have c compiler `cc` be installed and on the path. This can be installed by any linux distro's package manager.
 
 ## Node and NPM
 Nvim and all its plugins love to autoinstall things using these javascript tools.
@@ -54,7 +54,7 @@ Available at https://github.com/sharkdp/fd
 Needed for speed up telescope. Check if installed by typing `fd` in terminal.
 
 ## Language Versions
-In order to get the LSPs to work, make sure that each language is up to the neccessary version and on the path.
+In order to get the LSPs to work, make sure that each language is up to the necessary version and on the path.
 ### Python
 python3 is needed, ensure that `python` has an alias which links it to python3.
 ### Java
@@ -82,7 +82,7 @@ Neovim will also be automatically downloading all LSPs at this time.
 Messages will also appear saying when these are done, however it will not say how many need to be installed in total.
 To check this, execute the command `:Mason` to view a new popup window.
 This is very similar to the popup window for lazy, where each item visually moves from `Installing` or `Queued` sections to the `Installed` section.
-Once the popup window only shows 2 sections (`Installed` and `Available`) then you can be condident that the installation is done.
+Once the popup window only shows 2 sections (`Installed` and `Available`) then you can be confident that the installation is done.
 Once again, press the `q` key to close the popup.
 
 ## Post Installation Completion

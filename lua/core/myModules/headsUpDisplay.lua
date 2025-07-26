@@ -19,7 +19,7 @@ Each table is an interface which needs to implement:
         must be repeated in all open buffers to work.
         For example, vim.opt.number = true must be repeated
 
-	show() and hide() should use pcalls to check dependency plugins.
+	show() and hide() should use pcall to check dependency plugins.
 		if the pcall fails, the functions should no-op ]]
 M.tabs = {}
 function M.tabs.isShown()

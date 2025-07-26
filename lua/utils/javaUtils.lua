@@ -204,7 +204,7 @@ function M.start_debug(client)
 		return
 	end
 
-	-- This gets passed to the debuger, telling it about the debugee
+	-- This gets passed to the debugger, telling it about the debugee
 	local debugee_configuration = {
 		type = "java",
 		request = "attach",
@@ -270,7 +270,7 @@ function M.start_debug(client)
 		vim.api.nvim_buf_call(new_debugee_term.bufnr, function() new_debugee_term:__spawn() end)
 	end
 
-	-- Start the debuger thread
+	-- Start the debugger thread
 	client:request(
 		"workspace/executeCommand",
 		{ command = "vscode.java.startDebugSession" },

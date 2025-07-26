@@ -1,0 +1,60 @@
+{
+  "allowCompoundWords": true,
+  "patterns": [
+    {
+      "name": "neovim-built-ins",
+      "pattern": "/vim\\..*/g"
+    }
+  ],
+  "ignoreRegExpList": [
+    "neovim-built-ins"
+  ],
+  "words": [
+    "akinsho",
+    "autocmd",
+    "autocmds",
+    "Avante",
+    "bufnr",
+    "cclose",
+    "choco",
+    "copen",
+    "cterm",
+    "debugee",
+    "Declipse",
+    "Dlog",
+    "Dosgi",
+    "foldexpr",
+    "folke",
+    "ftplugin",
+    "guibg",
+    "guifg",
+    "higroup",
+    "hrsh",
+    "javac",
+    "JDTLS",
+    "lnum",
+    "luasnip",
+    "mfussenegger",
+    "mkview",
+    "Munif",
+    "mvnw",
+    "Netrw",
+    "noautocmd",
+    "noremap",
+    "nvim",
+    "pbutil",
+    "pyright",
+    "qflist",
+    "rafamadriz",
+    "romgrk",
+    "saadparwaiz",
+    "shellcmdflag",
+    "shellredir",
+    "shellxquote",
+    "smoka",
+    "virt",
+    "vsplit",
+    "windwp",
+    "xclip"
+  ]
+}

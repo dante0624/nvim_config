@@ -19,15 +19,16 @@ function M.local_map(mode, lhs, rhs, opts)
 end
 
 -- Lazy.nvim defaults to mode="n", but I like mode={"n", "v"}
--- It also wants all keymaps to exist in a table structure
-function M.lazy_map(all_map_tbls)
-	for _, map_tbl in ipairs(all_map_tbls) do
-		if map_tbl.mode == nil then
-			map_tbl.mode = { "n", "v" }
+-- See https://lazy.folke.io/spec/lazy_loading#%EF%B8%8F-lazy-key-mappings
+-- This explains the table spec
+function M.lazy_map(all_lazy_key_mappings)
+	for _, lazy_key_mappings in ipairs(all_lazy_key_mappings) do
+		if lazy_key_mappings.mode == nil then
+			lazy_key_mappings.mode = { "n", "v" }
 		end
 	end
 
-	return all_map_tbls
+	return all_lazy_key_mappings
 end
 
 return M

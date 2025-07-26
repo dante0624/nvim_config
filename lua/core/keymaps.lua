@@ -1,6 +1,6 @@
 local map = require("utils.map").map
 
--- Maps leader to the spacebar (pretty universal)
+-- Maps leader to the space bar (pretty universal)
 map("", "<Space>", "<Nop>")
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
@@ -12,7 +12,7 @@ map(all_modes, "<C-j>", "<Down>")
 map(all_modes, "<C-k>", "<Up>")
 map(all_modes, "<C-l>", "<Right>")
 
--- My remapings for moving far vertically and horizontally
+-- My remappings for moving far vertically and horizontally
 map("", "H", "^")
 map("", "L", "$")
 map("", "K", "<C-u>zz0")
@@ -73,7 +73,7 @@ map("", "R", "<C-r>")
 -- But I prefer <leader> commands to <C-> commands, so remap this
 map("", "<leader>i", "<C-a>")
 
--- Control-X similarly was originally for decrimenting a number
+-- Control-X similarly was originally for decrementing a number
 map("", "<leader>I", "<C-x>")
 
 -- Common to remap gd to LSP "Go to Definition

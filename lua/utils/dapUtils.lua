@@ -36,7 +36,7 @@ Options for widget_builder_key are currently:
 	centered_float - large floating window
 	cursor_float - small floating window, right next to the cursor
 Options for widget_key are currently:
-	scopes - veriables in scope
+	scopes - variables in scope
 	sessions - DAP sessions
 	frames - The stacktrace
 	expression

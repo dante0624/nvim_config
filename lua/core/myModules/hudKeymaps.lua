@@ -124,7 +124,7 @@ map("", "<Leader>vq", function()
 	onlyShow({})
 end)
 
--- My own verion of "zen mode".
+-- My own version of "zen mode".
 -- For making changes to larger codebase that can be overwhelming
 map("", "<Leader>vz", function()
 	print("Heads Up Display - Zen Mode")

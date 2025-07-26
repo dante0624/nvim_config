@@ -2,7 +2,6 @@ local showTable = require("utils.showTable")
 
 local M = {}
 
--- Sets up Diganostic signs, diagnostic config, and lsp handlers
 -- Also defines a lua function that can help with debugging clients
 function M.setup()
 	vim.diagnostic.config({
@@ -175,7 +174,7 @@ end
 ---	Some servers support not passing a root directory as a proxy for single
 ---	file mode under which cross-file features may be degraded. 
 ---
----	This information came from the lspconfig doc at:
+---	This information came from the LSP config doc at:
 ---	https://github.com/neovim/nvim-lspconfig/blob/b1a11b042d015df5b8f7f33aa026e501b639c649/doc/lspconfig.txt#L430
 --- @param supports_single_file_mode boolean true if the server supports this feature.
 --- @param root_dir string the root directory of the project, or the directory of a single file.
@@ -216,7 +215,7 @@ function M.start_or_attach(config_name, root_dir, single_file)
 	local resolved_root_dir = resolve_lsp_root_arg(settings.single_file_support, root_dir, single_file)
 
 	-- Trying to attach to active clients
-	-- If sucessful, attach and then return early
+	-- If successful, attach and then return early
 	for _, client_opts in ipairs(vim.lsp.get_clients()) do
 		local client_id = client_opts.id
 		local client_name = client_opts.config.name

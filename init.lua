@@ -31,7 +31,7 @@ Allow me to rename variables and files in a pop-out buffer.
 
 --[[ Low Priority:
 Remove auto-install of things. De-bloat.
-	Remove auto-install of Language Servers and Dubuggers.
+	Remove auto-install of Language Servers and Debuggers.
 	Remove auto-install of Treesitter Parsers.
 	Its easy to install these as-needed. Just put in the README.md file.
 ]]
