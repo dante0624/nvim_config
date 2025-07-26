@@ -10,6 +10,12 @@ require("lsp.serverCommon").start_or_attach(
 	single_file
 )
 
+require("lsp.serverCommon").start_or_attach(
+	"cspellServer",
+	root_dir,
+	single_file
+)
+
 -- Check if the first line of a fold ends with ":"
 -- If it does, then don't include the last line in the fold text
 vim.b.fold_last_line = function(fold_start_number, _)

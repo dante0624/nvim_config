@@ -142,6 +142,13 @@ if is_jdt_uri_class_file or is_normal_class_file then
 else
 	local client_id = jdtls_start_or_attach()
 	client = vim.lsp.get_client_by_id(client_id)
+
+	-- Only normal .java files should have spellchecking
+	require("lsp.serverCommon").start_or_attach(
+		"cspellServer",
+		jdtls_root_dir,
+		single_file
+	)
 end
 
 -- Everything from this point on, assumes that a jdtls client is attached

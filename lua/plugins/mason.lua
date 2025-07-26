@@ -31,6 +31,7 @@ return {
 				"lua-language-server", -- Lua
 				"pyright", -- Python
 				"jdtls", -- Java
+				"cspell-lsp", -- Spellchecking LSP
 
 				-- Debuggers (DAPs)
 				"java-debug-adapter", -- Java

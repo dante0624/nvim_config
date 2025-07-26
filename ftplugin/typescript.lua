@@ -10,6 +10,12 @@ require("lsp.serverCommon").start_or_attach(
 	single_file
 )
 
+require("lsp.serverCommon").start_or_attach(
+	"cspellServer",
+	root_dir,
+	single_file
+)
+
 -- %:p expands out to be the complete path to the current buffer
 vim.b.run_command = 'npx tsx "' .. vim.fn.expand("%:p") .. '"'
 

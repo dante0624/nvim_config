@@ -10,8 +10,6 @@ require("lsp.serverCommon").setup()
 
 -- TODO:
 --[[ Immediate planned steps:
-Get a basic spellchecker with a dictionary of valid words.
-
 Get Avante + MCP support and a free LLM.
 	Either local DeepSeek or a free online LLM.
 

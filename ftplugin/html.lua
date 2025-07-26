@@ -9,3 +9,9 @@ require("lsp.serverCommon").start_or_attach(
 	root_dir,
 	single_file
 )
+
+require("lsp.serverCommon").start_or_attach(
+	"cspellServer",
+	root_dir,
+	single_file
+)
