@@ -206,26 +206,22 @@ end
 --- First, finds the configuration for this new client in a separate file.
 --- @param config_name string config file name to use for new clients.
 --- @param root_dir string the root directory of the project, or the directory of a single file.
---- @param single_file boolean true if the root_dir is not part of a project.
+--- @param is_single_file boolean true if the root_dir is not part of a project.
 --- @return integer client_id the client_id of the attached or new client.
-function M.start_or_attach(config_name, root_dir, single_file)
+function M.start_or_attach(config_name, root_dir, is_single_file)
+	--- @type ServerConfigParams
+	local server_config_params = {
+		root_dir = root_dir,
+		is_single_file = is_single_file,
+	}
+
 	--- @type ServerConfig
-	local settings = require("lsp.serverSpecific." .. config_name)(root_dir)
+	local settings = require("lsp.serverSpecific." .. config_name)(server_config_params)
 
-	local resolved_root_dir = resolve_lsp_root_arg(settings.single_file_support, root_dir, single_file)
+	local resolved_root_dir = resolve_lsp_root_arg(settings.single_file_support, root_dir, is_single_file)
 
-	-- Trying to attach to active clients
-	-- If successful, attach and then return early
-	for _, client_opts in ipairs(vim.lsp.get_clients()) do
-		local client_id = client_opts.id
-		local client_name = client_opts.config.name
-		local client_root = client_opts.config.root_dir
-		if client_name == config_name and client_root == resolved_root_dir then
-			vim.lsp.buf_attach_client(0, client_id)
-			return client_id
-		end
-	end
-
+	-- Documentation says that this will be reused if a client is found
+	-- with the same name and root_dir.
 	local client_id = vim.lsp.start({
 		name = config_name,
 		cmd = settings.cmd,

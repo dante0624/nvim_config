@@ -18,7 +18,7 @@ local filter_func = function(diagnostic)
 	return true
 end
 
---- @param _ string the root directory for the LSP server.
+--- @param _ ServerConfigParams
 --- @return ServerConfig
 local function get_server_config(_)
 
@@ -28,6 +28,8 @@ local function get_server_config(_)
 			paths.Mason_Bin .. "typescript-language-server",
 			"--stdio",
 		},
+		single_file_support = true,
+
 		-- https://github.com/typescript-language-server/typescript-language-server/blob/master/docs/configuration.md
 		init_options = {
 			hostInfo = "neovim",
@@ -43,7 +45,6 @@ local function get_server_config(_)
 				strictNullChecks = false,
 			},
 		},
-		single_file_support = true,
 		diagnostic_filters = {
 			normal = filter_func,
 			strict = filter_func,

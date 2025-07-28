@@ -1,40 +1,45 @@
 local paths = require("utils.paths")
 
---- @param lsp_root_dir string the root directory for the LSP server.
+local global_cspell_json_path = paths.Data_Path .. "cspell.json"
+
+--- @param root_dir string the found root, or the current file's directory
+--- @param is_single_file boolean true if the root_dir is not part of a project.
+--- @return string cspell_json_path
+local function resolve_cspell_json_path(root_dir, is_single_file)
+	if is_single_file then
+		return global_cspell_json_path
+	end
+
+	for name, type in vim.fs.dir(root_dir) do
+		if name == "cspell.json" and type == "file" then
+			return root_dir .. "cspell.json"
+		end
+	end
+
+	return global_cspell_json_path
+end
+
+--- @param server_config_params ServerConfigParams
 --- @return ServerConfig
-local function get_server_config(lsp_root_dir)
+local function get_server_config(server_config_params)
+	local cspell_json_path = resolve_cspell_json_path(
+		server_config_params.root_dir,
+		server_config_params.is_single_file
+	)
 
 	--- @type ServerConfig
 	local server_config = {
 		cmd = {
 			paths.Mason_Bin .. "cspell-lsp",
 
-			-- Option 1, use per-workspace cspell.json files
-			"--config", lsp_root_dir .. "cspell.json",
-
-			-- Option 2, use a single, global cspell.json file
-			-- "--config", paths.Data_Path .. "cspell.json",
-
+			"--config", cspell_json_path,
 			"--sortWords",
 			"--stdio",
 		},
 
-		--[[
-		single_file_support = false because of the code actions:
-			"AddToUserWordsConfig" and "AddToWorkspaceWordsConfig"
-
-		During these, the LSP determines a directory to create / modify cspell.json
-		The LSP uses the following places in order:
-			1. CLI argument --config, -c (optional)
-			2. Search upward for cspell.json from the file with the diagnostic
-			3. The provided root_dir used at lsp-initialization
-
-		The first two are optional (since the upward search might return nothing).
-		So, this root_dir is the last resort.
-		If this is nil, the code actions will error out.
-		]]
-
-		single_file_support = false,
+		-- If is_single_file, I default to using the global cspell.json file
+		-- In this case, I provide a `nil` root_dir and the server still works
+		single_file_support = true,
 	}
 
 	return server_config

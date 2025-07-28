@@ -1,7 +1,21 @@
+--- @class ServerConfigParams
+--- @field root_dir string the found root, or the current file's directory.
+--- @field is_single_file boolean true if the root_dir is not part of a project.
+
 --- @class ServerConfig
 ---
 --- command string[] that launches the language server.
 --- @field cmd string[]
+---
+--- Language servers require each project to have a `root` in order to
+--- provide features that require cross-file indexing.
+---
+---	Some servers support a `nil` root directory as a proxy for single
+---	file mode under which cross-file features may be degraded. 
+---
+---	This information came from the LSP Config doc at:
+---	https://github.com/neovim/nvim-lspconfig/blob/b1a11b042d015df5b8f7f33aa026e501b639c649/doc/lspconfig.txt#L430
+--- @field single_file_support boolean
 ---
 --- Values to pass as `initializationOptions `under `InitializeParams`.
 --- See the `initialize` request in the LSP spec.
@@ -18,18 +32,6 @@
 --- This is used for choosing values which the LSP normally finds in
 --- a `settings.json` file within the workspace.
 --- @field post_init_settings? lsp.LSPObject
----
---- Language servers require each project to have a `root` in order to
---- provide features that require cross-file indexing.
----
----	Some servers support not passing a root directory as a proxy for single
----	file mode under which cross-file features may be degraded. 
----
----	This information came from the LSP Config doc at:
----	https://github.com/neovim/nvim-lspconfig/blob/b1a11b042d015df5b8f7f33aa026e501b639c649/doc/lspconfig.txt#L430
----
---- Default, false.
---- @field single_file_support? boolean
 ---
 --- Client-side diagnostic filters.
 --- Meant to be used if the server does not support server-side filtering.

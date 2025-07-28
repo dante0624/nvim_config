@@ -15,7 +15,7 @@ local ignored_code = array_to_set({
 	"reportUnnecessaryTypeIgnoreComment",
 })
 
---- @param _ string the root directory for the LSP server.
+--- @param _ ServerConfigParams
 --- @return ServerConfig
 local function get_server_config(_)
 
@@ -24,23 +24,6 @@ local function get_server_config(_)
 		cmd = {
 			mason_bin .. "pyright-langserver",
 			"--stdio",
-		},
-		-- https://microsoft.github.io/pyright/#/settings
-		post_init_settings = {
-			python = {
-				analysis = {
-					typeCheckingMode = "strict",
-					diagnosticSeverityOverrides = {
-						-- These get duplicated for some reason when using typeCheckingMode = "strict"  
-						-- They show up once as warnings (which I want them to be) then again as errors
-						-- Setting these to false has a nice affect of making them show up once as warnings
-						reportUnusedImport = false,
-						reportUnusedClass = false,
-						reportUnusedFunction = false,
-						reportUnusedVariable = false,
-					},
-				},
-			},
 		},
 
 		--[[ Having this as true or false both have downsides
@@ -64,6 +47,24 @@ local function get_server_config(_)
 		The true downside is a less common use case, so go with this one
 		It can be resolved by creating any file which marks it as a root]]
 		single_file_support = true,
+
+		-- https://microsoft.github.io/pyright/#/settings
+		post_init_settings = {
+			python = {
+				analysis = {
+					typeCheckingMode = "strict",
+					diagnosticSeverityOverrides = {
+						-- These get duplicated for some reason when using typeCheckingMode = "strict"  
+						-- They show up once as warnings (which I want them to be) then again as errors
+						-- Setting these to false has a nice affect of making them show up once as warnings
+						reportUnusedImport = false,
+						reportUnusedClass = false,
+						reportUnusedFunction = false,
+						reportUnusedVariable = false,
+					},
+				},
+			},
+		},
 
 		diagnostic_filters = {
 			normal = function(diagnostic)

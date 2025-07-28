@@ -1,12 +1,14 @@
 local mason_bin = require("utils.paths").Mason_Bin
 
---- @param _ string the root directory for the LSP server.
+--- @param _ ServerConfigParams
 --- @return ServerConfig
 local function get_server_config(_)
 
 	--- @type ServerConfig
 	local server_config = {
 		cmd = { mason_bin .. "lua-language-server" },
+		single_file_support = true,
+
 		-- https://luals.github.io/wiki/settings/
 		post_init_settings = {
 			Lua = {
@@ -27,7 +29,6 @@ local function get_server_config(_)
 				},
 			},
 		},
-		single_file_support = true,
 	}
 
 	return server_config

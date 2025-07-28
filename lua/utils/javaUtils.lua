@@ -94,7 +94,7 @@ M.debugee_port = 5005 -- Default when passing --debug-jvm to Gradle
 --- where a build command such as "gradle build" could be run.
 --- @return string project_root_dir the project root if single_file == false,
 ---     otherwise it is the directory where the current file is located.
---- @return boolean single_file true if a project root could not be found.
+--- @return boolean is_single_file true if a project root could not be found.
 function M.get_project_root_dir()
 	return find_project_root({
 		".git",
@@ -106,7 +106,7 @@ end
 --- Method will be different from find_project_root_dir() only if using a
 --- multi-project setup, with workspace folders.
 --- @return string jdtls_root_dir the desired root_dir for jdtls.
---- @return boolean single_file true if a project root could not be found.
+--- @return boolean is_single_file true if a project root could not be found.
 function M.get_jdtls_root_dir()
 	-- Modify me to be different if working on multiple projects
 	return M.get_project_root_dir()
@@ -229,9 +229,9 @@ function M.start_debug(client)
 
 	-- Start a new debugee is a new, background, toggleable terminal
 	else
-		local build_dir, single_file = M.get_project_root_dir()
-		if single_file then
-			print("Could not find build directory, cannot start debugging")
+		local project_dir, is_single_file = M.get_project_root_dir()
+		if is_single_file then
+			print("Could not find project directory, cannot start debugging")
 			return
 		end
 
@@ -254,7 +254,7 @@ function M.start_debug(client)
 			auto_scroll = false,
 			close_on_exit = false,
 			cmd = debugee_command,
-			dir = build_dir,
+			dir = project_dir,
 			display_name = M.terminal_display_name,
 			hidden = true,
 			on_exit = function(_, _, exit_code, _)

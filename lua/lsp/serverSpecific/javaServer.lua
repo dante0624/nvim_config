@@ -22,12 +22,12 @@ end
 -- Essentially do a regex search on a directory to find this jar file
 local launcher_file = vim.fn.globpath(jdtls_dir .. "plugins", "*launcher_*")
 
---- @param lsp_root_dir string the root directory for the LSP server.
+--- @param server_config_params ServerConfigParams
 --- @return ServerConfig
-local function get_server_config(lsp_root_dir)
+local function get_server_config(server_config_params)
 
-	local inferred_workspace = paths.Java_Workspaces
-		.. paths.serialize_path(lsp_root_dir)
+	local inferred_data_dir = paths.Java_Workspaces
+		.. paths.serialize_path(server_config_params.root_dir)
 
 	--- @type ServerConfig
 	local server_config = {
@@ -61,8 +61,13 @@ local function get_server_config(lsp_root_dir)
 			-- It creates data directories under a new folder in the Data_Dir
 			-- But it makes a new, nicely named folder, for each different project
 			"-data",
-			inferred_workspace,
+			inferred_data_dir,
 		},
+
+		-- Technically, JDTLS still runs if the root_dir is `nil`
+		-- However, JDTLS always needs a -data directory, which I construct from the root_dir
+		-- Therefore, I would prefer to always have JDTLs use a non-nil root_dir
+		single_file_support = false,
 
 		-- Here you can configure eclipse.jdt.ls specific settings
 		-- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request

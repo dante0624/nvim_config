@@ -20,7 +20,7 @@ local function resolve_lua_root_dir(starting_dir)
 	return starting_dir
 end
 
-local project_root_dir, single_file = find_project_root()
+local project_root_dir, is_single_file = find_project_root()
 local lua_root_dir = resolve_lua_root_dir(project_root_dir)
 
 folding.setup_treesitter_folding()
@@ -28,11 +28,11 @@ folding.setup_treesitter_folding()
 require("lsp.serverCommon").start_or_attach(
 	"luaServer",
 	lua_root_dir,
-	single_file
+	is_single_file
 )
 
 require("lsp.serverCommon").start_or_attach(
 	"cspellServer",
 	project_root_dir,
-	single_file
+	is_single_file
 )

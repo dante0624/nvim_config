@@ -62,7 +62,7 @@ vim.api.nvim_create_autocmd('LspTokenUpdate', {
 
 -- Now, worry about starting-up or attaching to a JDTLS instance
 -- Also worry about de-compiling class files
-local jdtls_root_dir, single_file = java_utils.get_jdtls_root_dir()
+local jdtls_root_dir, is_single_file = java_utils.get_jdtls_root_dir()
 local bufnr = vim.api.nvim_get_current_buf()
 local bufname = vim.api.nvim_buf_get_name(bufnr)
 
@@ -76,7 +76,7 @@ local function jdtls_start_or_attach()
 	return require("lsp.serverCommon").start_or_attach(
 		java_utils.server_config_name,
 		jdtls_root_dir,
-		single_file
+		is_single_file
 	)
 end
 
@@ -147,7 +147,7 @@ else
 	require("lsp.serverCommon").start_or_attach(
 		"cspellServer",
 		jdtls_root_dir,
-		single_file
+		is_single_file
 	)
 end
 
@@ -162,7 +162,7 @@ local java_class_name = vim.fn.expand("%:p:t:r")
 
 -- Setup the run_command for running either a single file or unit test
 vim.b.run_command = function()
-	if single_file then
+	if is_single_file then
 		local build_cmd = 'javac "' .. full_file_path .. '"'
 		local exec_cmd = 'java -cp "' .. jdtls_root_dir .. '" ' .. java_class_name
 

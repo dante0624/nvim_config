@@ -29,7 +29,7 @@ end
 --- When this happens, we are said to be reading a "single_file"
 --- @param root_files string[]? starting point
 --- @return string root_dir the found root, or the current file's directory
---- @return boolean single_file true if the root_dir is not part of a project.
+--- @return boolean is_single_file true if the root_dir is not part of a project.
 function M.find_project_root(root_files)
 	if root_files == nil then
 		root_files = { ".git" }
@@ -41,14 +41,14 @@ function M.find_project_root(root_files)
 			path = vim.fn.expand("%:p"),
 		})[1])
 
-	local single_file = root_dir == nil
-	if single_file then
+	local is_single_file = root_dir == nil
+	if is_single_file then
 		root_dir = vim.fn.expand("%:p:h")
 	end
 
 	root_dir = vim.fn.fnamemodify(root_dir, ":p")
 
-	return root_dir, single_file
+	return root_dir, is_single_file
 end
 
 return M

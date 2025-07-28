@@ -1,6 +1,6 @@
 local mason_bin = require("utils.paths").Mason_Bin
 
---- @param _ string the root directory for the LSP server.
+--- @param _ ServerConfigParams
 --- @return ServerConfig
 local function get_server_config(_)
 
@@ -10,6 +10,7 @@ local function get_server_config(_)
 			mason_bin .. "vscode-css-language-server",
 			"--stdio",
 		},
+		single_file_support = true,
 
 		-- https://code.visualstudio.com/docs/languages/css#_customizing-css-scss-and-less-settings
 		post_init_settings = {
@@ -20,7 +21,6 @@ local function get_server_config(_)
 				},
 			},
 		},
-		single_file_support = true,
 	}
 	return server_config
 end
