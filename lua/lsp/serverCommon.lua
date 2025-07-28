@@ -2,33 +2,6 @@ local showTable = require("utils.showTable")
 
 local M = {}
 
--- When LSP is attached to a buffer, this sets the keymaps for that buffer
-function M.on_attach_keymaps(_, bufnr)
-	-- Helper function to be less repetitive
-	local function lsp_map(mode, lhs, rhs, opts)
-		local options = { buffer = bufnr }
-		if opts then
-			options = vim.tbl_extend("force", options, opts)
-		end
-
-		vim.keymap.set(mode, lhs, rhs, options)
-	end
-
-	-- The beautiful keymaps
-	-- "s" for (language) "Server"
-	lsp_map("n", "gd", vim.lsp.buf.definition)
-	lsp_map("n", "gD", vim.lsp.buf.type_definition)
-	lsp_map("n", "gr", vim.lsp.buf.references)
-	lsp_map("", "<leader>sa", vim.lsp.buf.code_action)
-	lsp_map("n", "<leader>ss", vim.lsp.buf.document_symbol)
-	lsp_map("", "<leader>sf", vim.lsp.buf.format)
-	lsp_map("n", "<leader>sh", function()
-		vim.lsp.buf.hover({ border = 'rounded' })
-	end)
-	lsp_map("n", "<leader>sr", vim.lsp.buf.rename)
-	lsp_map("n", "<leader>sw", vim.lsp.buf.workspace_symbol)
-end
-
 -- Sets up Diganostic signs, diagnostic config, and lsp handlers
 -- Also defines a lua function that can help with debugging clients
 function M.setup()
@@ -108,71 +81,89 @@ function M.setup()
 	end
 end
 
---[[ First key of this table is the client_id
-Next are 3 possible keys:
-	normal_filter
-		function(diagnostic) -> boolean
-		Return true if that diagnostic should be shown in "normal mode"
-	strict_filter
-		function(diagnostic) -> boolean
-		Return true if that diagnostic should be shown in "strict mode"
-	bufnrs
-		Maps to a sub table, where each key is a bufnr
-		Each of these bufnrs maps to all (unfiltered) diagnostics
-		for that client and bufnr specifically ]]
+--- Key is the client_id, value is all the diagnostic info for that client.
+--- @type table<integer, ClientDiagnosticTracker>
 local diagnostics_tracker = {}
 
--- Used to set up this tracker based on specific lsp settings
--- These are found as languageSpecific settings
+--- @class ClientDiagnosticTracker
+--- @field diagnostic_filters DiagnosticFilters
+--- @field bufnr_to_unfiltered_diagnostics_info table<integer, BufferDiagnosticsInfo>
+
+--- @class BufferDiagnosticsInfo
+--- @field diagnostic_params lsp.PublishDiagnosticsParams
+--- @field ctx lsp.HandlerContext
+
+--- Used to set up this tracker based on specific lsp settings
+--- @param client_id integer
+--- @param settings ServerConfig
 local function set_up_tracker(client_id, settings)
 	local non_filter = function(_) return true end
 
-	-- Ignore different diagnostic in strict vs  mode
-	local diagnostic_filters = settings.diagnostic_filters or {}
-	local normal_filter = diagnostic_filters.normal or non_filter
-	local strict_filter = diagnostic_filters.strict or non_filter
+	local diagnostic_filters = settings.diagnostic_filters or {
+		normal = non_filter,
+		strict = non_filter,
+	}
 
-	-- Bufnrs will be added as diagnostics are published
 	diagnostics_tracker[client_id] = {
-		normal_filter = normal_filter,
-		strict_filter = strict_filter,
-		bufnrs = {},
+		diagnostic_filters = diagnostic_filters,
+		bufnr_to_unfiltered_diagnostics_info = {},
 	}
 end
 
--- This will pull data from the tracker, apply the filter, and then
--- publish the filtered diagnostics as if they came from the LSP server
+--- @param client_tracker ClientDiagnosticTracker
+--- @return fun(diagnostic: lsp.Diagnostic):boolean
+local function choose_filter(client_tracker)
+	if vim.g.ignore_strict_diagnostics == true then
+		return client_tracker.diagnostic_filters.normal
+	end
+
+	return client_tracker.diagnostic_filters.strict
+end
+
+--- This will pull data from the tracker, apply the filter, and then
+--- publish the filtered diagnostics as if they came from the LSP server
+--- @param client_id integer
+--- @param bufnr integer
 local function publish_tracker_diagnostics(client_id, bufnr)
 	local client_tracker = diagnostics_tracker[client_id]
+	local unfiltered_diagnostics_info = client_tracker.bufnr_to_unfiltered_diagnostics_info[bufnr]
+	local filter = choose_filter(client_tracker)
 
-	local filter
-	if vim.g.ignore_strict_diagnostics == true then
-		filter = client_tracker.normal_filter
-	else
-		filter = client_tracker.strict_filter
-	end
+	local filtered_diagnostics = vim.tbl_filter(filter, unfiltered_diagnostics_info.diagnostic_params.diagnostics)
+	local filtered_diagnostics_params = vim.deepcopy(unfiltered_diagnostics_info.diagnostic_params)
+	filtered_diagnostics_params.diagnostics = filtered_diagnostics
 
-	local filtered_diagnostics = {}
-	for _, diagnostic in ipairs(client_tracker.bufnrs[bufnr]) do
-		if filter(diagnostic) then
-			table.insert(filtered_diagnostics, diagnostic)
-		end
-	end
-
-	local result = {
-		uri = vim.uri_from_bufnr(bufnr),
-		diagnostics = filtered_diagnostics,
-	}
-
-	local ctx = { client_id = client_id }
-
-	vim.lsp.diagnostic.on_publish_diagnostics(nil, result, ctx)
+	vim.lsp.diagnostic.on_publish_diagnostics(
+		nil,
+		filtered_diagnostics_params,
+		unfiltered_diagnostics_info.ctx
+	)
 end
+
+--- Custom, overwritten handler for publishing diagnostics that allows
+--- for client-side filtering.
+--- See https://neovim.io/doc/user/lsp.html#lsp-handler
+--- @param _ table? Error info dict, or `nil` if the request completed. 
+--- @param diagnostic_params lsp.PublishDiagnosticsParams
+--- @param ctx lsp.HandlerContext
+local function custom_diagnostic_handler(_, diagnostic_params, ctx)
+	local client_id = ctx.client_id
+	local bufnr = vim.uri_to_bufnr(diagnostic_params.uri)
+	diagnostics_tracker[client_id].bufnr_to_unfiltered_diagnostics_info[bufnr] = {
+		diagnostic_params = diagnostic_params,
+		ctx = ctx,
+	}
+	publish_tracker_diagnostics(client_id, bufnr)
+end
+
+local publish_diagnostics_handler_overwrite = {
+	["textDocument/publishDiagnostics"] = custom_diagnostic_handler,
+}
 
 -- Loop over all clients and buffers publishing all filtered diagnostics
 function M.refresh_diagnostics()
 	for client_id, _ in pairs(diagnostics_tracker) do
-		for bufnr, _ in pairs(diagnostics_tracker[client_id].bufnrs) do
+		for bufnr, _ in pairs(diagnostics_tracker[client_id].bufnr_to_unfiltered_diagnostics_info) do
 			publish_tracker_diagnostics(client_id, bufnr)
 		end
 	end
@@ -180,7 +171,7 @@ end
 
 --- Language servers require each project to have a `root` in order to
 --- provide features that require cross-file indexing.
-
+---
 ---	Some servers support not passing a root directory as a proxy for single
 ---	file mode under which cross-file features may be degraded. 
 ---
@@ -198,6 +189,18 @@ local function resolve_lsp_root_arg(supports_single_file_mode, root_dir, single_
 	return root_dir
 end
 
+--- By default, just overwrite "textDocument/publishDiagnostics"
+--- Can also overwrite more handlers on a per-lsp basis
+--- @param server_specific_handler_overwrites table<string,function>
+--- @return table<string,function>
+local function resolve_lsp_handler_overwrites(server_specific_handler_overwrites)
+	if server_specific_handler_overwrites == nil then
+		return publish_diagnostics_handler_overwrite
+	end
+
+	return vim.tbl_extend('error', publish_diagnostics_handler_overwrite, server_specific_handler_overwrites)
+end
+
 --- Attaches to an existing client if the name and root directory match.
 ---
 --- If no match is found, then it creates and attaches to a new client.
@@ -207,79 +210,59 @@ end
 --- @param single_file boolean true if the root_dir is not part of a project.
 --- @return integer client_id the client_id of the attached or new client.
 function M.start_or_attach(config_name, root_dir, single_file)
+	--- @type ServerConfig
+	local settings = require("lsp.serverSpecific." .. config_name)(root_dir)
+
+	local resolved_root_dir = resolve_lsp_root_arg(settings.single_file_support, root_dir, single_file)
+
 	-- Trying to attach to active clients
 	-- If sucessful, attach and then return early
 	for _, client_opts in ipairs(vim.lsp.get_clients()) do
 		local client_id = client_opts.id
 		local client_name = client_opts.config.name
 		local client_root = client_opts.config.root_dir
-		if client_name == config_name and client_root == root_dir then
+		if client_name == config_name and client_root == resolved_root_dir then
 			vim.lsp.buf_attach_client(0, client_id)
 			return client_id
 		end
 	end
 
-	-- All of these can be overwritten by language specific settings
-	local init_options = {}
-	local pre_attach_settings = {}
-	local on_attach = M.on_attach_keymaps
-
-	local settings = require("lsp.serverSpecific." .. config_name)
-
-	assert(settings.cmd, "LSP configuration needs a cmd attribute")
-
-	if settings.init_options ~= nil then
-		init_options = settings.init_options
-	end
-	if settings.pre_attach_settings ~= nil then
-		pre_attach_settings = settings.pre_attach_settings
-	end
-	if settings.post_attach_settings ~= nil then
-		on_attach = function(_, bufnr)
-			M.on_attach_keymaps(_, bufnr)
-			vim.lsp.buf_notify(
-				bufnr,
-				"workspace/didChangeConfiguration",
-				settings.post_attach_settings
-			)
-		end
-	end
-
-	local new_client_root_dir = resolve_lsp_root_arg(settings.single_file_support, root_dir, single_file)
-
-	local capabilities = vim.tbl_deep_extend(
-		'keep',
-		require("cmp_nvim_lsp").default_capabilities(),
-		vim.lsp.protocol.make_client_capabilities()
-	)
-
-	local handlers = {
-		["textDocument/publishDiagnostics"] = function(_, result, ctx, _)
-			local client_id = ctx.client_id
-			local bufnr = vim.uri_to_bufnr(result.uri)
-			local diagnostics = result.diagnostics
-
-			diagnostics_tracker[client_id].bufnrs[bufnr] = diagnostics
-
-			publish_tracker_diagnostics(client_id, bufnr)
-		end,
-	}
-
-	local custom_handlers = settings.server_to_client_handlers or {}
-	handlers = vim.tbl_extend("keep", handlers, custom_handlers)
-
 	local client_id = vim.lsp.start({
 		name = config_name,
 		cmd = settings.cmd,
-		root_dir = new_client_root_dir,
-		settings = pre_attach_settings,
-		init_options = init_options,
-		on_attach = on_attach,
-		capabilities = capabilities,
-		-- Can only override server-to-client requests like textDocument/publishDiagnostics
-		-- Cannot override client-to-server requests like textDocument/definition
-		-- This is documented here: https://neovim.io/doc/user/lsp.html#vim.lsp.handlers
-		handlers = handlers,
+		root_dir = resolved_root_dir,
+		init_options = settings.init_options,
+		settings = settings.post_init_settings,
+		on_attach = function(_, bufnr)
+			local function lsp_map(mode, lhs, rhs, opts)
+				local options = { buffer = bufnr }
+				if opts then
+					options = vim.tbl_extend("force", options, opts)
+				end
+
+				vim.keymap.set(mode, lhs, rhs, options)
+			end
+
+			-- The beautiful keymaps
+			-- "s" for (language) "Server"
+			lsp_map("n", "gd", vim.lsp.buf.definition)
+			lsp_map("n", "gD", vim.lsp.buf.type_definition)
+			lsp_map("n", "gr", vim.lsp.buf.references)
+			lsp_map("", "<leader>sa", vim.lsp.buf.code_action)
+			lsp_map("n", "<leader>ss", vim.lsp.buf.document_symbol)
+			lsp_map("", "<leader>sf", vim.lsp.buf.format)
+			lsp_map("n", "<leader>sh", function()
+				vim.lsp.buf.hover({ border = 'rounded' })
+			end)
+			lsp_map("n", "<leader>sr", vim.lsp.buf.rename)
+			lsp_map("n", "<leader>sw", vim.lsp.buf.workspace_symbol)
+		end,
+		capabilities = vim.tbl_deep_extend(
+			'keep',
+			require("cmp_nvim_lsp").default_capabilities(),
+			vim.lsp.protocol.make_client_capabilities()
+		),
+		handlers = resolve_lsp_handler_overwrites(settings.server_to_client_handlers),
 	})
 	assert(client_id, "Could not start LSP")
 	set_up_tracker(client_id, settings)

@@ -1,17 +1,28 @@
 local mason_bin = require("utils.paths").Mason_Bin
 
-return {
-	cmd = {
-		mason_bin .. "vscode-css-language-server",
-		"--stdio",
-	},
-	pre_attach_settings = {
-		css = {
-			lint = {
-				-- This just fixes some css linting error
-				validProperties = {},
+--- @param _ string the root directory for the LSP server.
+--- @return ServerConfig
+local function get_server_config(_)
+
+	--- @type ServerConfig
+	local server_config = {
+		cmd = {
+			mason_bin .. "vscode-css-language-server",
+			"--stdio",
+		},
+
+		-- https://code.visualstudio.com/docs/languages/css#_customizing-css-scss-and-less-settings
+		post_init_settings = {
+			css = {
+				lint = {
+					-- This just fixes some css linting error
+					validProperties = {},
+				},
 			},
 		},
-	},
-	single_file_support = true,
-}
+		single_file_support = true,
+	}
+	return server_config
+end
+
+return get_server_config

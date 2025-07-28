@@ -1,0 +1,50 @@
+--- @class ServerConfig
+---
+--- command string[] that launches the language server.
+--- @field cmd string[]
+---
+--- Values to pass as `initializationOptions `under `InitializeParams`.
+--- See the `initialize` request in the LSP spec.
+--- Neovim fills in the rest of the `InitializeParams` by default.
+--- @field init_options? lsp.LSPObject
+---
+--- Values to pass as `settings` under `DidChangeConfigurationParams`.
+--- See the `workspace/didChangeConfiguration` notification in the LSP spec.
+--- Neovim calls `workspace/didChangeConfiguration` in the callback of
+--- `initialize`, only if this is a non-empty table.
+--- Many language servers have settings which can only be configured like this.
+--- For example:
+--- https://github.com/typescript-language-server/typescript-language-server/blob/master/docs/configuration.md
+--- This is used for choosing values which the LSP normally finds in
+--- a `settings.json` file within the workspace.
+--- @field post_init_settings? lsp.LSPObject
+---
+--- Language servers require each project to have a `root` in order to
+--- provide features that require cross-file indexing.
+---
+---	Some servers support not passing a root directory as a proxy for single
+---	file mode under which cross-file features may be degraded. 
+---
+---	This information came from the lspconfig doc at:
+---	https://github.com/neovim/nvim-lspconfig/blob/b1a11b042d015df5b8f7f33aa026e501b639c649/doc/lspconfig.txt#L430
+---
+--- Default, false.
+--- @field single_file_support? boolean
+---
+--- Client-side diagnostic filters.
+--- Meant to be used if the server does not support server-side filtering.
+--- @field diagnostic_filters? DiagnosticFilters
+---
+--- Map of language server method names to |lsp-handler|.
+--- Defaults to only overwriting `textDocument/publishDiagnostics`
+--- to enable the functionality of `diagnostic_filters`.
+--- @field server_to_client_handlers? table<string,function>
+
+
+--- @class DiagnosticFilters
+---
+--- Client-side diagnostic filter used for normal LSP execution
+--- @field normal fun(diagnostic: lsp.Diagnostic):boolean
+---
+--- Client-side diagnostic Filter used when in "strict" mode of LSP execution
+--- @field strict fun(diagnostic: lsp.Diagnostic):boolean
