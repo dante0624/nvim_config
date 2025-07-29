@@ -2,17 +2,16 @@ local paths = require("utils.paths")
 
 local global_cspell_json_path = paths.Data_Path .. "cspell.json"
 
---- @param root_dir string the found root, or the current file's directory
---- @param is_single_file boolean true if the root_dir is not part of a project.
+--- @param server_config_params ServerConfigParams
 --- @return string cspell_json_path
-local function resolve_cspell_json_path(root_dir, is_single_file)
-	if is_single_file then
+local function resolve_cspell_json_path(server_config_params)
+	if server_config_params.is_single_file then
 		return global_cspell_json_path
 	end
 
-	for name, type in vim.fs.dir(root_dir) do
+	for name, type in vim.fs.dir(server_config_params.root_dir) do
 		if name == "cspell.json" and type == "file" then
-			return root_dir .. "cspell.json"
+			return server_config_params.root_dir .. "cspell.json"
 		end
 	end
 
@@ -22,10 +21,7 @@ end
 --- @param server_config_params ServerConfigParams
 --- @return ServerConfig
 local function get_server_config(server_config_params)
-	local cspell_json_path = resolve_cspell_json_path(
-		server_config_params.root_dir,
-		server_config_params.is_single_file
-	)
+	local cspell_json_path = resolve_cspell_json_path(server_config_params)
 
 	--- @type ServerConfig
 	local server_config = {

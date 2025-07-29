@@ -10,16 +10,15 @@ M.Java_Workspaces = M.Data_Path .. "Java_Workspaces/"
 M.Mason_Path = M.Data_Path .. "mason/"
 M.Mason_Bin = M.Mason_Path .. "bin/"
 
--- Got this basic idea from persistence.nvim plugin
+--- Take a full file path and replace the file_separator characters.
+--- Makes it safe to use as a single file's name.
+--- Got this basic idea from persistence.nvim plugin
+--- @param path string
+--- @return string serialized_path
 function M.serialize_path(path)
-	local file_separator
-	if os.is_windows then
-		file_separator = "[\\:]"
-	else
-		file_separator = "/"
-	end
-
-	return path:gsub(file_separator, "%%")
+	local file_separator = os.is_windows and "[\\:]" or "/"
+	local serialized_path, _ = path:gsub(file_separator, "%%")
+	return serialized_path
 end
 
 --- Starts at the current file's directory, searches upwards for matching files

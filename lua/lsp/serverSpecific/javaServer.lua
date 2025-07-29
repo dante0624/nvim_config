@@ -3,31 +3,69 @@ local os = require("utils.os")
 local architecture = require("utils.architecture")
 
 local jdtls_dir = paths.Mason_Path .. "packages/jdtls/"
-local os_config
-if os.is_linux_os then
-	os_config = "config_linux"
-elseif os.is_macos then
-	os_config = "config_mac"
-elseif os.is_wsl then
-	os_config = "config_ss_linux"
-elseif os.is_windows then
-	os_config = "config_win"
+
+local function get_base_os_config()
+	if os.is_linux_os then
+		return "config_linux"
+	end
+	if os.is_macos then
+		return "config_mac"
+	end
+	if os.is_wsl then
+		return "config_ss_linux"
+	end
+	if os.is_windows then
+		return "config_win"
+	end
+
+	error("Could not determine os to use for JDTLS config")
 end
 
--- For some reason, the distribution of jdtls through mason does not come with config_win_arm
-if architecture.is_arm and not os.is_windows then
-	os_config = os_config .. "_arm"
+local function get_os_config()
+	-- For some reason, the distribution of jdtls through mason does not come with config_win_arm
+	local base_os_config = get_base_os_config()
+
+	if architecture.is_arm and not os.is_windows then
+		return base_os_config .. "_arm"
+	end
+
+	return base_os_config
 end
 
--- Essentially do a regex search on a directory to find this jar file
-local launcher_file = vim.fn.globpath(jdtls_dir .. "plugins", "*launcher_*")
+local os_config = get_os_config()
+
+--- @return string
+local function get_launcher_file()
+	-- Essentially do a regex search on a directory to find this jar file
+	-- Returns a non-empty string for success, empty string for failure
+	local glob_result = vim.fn.globpath(jdtls_dir .. "plugins", "*launcher_*")
+
+	if (glob_result == "") then
+		error("Could not determine launcher file to use for JDTLS config")
+	end
+
+	return glob_result
+end
+
+local launcher_file = get_launcher_file()
+
+--- Very proud of how I handled this.
+--- Creates data directories under a new folder in the Data_Dir.
+--- Makes a new, nicely named folder, for each different project.
+--- Has a "catch-all" folder for files that are not part of a project.
+--- @param server_config_params ServerConfigParams
+--- @return string inferred_data_dir
+local function resolve_data_dir(server_config_params)
+	if server_config_params.is_single_file then
+		return paths.Java_Workspaces .. "NonProjectDataDir"
+	end
+
+	return paths.Java_Workspaces .. paths.serialize_path(server_config_params.root_dir)
+end
 
 --- @param server_config_params ServerConfigParams
 --- @return ServerConfig
 local function get_server_config(server_config_params)
-
-	local inferred_data_dir = paths.Java_Workspaces
-		.. paths.serialize_path(server_config_params.root_dir)
 
 	--- @type ServerConfig
 	local server_config = {
@@ -57,17 +95,13 @@ local function get_server_config(server_config_params)
 			"-configuration",
 			jdtls_dir .. os_config,
 
-			-- Very proud of how I handled this
-			-- It creates data directories under a new folder in the Data_Dir
-			-- But it makes a new, nicely named folder, for each different project
 			"-data",
-			inferred_data_dir,
+			resolve_data_dir(server_config_params),
 		},
 
-		-- Technically, JDTLS still runs if the root_dir is `nil`
-		-- However, JDTLS always needs a -data directory, which I construct from the root_dir
-		-- Therefore, I would prefer to always have JDTLs use a non-nil root_dir
-		single_file_support = false,
+		-- If in single_file_mode, where root_dir is `nil`, use a custom data directory
+		-- This allows having one "catch-all" JDTLS instance for single files
+		single_file_support = true,
 
 		-- Here you can configure eclipse.jdt.ls specific settings
 		-- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
@@ -80,6 +114,11 @@ local function get_server_config(server_config_params)
 			bundles = {
 				paths.Mason_Path .. "share/java-debug-adapter/com.microsoft.java.debug.plugin.jar",
 			},
+
+			-- Add workspaceFolders here if working on multiple projects at once
+			-- workspaceFolders = {
+			--
+			-- },
 		},
 		post_init_settings = {
 			java = {
