@@ -119,6 +119,12 @@ local function get_server_config(server_config_params)
 			-- workspaceFolders = {
 			--
 			-- },
+
+			-- Copied from nvim-jdtls, which has this capability and many more
+			extendedClientCapabilities = {
+				-- Gives extra code action capabilities, and ability to "gd" into class files
+				classFileContentsSupport = true,
+			},
 		},
 		post_init_settings = {
 			java = {
