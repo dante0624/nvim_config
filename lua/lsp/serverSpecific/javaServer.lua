@@ -99,9 +99,10 @@ local function get_server_config(server_config_params)
 			resolve_data_dir(server_config_params),
 		},
 
-		-- If in single_file_mode, where root_dir is `nil`, use a custom data directory
-		-- This allows having one "catch-all" JDTLS instance for single files
-		single_file_support = true,
+		-- Having false allows single files to still run JDTLS with full capabilities
+		-- Having true means that single files will always see the diagnostic:
+		-- <FileName.java> is a non-project file, only syntax errors are reported
+		single_file_support = false,
 
 		-- Here you can configure eclipse.jdt.ls specific settings
 		-- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
