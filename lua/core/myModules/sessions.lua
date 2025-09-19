@@ -33,7 +33,7 @@ local function save_hud()
     if hud_file ~= nil then
         for display_name, display in pairs(hud) do
             hud_file:write(display_name .. "=" ..
-                tostring(display.isShown()) .. "\n")
+                tostring(display.is_shown()) .. "\n")
         end
         hud_file:flush()
         hud_file:close()
@@ -62,10 +62,10 @@ local function restore_hud()
             local display_shown = line:sub(equal_index+1)
 
             if display_shown == "true" then
-                hud[display_name].show()
+                hud[display_name]:show()
             end
             if display_shown == "false" then
-                hud[display_name].hide()
+                hud[display_name]:hide()
             end
         end
 

@@ -1,33 +1,23 @@
 local map = require("utils.map").map
-local buf_do = require("utils.buffers").buf_do
 local tables = require("utils.tables")
 
 local hud = require("core.myModules.headsUpDisplay")
 
 local M = {}
 
--- toggle some hud display using its display_name (key from the hud table)
-local function toggle(display_name)
-    local display = hud[display_name]
-    local shown = display.isShown()
-    local repeat_buffers = display.repeat_buffers
+-- toggle some hud element using its element_name (key from the hud table)
+local function toggle(element_name)
+    local element = hud[element_name]
+    local shown = element.is_shown()
 
     if shown == true then
-        print("Hiding: " .. display_name)
-        if repeat_buffers then
-            buf_do(display.hide)
-        else
-            display.hide()
-        end
+        print("Hiding: " .. element_name)
+		element:hide()
     elseif shown == false then
-        print("Showing: " .. display_name)
-        if repeat_buffers then
-            buf_do(display.show)
-        else
-            display.show()
-        end
+        print("Showing: " .. element_name)
+		element:show()
     else
-        print("Failed toggle call on: " .. display_name)
+        print("Failed toggle call on: " .. element_name)
     end
 end
 
@@ -41,60 +31,24 @@ map("", "<Leader>vb", function() toggle("buffer_sign_column") end)
 map("", "<Leader>vd", function() toggle("diagnostics") end)
 map("", "<Leader>vs", function() toggle("strict") end)
 
--- These can be used to set "favorite" HUD settings
+-- This function can be used to set "favorite" HUD settings
 local function show_hide_batch(show_names, hide_names)
-    -- First sort into 4 categories
-    local show_names_multi = tables.filter_array(
-        show_names,
-        function(display_name)
-            return hud[display_name].repeat_buffers == true
-        end
-    )
-    local show_names_singular = tables.filter_array(
-        show_names,
-        function(display_name)
-            return hud[display_name].repeat_buffers == false
-        end
-    )
-    local hide_names_multi = tables.filter_array(
-        hide_names,
-        function(display_name)
-            return hud[display_name].repeat_buffers == true
-        end
-    )
-    local hide_names_singular = tables.filter_array(
-        hide_names,
-        function(display_name)
-            return hud[display_name].repeat_buffers == false
-        end
-    )
-
     -- Set all the singular ones
-    for _, display_name in ipairs(show_names_singular) do
-        hud[display_name].show()
+    for _, element_name in ipairs(show_names) do
+        hud[element_name]:show()
     end
-    for _, display_name in ipairs(hide_names_singular) do
-        hud[display_name].hide()
+    for _, element_name in ipairs(hide_names) do
+        hud[element_name]:hide()
     end
-
-    -- Set all the multi ones in single loop
-    buf_do(function()
-        for _, display_name in ipairs(show_names_multi) do
-            hud[display_name].show()
-        end
-        for _, display_name in ipairs(hide_names_multi) do
-            hud[display_name].hide()
-        end
-    end)
 end
 
 -- Convenience Functions that wrap show_hide_batch
 local function onlyShow(show_names)
     local show_names_set = tables.array_to_set(show_names)
     local hide_names = {}
-    for display_name, _ in pairs(hud) do
-        if not show_names_set[display_name] then
-            table.insert(hide_names, display_name)
+    for element_name, _ in pairs(hud) do
+        if not show_names_set[element_name] then
+            table.insert(hide_names, element_name)
         end
     end
 
@@ -103,9 +57,9 @@ end
 local function onlyHide(hide_names)
     local hide_names_set = tables.array_to_set(hide_names)
     local show_names = {}
-    for display_name, _ in pairs(hud) do
-        if not hide_names_set[display_name] then
-            table.insert(show_names, display_name)
+    for element_names, _ in pairs(hud) do
+        if not hide_names_set[element_names] then
+            table.insert(show_names, element_names)
         end
     end
 

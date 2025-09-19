@@ -14,20 +14,6 @@ function M.clean_empty()
 	end
 end
 
--- Takes in a function, called func
--- Iterates through all buffers, and calls func() in all of them
--- Good for setting values which must apply to all buffers
-function M.buf_do(func)
-	local original_buffer = vim.fn.bufnr()
-	for n=1,vim.fn.bufnr('$') do
-		if vim.fn.buflisted(n) == 1 then
-	        vim.cmd("buffer " .. n)
-            func()
-		end
-    end
-    vim.cmd("buffer " .. original_buffer)
-end
-
 -- Create a buffer with the given name, and return its buffer number
 -- If the name is already in use, make it listed and return its existing buffer number
 function M.create_buffer(name)

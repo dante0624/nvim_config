@@ -1,150 +1,135 @@
 local refresh_diagnostics = require('lsp.serverCommon').refresh_diagnostics
 
-local M = {}
+--- @class HudElement
+---
+--- Function which returns whether or not the element is currently visible.
+--- Returns nil if the element is part of a plugin it is not loaded yet.
+--- Function should use `pcall(require("plugin"))` when dealing with plugins.
+--- @field is_shown fun():boolean?
+---
+--- Function which makes the element become visible.
+--- Function should use `pcall(require("plugin"))` when dealing with plugins.
+--- @field show fun(self: HudElement):nil
+---
+--- Function which hides the element, so it is not visible.
+--- Function should use `pcall(require("plugin"))` when dealing with plugins.
+--- @field hide fun(self: HudElement):nil
+---
+--- In Neovim, some options are local to the current buffer and window.
+--- See https://neovim.io/doc/user/options.html#local-options for more info.
+--- The goal of the HUD is to create the illusion of these being global.
+--- Autocommands on "BufEnter" are used to create this illusion.
+--- This can be used to delete the existing the autocmd and create a new one.
+--- @field _autocmd_id integer?
 
---[[ Table oriented way of going about this
-Each table is an interface which needs to implement:
-	isShown()
-		Return true, false, or nil
-		nil generally means that something is wrong,
-		ex: a plugin is not loaded
-		When nil is returned, the calling function should do nothing
-	show()
-		Causes the display to be shown, even if it is already shown
-	hide()
-		Causes the display to be hidden, even if it is already hidden
-
-    repeat_buffers
-        True or false. Indicates if a show() / hide() function
-        must be repeated in all open buffers to work.
-        For example, vim.opt.number = true must be repeated
-
-	show() and hide() should use pcall to check dependency plugins.
-		if the pcall fails, the functions should no-op ]]
-M.tabs = {}
-function M.tabs.isShown()
-	return vim.o.showtabline ~= 0
-end
-
-function M.tabs.show()
-	vim.opt.showtabline = 2
-end
-
-function M.tabs.hide()
-	vim.opt.showtabline = 0
-end
-M.tabs.repeat_buffers = false
-
-M.line_numbers = {}
-function M.line_numbers.isShown()
-	return vim.o.number
-end
-
-function M.line_numbers.show()
-    vim.opt.number = true
-end
-
-function M.line_numbers.hide()
-	vim.opt.number = false
-end
-M.line_numbers.repeat_buffers = true
-
-M.relative_line_numbers = {}
-function M.relative_line_numbers.isShown()
-	return vim.o.relativenumber
-end
-
-function M.relative_line_numbers.show()
-	vim.opt.relativenumber = true
-end
-
-function M.relative_line_numbers.hide()
-    vim.opt.relativenumber = false
-end
-M.relative_line_numbers.repeat_buffers = true
-
-M.color_column = {}
-function M.color_column.isShown()
-	return vim.o.colorcolumn == "80"
-end
-
-function M.color_column.show()
-    vim.opt.colorcolumn = "80"
-end
-
-function M.color_column.hide()
-    vim.opt.colorcolumn = "0"
-end
-M.color_column.repeat_buffers = true
-
-M.git_signs = {}
-function M.git_signs.isShown()
-	local gitsigns_ok, _ = pcall(require, "gitsigns")
-	if not gitsigns_ok then
-		return nil
+---@param hud_element HudElement
+---@param option_name string
+---@param value any
+local function handle_local_option(hud_element, option_name, value)
+	for _, window_id in ipairs(vim.api.nvim_list_wins()) do
+		vim.wo[window_id][option_name] = value
 	end
 
-	return require("gitsigns.config").config.signcolumn
-end
-
-function M.git_signs.show()
-	local shown = M.git_signs.isShown()
-	if shown == false then
-		vim.cmd("silent! Gitsigns toggle_signs")
+	if hud_element._autocmd_id ~= nil then
+		vim.api.nvim_del_autocmd(hud_element._autocmd_id)
 	end
+
+	hud_element._autocmd_id = vim.api.nvim_create_autocmd({ "BufEnter" }, {
+		pattern = "*",
+		callback = function() vim.opt[option_name] = value end,
+	})
 end
 
-function M.git_signs.hide()
-	local shown = M.git_signs.isShown()
-	if shown == true then
-		vim.cmd("silent! Gitsigns toggle_signs")
-	end
-end
-M.git_signs.repeat_buffers = false
+--- @type table<string, HudElement>
+local M = {
+	tabs = {
+		is_shown = function() return vim.o.showtabline ~= 0 end,
+		show = function(_) vim.opt.showtabline = 2 end,
+		hide = function(_) vim.opt.showtabline = 0 end,
+	},
 
--- Use this as a buffer for my neck, in case line numbers and git_signs are disabled
-M.buffer_sign_column = {}
-function M.buffer_sign_column.isShown()
-	return vim.o.signcolumn == "yes"
-end
-function M.buffer_sign_column.show()
-	vim.opt.signcolumn = "yes"
-end
-function M.buffer_sign_column.hide()
-	vim.opt.signcolumn = "auto"
-end
-M.buffer_sign_column.repeat_buffers = true
+	line_numbers = {
+		is_shown = function() return vim.o.number end,
+		show = function(self)
+			handle_local_option(self, "number", true)
+		end,
+		hide = function(self)
+			handle_local_option(self, "number", false)
+		end,
+	},
 
-M.diagnostics = {}
-function M.diagnostics.isShown()
-	return vim.diagnostic.is_enabled()
-end
+	relative_line_numbers = {
+		is_shown = function() return vim.o.relativenumber end,
+		show = function(self)
+			handle_local_option(self, "relativenumber", true)
+		end,
+		hide = function(self)
+			handle_local_option(self, "relativenumber", false)
+		end,
+	},
 
-function M.diagnostics.show()
-	vim.diagnostic.enable()
-end
+	color_column = {
+		is_shown = function() return vim.o.colorcolumn == "80" end,
+		show = function(self)
+			handle_local_option(self, "colorcolumn", "80")
+		end,
+		hide = function(self)
+			handle_local_option(self, "colorcolumn", "0")
+		end,
+	},
 
-function M.diagnostics.hide()
-	vim.diagnostic.enable(false)
-end
-M.diagnostics.repeat_buffers = false
+	git_signs = {
+		is_shown = function()
+			local gitsigns_ok, _ = pcall(require, "gitsigns")
+			if not gitsigns_ok then
+				return nil
+			end
 
-M.strict = {}
-function M.strict.isShown()
-	return vim.g.ignore_strict_diagnostics ~= true
-end
+			return require("gitsigns.config").config.signcolumn
+		end,
+		show = function(self)
+			if self.is_shown() == false then
+				vim.cmd("silent! Gitsigns toggle_signs")
+			end
+		end,
+		hide = function(self)
+			if self.is_shown() == true then
+				vim.cmd("silent! Gitsigns toggle_signs")
+			end
+		end,
+	},
 
-function M.strict.show()
-	vim.g.ignore_strict_diagnostics = false
+	-- Use this as a vertical buffer for my neck
+	-- In case line numbers and git_signs are disabled
+	buffer_sign_column = {
+		is_shown = function() return vim.o.signcolumn == "yes" end,
+		show = function(self)
+			handle_local_option(self, "signcolumn", "yes")
+		end,
+		hide = function(self)
+			handle_local_option(self, "signcolumn", "auto")
+		end,
+	},
 
-	refresh_diagnostics()
-end
+	diagnostics = {
+		is_shown = function() return vim.diagnostic.is_enabled() end,
+		show = function(_) vim.diagnostic.enable(true) end,
+		hide = function(_) vim.diagnostic.enable(false) end,
+	},
 
-function M.strict.hide()
-	vim.g.ignore_strict_diagnostics = true
-
-	refresh_diagnostics()
-end
-M.strict.repeat_buffers = false
+	strict = {
+		is_shown = function()
+			return vim.g.ignore_strict_diagnostics ~= true
+		end,
+		show = function(_)
+			vim.g.ignore_strict_diagnostics = false
+			refresh_diagnostics()
+		end,
+		hide = function(_)
+			vim.g.ignore_strict_diagnostics = true
+			refresh_diagnostics()
+		end,
+	},
+}
 
 return M
