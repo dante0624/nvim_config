@@ -1,5 +1,5 @@
 local clean_empty = require("utils.buffers").clean_empty
-local lazy_map = require("utils.map").lazy_map
+local default_key_map_modes = require("utils.map").default_key_map_modes
 
 -- Helper functions for defining my own custom commands in the tree
 local function get_neotree_commands(source)
@@ -72,13 +72,13 @@ return {
 			end
 		end,
 		event = "User started_on_directory",
-		keys = lazy_map({
+		keys = {
 			-- Close the tree
-			{ "<leader>tq", "<Cmd>Neotree close<CR>" },
+			{ "<leader>tq", "<Cmd>Neotree close<CR>", mode = default_key_map_modes },
 
 			-- Netrw-style Tree
-			{ "<leader>to", "<Cmd>Neotree<CR>" },
-			{ "<leader>tp", "<Cmd>Neotree reveal_force_cwd<CR>" },
+			{ "<leader>to", "<Cmd>Neotree<CR>", mode = default_key_map_modes },
+			{ "<leader>tp", "<Cmd>Neotree reveal_force_cwd<CR>", mode = default_key_map_modes },
 
 			--[[ 4 Slightly different ways to open the tree on the left (asdf)
 			I prefer Netrw-style, because I don't like the split screen
@@ -86,26 +86,30 @@ return {
 			{
 				"<leader>ta",
 				"<Cmd>Neotree position=left<CR>",
+				mode = default_key_map_modes,
 			},
 			{
 				"<leader>ts",
 				"<Cmd>Neotree position=left reveal_force_cwd<CR>",
+				mode = default_key_map_modes,
 			},
 			{
 				"<leader>td",
 				"<Cmd>Neotree position=left action=show<CR>",
+				mode = default_key_map_modes,
 			},
 			{
 				"<leader>tf",
 				"<Cmd>Neotree position=left action=show reveal_force_cwd<CR>",
+				mode = default_key_map_modes,
 			},
 
 			-- Git Status Tree
-			{ "<leader>tg", "<Cmd>Neotree git_status<CR>" },
+			{ "<leader>tg", "<Cmd>Neotree git_status<CR>", mode = default_key_map_modes },
 
 			-- Buffers Tree
-			{ "<leader>tb", "<Cmd>Neotree buffers<CR>" },
-		}),
+			{ "<leader>tb", "<Cmd>Neotree buffers<CR>", mode = default_key_map_modes },
+		},
 		opts = {
 			close_if_last_window = true,
 			window = {

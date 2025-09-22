@@ -1,4 +1,5 @@
 local map = require("utils.map").map
+local default_key_map_modes = require("utils.map").default_key_map_modes
 
 return {
 	{
@@ -26,19 +27,19 @@ return {
 			-- Manipulate Buffer Tabs
 			map("n", "<S-TAB>", "<Cmd>BufferPrev<CR>")
 			map("n", "<TAB>", "<Cmd>BufferNext<CR>")
-			map("", "<leader><S-TAB>", "<Cmd>BufferMovePrev<CR>")
-			map("", "<leader><TAB>", "<Cmd>BufferMoveNext<CR>")
+			map(default_key_map_modes, "<leader><S-TAB>", "<Cmd>BufferMovePrev<CR>")
+			map(default_key_map_modes, "<leader><TAB>", "<Cmd>BufferMoveNext<CR>")
 
 			-- Close Buffer Tabs
-			map("", "<leader>e", "<Cmd>BufferClose<CR>")
-			map("", "<leader>E", "<Cmd>BufferCloseBuffersRight<CR>")
+			map(default_key_map_modes, "<leader>e", "<Cmd>BufferClose<CR>")
+			map(default_key_map_modes, "<leader>E", "<Cmd>BufferCloseBuffersRight<CR>")
 
 			-- O for "open" and then select a specific buffer
-			map("", "<leader>oa", "<Cmd>BufferGoto 1<CR>")
-			map("", "<leader>os", "<Cmd>BufferGoto 2<CR>")
-			map("", "<leader>od", "<Cmd>BufferGoto 3<CR>")
-			map("", "<leader>of", "<Cmd>BufferGoto 4<CR>")
-			map("", "<leader>og", "<Cmd>BufferGoto 5<CR>")
+			map(default_key_map_modes, "<leader>oa", "<Cmd>BufferGoto 1<CR>")
+			map(default_key_map_modes, "<leader>os", "<Cmd>BufferGoto 2<CR>")
+			map(default_key_map_modes, "<leader>od", "<Cmd>BufferGoto 3<CR>")
+			map(default_key_map_modes, "<leader>of", "<Cmd>BufferGoto 4<CR>")
+			map(default_key_map_modes, "<leader>og", "<Cmd>BufferGoto 5<CR>")
 		end,
 	},
 }

@@ -1,4 +1,7 @@
 local showTable = require("utils.showTable")
+local map = require("utils.map").map
+local default_key_map_modes = require("utils.map").default_key_map_modes
+local alpabetical_key_map_modes = require("utils.map").alpabetical_key_map_modes
 
 local M = {}
 
@@ -229,28 +232,22 @@ function M.start_or_attach(config_name, root_dir, is_single_file)
 		init_options = settings.init_options,
 		settings = settings.post_init_settings,
 		on_attach = function(_, bufnr)
-			local function lsp_map(mode, lhs, rhs, opts)
-				local options = { buffer = bufnr }
-				if opts then
-					options = vim.tbl_extend("force", options, opts)
-				end
-
-				vim.keymap.set(mode, lhs, rhs, options)
-			end
+			-- Use so that the keymaps only apply to the buffer which is attached.
+			local map_opts = { buffer = bufnr }
 
 			-- The beautiful keymaps
 			-- "s" for (language) "Server"
-			lsp_map("n", "gd", vim.lsp.buf.definition)
-			lsp_map("n", "gD", vim.lsp.buf.type_definition)
-			lsp_map("n", "gr", vim.lsp.buf.references)
-			lsp_map("", "<leader>sa", vim.lsp.buf.code_action)
-			lsp_map("n", "<leader>ss", vim.lsp.buf.document_symbol)
-			lsp_map("", "<leader>sf", vim.lsp.buf.format)
-			lsp_map("n", "<leader>sh", function()
+			map(alpabetical_key_map_modes, "gd", vim.lsp.buf.definition, map_opts)
+			map(alpabetical_key_map_modes, "gD", vim.lsp.buf.type_definition, map_opts)
+			map(alpabetical_key_map_modes, "gr", vim.lsp.buf.references, map_opts)
+			map(default_key_map_modes, "<leader>sa", vim.lsp.buf.code_action, map_opts)
+			map(default_key_map_modes, "<leader>ss", vim.lsp.buf.document_symbol, map_opts)
+			map(default_key_map_modes, "<leader>sf", vim.lsp.buf.format, map_opts)
+			map(default_key_map_modes, "<leader>sh", function()
 				vim.lsp.buf.hover({ border = 'rounded' })
-			end)
-			lsp_map("n", "<leader>sr", vim.lsp.buf.rename)
-			lsp_map("n", "<leader>sw", vim.lsp.buf.workspace_symbol)
+			end, map_opts)
+			map(default_key_map_modes, "<leader>sr", vim.lsp.buf.rename, map_opts)
+			map(default_key_map_modes, "<leader>sw", vim.lsp.buf.workspace_symbol, map_opts)
 		end,
 		capabilities = vim.tbl_deep_extend(
 			'keep',

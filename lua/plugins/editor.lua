@@ -1,3 +1,5 @@
+local default_key_map_modes = require("utils.map").default_key_map_modes
+
 return {
 	{
 		-- This author doesn't seem to use tags, so use the commits instead
@@ -33,9 +35,13 @@ return {
 				function()
 					require("Comment.api").toggle.linewise.current()
 				end,
-				mode = "n",
+				mode = { "n", "o" },
 			},
-			{ "C", "<Plug>(comment_toggle_linewise_visual)gv", mode = "v" },
+			{
+				"C",
+				"<Plug>(comment_toggle_linewise_visual)gv",
+				mode = "x"
+			},
 
 			-- "cm" is supposed to be short for "comment multi-line"
 			{
@@ -43,12 +49,12 @@ return {
 				function()
 					require("Comment.api").toggle.blockwise.current()
 				end,
-				mode = "n",
+				mode = { "n", "o" },
 			},
 			{
 				"<leader>cm",
 				"<Plug>(comment_toggle_blockwise_visual)gv",
-				mode = "v",
+				mode = { "x", "s" },
 			},
 
 			{
@@ -56,21 +62,21 @@ return {
 				function()
 					require("Comment.api").insert.linewise.above()
 				end,
-				mode = "n",
+				mode = default_key_map_modes,
 			},
 			{
 				"<leader>cj",
 				function()
 					require("Comment.api").insert.linewise.below()
 				end,
-				mode = "n",
+				mode = default_key_map_modes,
 			},
 			{
 				"<leader>cl",
 				function()
 					require("Comment.api").insert.linewise.eol()
 				end,
-				mode = "n",
+				mode = default_key_map_modes,
 			},
 		},
 	},

@@ -1,3 +1,5 @@
+local alpabetical_key_map_modes = require("utils.map").alpabetical_key_map_modes
+
 --[[ Fixes a strange issue with neovim folding
 Folds are computed initially, but not recomputed after the buffer is modified
 
@@ -43,16 +45,16 @@ local function fold_keymap(mode, lhs, rhs, opts)
 	end, options)
 end
 
-fold_keymap("", "ze", "]z")
-fold_keymap("", "zb", "[z")
+fold_keymap(alpabetical_key_map_modes, "ze", "]z")
+fold_keymap(alpabetical_key_map_modes, "zb", "[z")
 
-fold_keymap("", "za", "za")
-fold_keymap("", "zo", "zo")
-fold_keymap("", "zO", "zO")
-fold_keymap("", "zc", "zc")
-fold_keymap("", "zC", "zC")
-fold_keymap("", "zR", "zR")
-fold_keymap("", "zM", "zM")
+fold_keymap(alpabetical_key_map_modes, "za", "za")
+fold_keymap(alpabetical_key_map_modes, "zo", "zo")
+fold_keymap(alpabetical_key_map_modes, "zO", "zO")
+fold_keymap(alpabetical_key_map_modes, "zc", "zc")
+fold_keymap(alpabetical_key_map_modes, "zC", "zC")
+fold_keymap(alpabetical_key_map_modes, "zR", "zR")
+fold_keymap(alpabetical_key_map_modes, "zM", "zM")
 
 -- These options come from Treesitter's README on how to set up folding
 vim.opt.foldexpr = "nvim_treesitter#foldexpr()"

@@ -1,32 +1,26 @@
-local lazy_map = require("utils.map").lazy_map
+local local_map = require("utils.map").local_map
+local default_key_map_modes = require("utils.map").default_key_map_modes
+local alpabetical_key_map_modes = require("utils.map").alpabetical_key_map_modes
 
 -- Short for "shell open"
 local open_mapping = "<leader>xo"
 
 function _G.set_term_keymaps()
-	local function term_map(mode, lhs, rhs, opts)
-		local options = { noremap = true, silent = true, buffer = 0 }
-		if opts then
-			options = vim.tbl_extend("force", options, opts)
-		end
-		vim.keymap.set(mode, lhs, rhs, options)
-	end
-
 	-- For some reason <C-\><C-n> goes from terminal mode to normal mode
-    term_map("t", "<Esc>", [[<C-\><C-n>]])
+    local_map("t", "<Esc>", [[<C-\><C-n>]])
 
 	-- All of the following can be used to exit ToggleTerm when in normal mode
-	term_map({ "n", "v" }, "<Esc>", "<CMD>ToggleTerm<CR>")
-	term_map({ "n", "v" }, "q", "<CMD>ToggleTerm<CR>")
-	term_map({ "n", "v" }, ";", "<CMD>ToggleTerm<CR>")
+	local_map(alpabetical_key_map_modes, "<Esc>", "<CMD>ToggleTerm<CR>")
+	local_map(alpabetical_key_map_modes, "q", "<CMD>ToggleTerm<CR>")
+	local_map(alpabetical_key_map_modes, ";", "<CMD>ToggleTerm<CR>")
 end
 
 return {
 	{
 		"akinsho/toggleterm.nvim",
 		tag = "v2.8.0",
-		keys = lazy_map({
-			{ open_mapping, "<CMD>ToggleTerm<CR>" },
+		keys = {
+			{ open_mapping, "<CMD>ToggleTerm<CR>", mode = default_key_map_modes },
 
 			-- Short for "execute run command"
 			{
@@ -50,11 +44,12 @@ return {
 
 					toggleterm.exec(run_command)
 				end,
+				mode = default_key_map_modes,
 			},
 
 			-- Short for "execute previous command"
-			{ "<Leader>xp", "<CMD>ToggleTerm<CR><Up><CR>" },
-		}),
+			{ "<Leader>xp", "<CMD>ToggleTerm<CR><Up><CR>", mode = default_key_map_modes },
+		},
 		config = function()
 			require("utils.shell").set_shell()
 

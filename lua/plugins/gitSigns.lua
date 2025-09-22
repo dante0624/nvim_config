@@ -1,35 +1,32 @@
-local function git_on_attach(bufnr)
+local map = require("utils.map").map
+local default_key_map_modes = require("utils.map").default_key_map_modes
+
+local function git_on_attach()
 	local git_signs = package.loaded.gitsigns
 
-	local function map(mode, l, r, opts)
-		opts = opts or {}
-		opts.buffer = bufnr
-		vim.keymap.set(mode, l, r, opts)
-	end
-
 	-- Navigation
-	map("n", "<leader>gj", git_signs.next_hunk)
-	map("n", "<leader>gk", git_signs.prev_hunk)
+	map(default_key_map_modes, "<leader>gj", git_signs.next_hunk)
+	map(default_key_map_modes, "<leader>gk", git_signs.prev_hunk)
 
 	-- Actions
-	map("n", "<leader>gs", git_signs.stage_hunk)
-	map("v", "<leader>gs", function()
+	map({ "n", "o" }, "<leader>gs", git_signs.stage_hunk)
+	map({ "x", "s" }, "<leader>gs", function()
 		git_signs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
 	end)
 
-	map("n", "<leader>gS", git_signs.stage_buffer)
-	map("n", "<leader>gu", git_signs.undo_stage_hunk)
+	map(default_key_map_modes, "<leader>gS", git_signs.stage_buffer)
+	map(default_key_map_modes, "<leader>gu", git_signs.undo_stage_hunk)
 
-	map("n", "<leader>gr", git_signs.reset_hunk)
-	map("v", "<leader>gr", function()
+	map({ "n", "o" }, "<leader>gr", git_signs.reset_hunk)
+	map({ "x", "s" }, "<leader>gr", function()
 		git_signs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
 	end)
 
-	map("n", "<leader>gR", git_signs.reset_buffer)
-	map("n", "<leader>go", git_signs.preview_hunk)
-	map("n", "<leader>gb", git_signs.blame_line)
-	map("n", "<leader>gd", git_signs.diffthis)
-	map("n", "<leader>gt", git_signs.toggle_deleted)
+	map(default_key_map_modes, "<leader>gR", git_signs.reset_buffer)
+	map(default_key_map_modes, "<leader>go", git_signs.preview_hunk)
+	map(default_key_map_modes, "<leader>gb", git_signs.blame_line)
+	map(default_key_map_modes, "<leader>gd", git_signs.diffthis)
+	map(default_key_map_modes, "<leader>gt", git_signs.toggle_deleted)
 end
 
 return {

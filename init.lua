@@ -18,12 +18,6 @@ Put up a CR for my solution to TMUX OSC52 Paste.
 ]]
 
 --[[ Medium Priority Work:
-Make certain keymaps apply to "visual" but not "select" mode.
-	I've "C" for comment. Look for others.
-
-Make the HUD work for all windows.
-	Currently it works for all tabs, but not all windows.
-
 Allow me to rename variables and files in a pop-out buffer.
 	I want Visual, Insert, and Normal mode to work here.
 	I'm surprised this isn't in neovim core tbh.
