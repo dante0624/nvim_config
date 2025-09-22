@@ -36,7 +36,11 @@ local function handle_local_option(hud_element, option_name, value)
 
 	hud_element._autocmd_id = vim.api.nvim_create_autocmd({ "BufEnter" }, {
 		pattern = "*",
-		callback = function() vim.opt[option_name] = value end,
+		callback = function(event_args)
+			if vim.fn.buflisted(event_args.buf) == 1 then
+				vim.opt[option_name] = value
+			end
+		end,
 	})
 end
 
