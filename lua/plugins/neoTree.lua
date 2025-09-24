@@ -85,7 +85,6 @@ return {
 					["<C-v>"] = "open_vsplit",
 					["c"] = "close_node",
 					["C"] = "close_all_nodes",
-					["y"] = "copy_to_clipboard",
 
 					-- Setting keys to nothing
 					["."] = "noop",
@@ -117,6 +116,12 @@ return {
 					["o"] = "open_silently",
 					["<CR>"] = "open_and_go",
 					["<C-y>"] = "copy_path_to_paste_register",
+
+					-- Needed to split between normal and visual mode
+					-- In normal mode, "copy" the file (can paste to different location)
+					-- In visual mode, just use the normal keymap; ie copy the text into register 0
+					-- Cannot use the builtin "copy_to_clipboard" because "copy_to_clipboard_visual" is defined
+					["y"] = "custom_y_handler",
 				},
 			},
 			commands = {
@@ -161,7 +166,13 @@ return {
 
 				-- I prefer to paste with "p" from the 0 register
 				copy_path_to_paste_register = function(state)
-					vim.fn.setreg('0', state.tree:get_node().path)
+					local node = state.tree:get_node()
+					vim.fn.setreg('0', node.path)
+					print("Saved complete " .. node.type .. " path to register 0.")
+				end,
+
+				custom_y_handler = function(state)
+					state.commands.copy_to_clipboard(state)
 				end,
 			},
 			filesystem = {
