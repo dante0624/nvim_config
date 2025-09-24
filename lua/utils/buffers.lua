@@ -1,11 +1,35 @@
 local M = {}
 
-function M.clean_empty()
-	for n=1,vim.fn.bufnr('$') do -- All buffers including hidden ones. ':ls!'
+--- Gets the buffers ids which are listed, excluding the [No Name] buffer
+---@return integer[]
+function M.get_listed_user_buffer_ids()
+	local is_user_buffer_filter = function(buf)
+		return vim.fn.buflisted(buf) == 1 and
+			vim.fn.empty(vim.fn.bufname(buf)) ~= 1
+	end
 
+	return M.get_buffer_ids(is_user_buffer_filter)
+end
+
+--- Get a list of buffer ids which pass some filter
+---@param filter? fun(buf: integer):boolean
+---@return integer[]
+function M.get_buffer_ids(filter)
+	local buffer_ids = {}
+	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+		if (filter == nil or filter(buf)) then
+			table.insert(buffer_ids, buf)
+		end
+	end
+
+	return buffer_ids
+end
+
+function M.clean_no_name_buffers()
+	-- Loop over all buffers, including hidden ones. Like ':ls!'
+	for _, n in ipairs(vim.api.nvim_list_bufs()) do
         -- Check if the buffer is safe to delete
-		if vim.fn.buflisted(n) == 1 and -- In the buffer list after typing ':ls'
-			vim.fn.empty(vim.fn.bufname(n)) == 1 and -- Has no name
+		if vim.fn.empty(vim.fn.bufname(n)) == 1 and -- Has no name
 			vim.fn.bufwinnr(n) < 0 and -- Not in the current window
 			vim.fn.getbufvar(n, '&mod') == 0 -- Hasn't been modified
         then

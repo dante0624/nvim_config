@@ -1,56 +1,7 @@
-local clean_empty = require("utils.buffers").clean_empty
+local clean_no_name_buffers = require("utils.buffers").clean_no_name_buffers
+local get_listed_user_buffer_ids = require("utils.buffers").get_listed_user_buffer_ids
 local default_key_map_modes = require("utils.map").default_key_map_modes
 
--- Helper functions for defining my own custom commands in the tree
-local function get_neotree_commands(source)
-	if source == "filesystem" then
-		return require("neo-tree.sources.filesystem.commands")
-	end
-
-	-- Applies to git status and buffers
-	return require("neo-tree.sources.common.commands")
-end
-
--- Open a tree node silently, should work for any source
-local function common_open_silently(state, source)
-	local cmds = get_neotree_commands(source)
-	local node = state.tree:get_node()
-
-	-- Need alternative because the current buffer is the tree
-	local current_buff = vim.fn.expand("#:p")
-
-	if node.type == "directory" then
-		cmds.open(state)
-		return
-	end
-
-	-- If we are currently looking at the [No Name] buffer
-	if current_buff == "" then
-		cmds.open(state)
-
-		-- Return focus to the tree
-		vim.cmd("Neotree")
-
-		-- If we are currently looking at a non-null buffer
-	else
-		vim.cmd("badd " .. node.path)
-	end
-
-    clean_empty()
-end
-
--- Open a tree node and go, should work for any source
-local function common_open_and_go(state, source)
-	local cmds = get_neotree_commands(source)
-	local node = state.tree:get_node()
-
-	cmds.open(state)
-
-	if node.type == "file" then
-		vim.cmd("Neotree action=close")
-        clean_empty()
-	end
-end
 
 return {
 	{
@@ -161,9 +112,60 @@ return {
 					["z"] = "noop",
 					["e"] = "noop",
 					["w"] = "noop",
+
+					-- The custom mappings
+					["o"] = "open_silently",
+					["<CR>"] = "open_and_go",
+					["<C-y>"] = "copy_path_to_paste_register",
 				},
 			},
+			commands = {
+				-- Open a tree node silently, should work for any source
+				open_silently = function(state)
+					local cmds = state.commands
+					local node = state.tree:get_node()
+
+					if node.type == "directory" then
+						cmds.open(state)
+						return
+					end
+
+					-- If only the [No Name] buffer is currently open
+					if #get_listed_user_buffer_ids() == 0 then
+						cmds.open(state)
+
+						-- Return focus to the tree
+						vim.cmd("Neotree source=last position=" .. state.current_position)
+
+					-- If we are currently looking at a non-null buffer
+					else
+						vim.cmd("badd " .. node.path)
+					end
+
+					-- Always cleanup any potential [No Name] buffers that are still around
+					clean_no_name_buffers()
+				end,
+
+				-- Open a tree node and go, should work for any source
+				open_and_go = function(state)
+					local cmds = state.commands
+					local node = state.tree:get_node()
+
+					cmds.open(state)
+
+					if node.type == "file" then
+						vim.cmd("Neotree action=close")
+						clean_no_name_buffers()
+					end
+				end,
+
+				-- I prefer to paste with "p" from the 0 register
+				copy_path_to_paste_register = function(state)
+					vim.fn.setreg('0', state.tree:get_node().path)
+				end,
+			},
 			filesystem = {
+				group_empty_dirs = true,
 				window = {
 					position = "current",
 					mappings = {
@@ -183,44 +185,25 @@ return {
 
 						-- The custom mappings
 						["O"] = "set_root_or_open",
-						["o"] = "open_silently",
-						["<CR>"] = "open_and_go",
 					},
 				},
 				commands = {
 					set_root_or_open = function(state)
-						local cmds = get_neotree_commands("filesystem")
+						local cmds = state.commands
 						local node = state.tree:get_node()
 						if node.type == "file" then
 							cmds.open(state)
 						else
+							-- This line only works from the filesystem source
+							-- This makes sense intuitively
 							cmds.set_root(state)
 						end
-					end,
-					open_silently = function(state)
-						common_open_silently(state, "filesystem")
-					end,
-					open_and_go = function(state)
-						common_open_and_go(state, "filesystem")
 					end,
 				},
 			},
 			buffers = {
 				window = {
 					position = "float",
-					mappings = {
-						-- The custom mappings
-						["o"] = "open_silently",
-						["<CR>"] = "open_and_go",
-					},
-				},
-				commands = {
-					open_silently = function(state)
-						common_open_silently(state, "buffers")
-					end,
-					open_and_go = function(state)
-						common_open_and_go(state, "buffers")
-					end,
 				},
 				follow_current_file = {
 					enabled = true,
@@ -229,19 +212,6 @@ return {
 			git_status = {
 				window = {
 					position = "float",
-					mappings = {
-						-- The custom mappings
-						["o"] = "open_silently",
-						["<CR>"] = "open_and_go",
-					},
-				},
-				commands = {
-					open_silently = function(state)
-						common_open_silently(state, "git_status")
-					end,
-					open_and_go = function(state)
-						common_open_and_go(state, "git_status")
-					end,
 				},
 			},
 			default_component_configs = {
