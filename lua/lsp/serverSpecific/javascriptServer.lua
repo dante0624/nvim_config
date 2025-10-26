@@ -3,6 +3,7 @@ local paths = require("utils.paths")
 local ignored_message_substrings = {
 	"'browser' is not defined.",
 	"Cannot find name 'browser'.",
+	"Cannot find name 'Services'.",
 	"implicitly has an 'any' type, but a better type may be inferred from usage.",
 }
 
