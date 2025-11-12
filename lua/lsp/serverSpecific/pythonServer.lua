@@ -1,19 +1,32 @@
 local mason_bin = require("utils.paths").Mason_Bin
-local array_to_set = require("utils.tables").array_to_set
+local merge_tables = require("utils.tables").merge_tables
 
-local ignored_code = array_to_set({
-	"reportPropertyTypeMismatch",
-	"reportMissingTypeStubs",
-	"reportTypeCommentUsage",
-	"reportUnknownParameterType",
-	"reportUnknownArgumentType",
-	"reportUnknownLambdaType",
-	"reportUnknownVariableType",
-	"reportUnknownMemberType",
-	"reportMissingParameterType",
-	"reportMissingTypeArgument",
-	"reportUnnecessaryTypeIgnoreComment",
-})
+local strict_only_disagnostics = {
+	reportMissingParameterType = "information",
+	reportMissingTypeArgument = "information",
+	reportMissingTypeStubs = "information",
+	reportPropertyTypeMismatch = "information",
+	reportTypeCommentUsage = "information",
+	reportUnknownArgumentType = "information",
+	reportUnknownLambdaType = "information",
+	reportUnknownMemberType = "information",
+	reportUnknownParameterType = "information",
+	reportUnknownVariableType = "information",
+	reportUnnecessaryTypeIgnoreComment = "information",
+}
+
+local normal_severity_overrides = {
+	reportUnusedClass = "warning",
+	reportUnusedFunction = "warning",
+	reportUnusedImport = "warning",
+	reportUnusedVariable = "warning",
+}
+
+local all_severity_overrides = merge_tables(
+	strict_only_disagnostics,
+	normal_severity_overrides
+)
+
 
 --- @param _ ServerConfigParams
 --- @return ServerConfig
@@ -22,7 +35,7 @@ local function get_server_config(_)
 	--- @type ServerConfig
 	local server_config = {
 		cmd = {
-			mason_bin .. "pyright-langserver",
+			mason_bin .. "basedpyright-langserver",
 			"--stdio",
 		},
 
@@ -48,27 +61,22 @@ local function get_server_config(_)
 		It can be resolved by creating any file which marks it as a root]]
 		single_file_support = true,
 
-		-- https://microsoft.github.io/pyright/#/settings
+		-- https://docs.basedpyright.com/latest/configuration/language-server-settings/
 		post_init_settings = {
-			python = {
+			basedpyright = {
 				analysis = {
+					autoSearchPaths = true,
+					diagnosticMode = 'openFilesOnly',
+					diagnosticSeverityOverrides = all_severity_overrides,
 					typeCheckingMode = "strict",
-					diagnosticSeverityOverrides = {
-						-- These get duplicated for some reason when using typeCheckingMode = "strict"  
-						-- They show up once as warnings (which I want them to be) then again as errors
-						-- Setting these to false has a nice affect of making them show up once as warnings
-						reportUnusedImport = false,
-						reportUnusedClass = false,
-						reportUnusedFunction = false,
-						reportUnusedVariable = false,
-					},
+					useLibraryCodeForTypes = true,
 				},
 			},
 		},
 
 		diagnostic_filters = {
 			normal = function(diagnostic)
-				return not ignored_code[diagnostic.code]
+				return not strict_only_disagnostics[diagnostic.code]
 			end,
 			strict = function(_) return true end,
 		},

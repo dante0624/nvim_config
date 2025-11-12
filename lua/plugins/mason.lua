@@ -29,7 +29,7 @@ return {
 				"css-lsp", -- CSS
 				"typescript-language-server", -- JS and TS
 				"lua-language-server", -- Lua
-				"pyright", -- Python
+				"basedpyright", -- Python
 				"jdtls", -- Java
 				"rust-analyzer", -- Rust
 				"cspell-lsp", -- Spellchecking LSP

@@ -12,22 +12,33 @@ function M.array_to_set(array)
 	return set
 end
 
---[[  Args:
-    tbl is an array table
-    function is a func(any) which returns a boolean
-filter_array() returns an array table:
-    The returned_tbl is a subset of tbl, such that each value in 
-    returned_tbl returns true when func(value) is called.
-    The returned_tbl is a shallow copy of tbl!
-    tbl[key] and returned_tbl[key] are the same objects ]]-- 
-function M.filter_array(tbl, func)
+--- Apply a filter to all elements of an array
+--- @param tbl table an array table
+--- @param filter_func fun(value: any):boolean the filter function
+--- @return table filtered_tbl a shallow copy tbl, after flitering
+function M.filter_array(tbl, filter_func)
     local filtered_tbl = {}
     for _, value in ipairs(tbl) do
-        if func(value) then
+        if filter_func(value) then
            table.insert(filtered_tbl, value)
         end
     end
     return filtered_tbl
+end
+
+--- Merge two hash-set tables, adding all their keys and values
+--- @param first_tbl table
+--- @param second_tbl table
+--- @return table merged
+function M.merge_tables(first_tbl, second_tbl)
+	local merged = {}
+	for key, value in pairs(first_tbl) do
+		merged[key] = value
+	end
+	for key, value in pairs(second_tbl) do
+		merged[key] = value
+	end
+	return merged
 end
 
 return M
