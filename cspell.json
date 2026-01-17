@@ -44,6 +44,7 @@
     "noautocmd",
     "noremap",
     "nvim",
+    "Ollama",
     "pbutil",
     "pyright",
     "qflist",

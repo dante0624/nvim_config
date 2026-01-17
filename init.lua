@@ -10,11 +10,23 @@ require("lsp.serverCommon").setup()
 
 -- TODO:
 --[[ Immediate planned steps:
-Get Avante + MCP support and a free LLM.
-	Either local DeepSeek or a free online LLM.
+Do remote work in Neovim similar to how Neovide does it:
+  1. First, start up neovim with a client / server split:
+    - https://neovide.dev/features.html#unix-domain-socket-example
+  2. For any clipboard copy-paste, the server makes a specific RPC request 
+    ```
+    vim.rpcrequest(some_channel_id, 'custom.set_clipboard', lines)
+	vim.rpcrequest(some_channel_id, 'custom.get_clipboard')
+	````
+  3. Handle this request on the client side. Couple of ways this can go:
+    a. Make a wrapper script around the server-client initialization.
+	  It should setup a second client, whose only job is to wrap the clipboard.
+	  Then the server makes its rpc requests to only that client
+	b. Make the local neovim client code (all C) handle these RPC requests.
+	  This would involve forking neovim, modifying, then building from source.
 
-Put up a CR for my solution to TMUX OSC52 Paste.
-	Will resolve any issues that I've commented on.
+Get Avante + MCP support and a free LLM.
+	Either local LLM from Ollama  or a free-tier of an online LLM.
 ]]
 
 --[[ Medium Priority Work:
