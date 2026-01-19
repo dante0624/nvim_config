@@ -46,6 +46,12 @@ vim.opt.smartcase = true
 -- https://github.com/lewis6991/gitsigns.nvim/issues/1278
 vim.opt.diffopt = "internal,filler,closeoff"
 
+-- Encountered an issue with Wezterm domains and Neovim
+-- Temporarily can fix by disabling this feature
+-- The real fix should be upstream in Wezterm
+-- https://github.com/wezterm/wezterm/issues/4607
+vim.o.termsync = false
+
 -- Default is "folds,cursor,curdir"
 -- Remove curdir, this way view files do not update the working directory
 -- https://neovim.io/doc/user/options.html#'viewoptions'
