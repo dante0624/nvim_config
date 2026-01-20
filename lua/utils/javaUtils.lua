@@ -241,7 +241,9 @@ function M.start_debug(client)
 			return
 		end
 
-		local debugee_command = "gradle --rerun-tasks test --tests " .. full_method_path .. " --debug-jvm"
+		-- cleanTest removes caching results from the last time a test was run
+		-- Ensures the test task is never skipped, so debugging always occurs
+		local debugee_command = "gradle cleanTest test --tests " .. full_method_path .. " --debug-jvm"
 
 		local terminal_plugin = require("toggleterm.terminal")
 		local old_debugee_term = terminal_plugin.find(function(term)
