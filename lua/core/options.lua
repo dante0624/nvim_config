@@ -25,6 +25,28 @@ vim.api.nvim_create_autocmd({ "BufEnter" }, {
 	end,
 })
 
+local function disable_features_in_large_file()
+	-- Apply buffer-local options (e.g., disable spell check, set foldmethod)
+	vim.opt_local.spell = false
+	vim.opt_local.foldmethod = "manual"
+	vim.cmd("setlocal syntax=off") -- Disable syntax highlighting
+end
+local large_file_group = vim.api.nvim_create_augroup("LargeFileActions", { clear = true })
+vim.api.nvim_create_autocmd("BufEnter", {
+	group = large_file_group,
+	callback = function(args)
+		local buf_id = args.buf
+		local file_path = vim.api.nvim_buf_get_name(buf_id)
+		-- Check file size: vim.fn.getfsize() returns size in bytes, -1 on error
+		-- 100 * 1024 bytes = 100 KB
+		local file_size = vim.fn.getfsize(file_path)
+		if file_size > 100 * 1024 then
+			print("Disabling features due to large file with " .. file_size .. " bytes")
+			disable_features_in_large_file()
+		end
+	end,
+})
+
 -- Controls how many spaces a tab (indent) turns into
 -- These 3 are all buffer local options
 -- They can be overwritten within an ftplugin file
