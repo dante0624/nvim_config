@@ -1,4 +1,4 @@
-local os = require("utils.os")
+local os_type = require("utils.os_type")
 
 local M = {}
 
@@ -16,7 +16,7 @@ M.Mason_Bin = M.Mason_Path .. "bin/"
 --- @param path string
 --- @return string serialized_path
 function M.serialize_path(path)
-	local file_separator = os.is_windows and "[\\:]" or "/"
+	local file_separator = os_type.is_windows and "[\\:]" or "/"
 	local serialized_path, _ = path:gsub(file_separator, "%%")
 	return serialized_path
 end

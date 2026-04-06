@@ -1,20 +1,20 @@
 local paths = require("utils.paths")
-local os = require("utils.os")
+local os_type = require("utils.os_type")
 local architecture = require("utils.architecture")
 
 local jdtls_dir = paths.Mason_Path .. "packages/jdtls/"
 
 local function get_base_os_config()
-	if os.is_linux_os then
+	if os_type.is_linux_os then
 		return "config_linux"
 	end
-	if os.is_macos then
+	if os_type.is_macos then
 		return "config_mac"
 	end
-	if os.is_wsl then
+	if os_type.is_wsl then
 		return "config_ss_linux"
 	end
-	if os.is_windows then
+	if os_type.is_windows then
 		return "config_win"
 	end
 
@@ -25,7 +25,7 @@ local function get_os_config()
 	-- For some reason, the distribution of jdtls through mason does not come with config_win_arm
 	local base_os_config = get_base_os_config()
 
-	if architecture.is_arm and not os.is_windows then
+	if architecture.is_arm and not os_type.is_windows then
 		return base_os_config .. "_arm"
 	end
 

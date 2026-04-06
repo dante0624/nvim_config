@@ -1,5 +1,5 @@
 local M = {}
-local os = require("utils.os")
+local os_type = require("utils.os_type")
 
 -- Use these flags with if statements to guard shell specific lines of code
 local function set_flags()
@@ -23,7 +23,7 @@ function M.set_shell()
 		shellxquote = "",
 	}
 
-	if os.is_windows then
+	if os_type.is_windows then
 		for option, value in pairs(powershell_options) do
 			vim.opt[option] = value
 		end

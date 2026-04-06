@@ -1,4 +1,4 @@
-local os = require("utils.os")
+local os_type = require("utils.os_type")
 
 return {
 	{
@@ -10,7 +10,7 @@ return {
 			-- Most OS can install cc pretty easily, except for windows
 			-- Zig is the easiest compiler to get on Windows
 			local treesitter_compilers
-			if os.is_windows then
+			if os_type.is_windows then
 				treesitter_compilers = { "zig" }
 			else
 				treesitter_compilers = { "cc" }
