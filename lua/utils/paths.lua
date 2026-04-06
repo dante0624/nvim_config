@@ -2,6 +2,7 @@ local os_type = require("utils.os_type")
 
 local M = {}
 
+M.Home = vim.fn.fnamemodify(assert(os.getenv("HOME"), "HOME environment variable must be set"), ":p")
 M.Config_Path = vim.fn.fnamemodify(vim.fn.stdpath("config"), ":p")
 M.Logs_Path = vim.fn.fnamemodify(vim.fn.stdpath("log"), ":p")
 M.Data_Path = vim.fn.fnamemodify(vim.fn.stdpath("data"), ":p")
